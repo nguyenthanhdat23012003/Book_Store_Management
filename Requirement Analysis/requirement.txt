@@ -1,0 +1,78 @@
+requirement summary:
+- serve up to 1000 users
+- resume normal within a maximum of 1 hour after an incident
+- maximum response time is 2 seconds (normal) and 5 seconds (peak hours)
+- product managers can add, view, edit, delete any product
+- only add/edit 1 product at a time
+- can delete up to 10 product at once
+- can not delete/update more than 30 products
+- can add unlimited products in a day
+
+- need to provide: title, category, value, price
+- book:
+	authors, cover type ( paperback or hard cover ), publisher, 
+publication date. additional: number of pages, language, genre.
+- CDs:
+	collections, albums, artists, record label, track list, genre
+additional: release date
+- DVDs:
+	disc type ( Blu-ray, HD-DVD ), director, runtime, studio, 
+language, subtitle. additional: release date, genre
+
+- only allows buying and selling of physical media products.
+- can update price up to twice a day. ( must be between 30% and 150% )
+- store s history of product addition, editing, deletion
+
+- Admin can:
+	create new user, view user info, update user info, delete user, reset password of user, block/unblock users. 
+	send email notifications to users for admin actions
+	change user roles (admin, manager, user,...)
+
+
+
+- customer:
+	register/login -> then they will see list of 20 random products on each page
+	search for product
+	sort by price
+	view detail info 
+	add to cart
+	view cart, include: total price (exclude VAT), list of product (name, description, quantity, unit price)
+	remove or change qty of products in the cart
+	place order, include: provide delivery info (name, email, phone, province/city, delivery address), payment info
+	place rush order (only available for address within the inner city of Hanoi)
+	view order information or cancel orders using the links sent in the email
+	view all information about the order, including the
+invoice, shipping information, and payment transaction information.
+	can choose to cancel the order when viewing the order information before the order is approved.
+
+
+- software:
+	display list products, product detail
+	display cart
+	notify customers if the inventory quantity of any product is insufficient and will display the quantity of each product that is lacking
+	empty cart after customer pay for order success
+	temporary invoice information (list of products, qty, unit price, total price, VAT, delivery fee, time, status, payment method, payment info)
+	only pay by credit card, connect to VN Pay for further payment.
+	If no products are eligible or the delivery address doesn't support rush order delivery, the software prompts the customer to update the delivery information or delivery method. 
+
+	- delivery fee:
+	+ Orders with a total value of the items exceeding 100,000 VND will qualify for free shipping, up to a maximum of 25,000 VND per order (not apply to rush order)
+	+ Shipping fees are calculated based on the weight of the heaviest item
+	+ For customers in Hanoi or Ho Chi Minh City, the initial price for the first 3kg is 22,000 VND.
+	+ For customers elsewhere in Vietnam, the initial price for the first 0.5kg is 30,000 VND.
+	+ An additional fee of 2,500 VND is charged for every subsequent 0.5kg
+	+ for rush order delivery, customers will be charged an additional 10,000 VND per rush order delivery item.
+
+	After success payment, software display general info (name, phone, delivery address, province, amount, total price and transaction info (content, date time)  
+	initial status: pending. software send invoice and payment transaction to customer email. 
+	customers can go back to any step or exit the software during the ordering process.
+
+- manager:
+	Orders in the pending will be reviewed or rejected by the product manager. (can see 30 pending orders on each page).
+	can select a specific order to view the details and approve or reject the order.
+	reasons: undelivered item, out of stock, cannot find item in stock.
+
+	Payment API: https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.html
+	Query and refund API: https://sandbox.vnpayment.vn/apis/docs/truy-van-hoan-tien/querydr&refund.html
+
+	
