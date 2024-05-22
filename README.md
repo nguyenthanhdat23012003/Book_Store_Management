@@ -4,5 +4,6 @@
 
 - Nguyen Huu Dat 20215192
 - Le Tuan Anh 20205141
-- Mai Hoang Anh 20205144
+- Mai Hoang Anh 20205142
+- Ngo Xuan Bach 20205144
 - Nguyen Thanh Dat 20205178
