@@ -23,7 +23,7 @@ class ProductFactory extends Factory
             'type' => fake()->randomElement($type),
             'description' => fake()->realText(),
             'image_path' => fake()->imageUrl(),
-            'price' => fake()->numberBetween(10000, 100000),
+            'price' => fake()->numberBetween(10, 100) * 1000,
             'in_stock' => fake()->numberBetween(0, 100),
             'genre' => fake()->randomElement($genre),
             'weight' => fake()->numberBetween(100, 1000),

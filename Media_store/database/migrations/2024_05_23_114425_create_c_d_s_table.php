@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('CompactDiscs', function (Blueprint $table) {
             $table->id();
             $table->string('collections');
-            $table->string('albums');
-            $table->string('artists');
-            $table->string('record_label');
+            $table->json('albums');
+            $table->json('artists');
+            $table->json('record_label');
             $table->json('track_list');
             $table->timestamp('release_date');
-            $table->timestamps();
 
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
         });

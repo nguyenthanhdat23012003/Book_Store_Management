@@ -9,6 +9,12 @@ class CD extends Model
 {
     use HasFactory;
 
+    protected $table = 'CompactDiscs';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+
     public function product()
     {
         return $this->belongsTo(Product::class);

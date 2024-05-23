@@ -9,6 +9,10 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $table = 'products';
+
+    protected $guarded = [];
+
     public function book()
     {
         return $this->hasOne(Book::class);

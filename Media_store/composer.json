@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^1.0",
+        "laravel/breeze": "^2.0",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
@@ -14,7 +15,6 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
-        "laravel/breeze": "^2.0",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.6",

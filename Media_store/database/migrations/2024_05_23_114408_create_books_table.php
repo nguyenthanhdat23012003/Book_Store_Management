@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('authors');
+            $table->json('authors');
             $table->enum('cover_type', ['paperback', 'hardcover']);
             $table->string('publisher');
             $table->integer('pages');

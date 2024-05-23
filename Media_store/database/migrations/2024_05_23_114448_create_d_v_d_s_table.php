@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('studio');
             $table->string('language');
             $table->timestamp('release_date');
-            $table->timestamps();
 
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
         });

@@ -17,7 +17,12 @@ class DVDFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'disc_type' => fake()->randomElement(['Blu-ray', 'HD-DVD']),
+            'director' => fake()->name(),
+            'runtime' => rand(60, 180), // Random runtime between 1 and 3 hours
+            'studio' => fake()->company(),
+            'language' => fake()->languageCode(),
+            'release_date' => fake()->date(),
         ];
     }
 }

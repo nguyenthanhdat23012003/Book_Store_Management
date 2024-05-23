@@ -16,8 +16,12 @@ class BookFactory extends Factory
      */
     public function definition(): array
     {
+        $authors = [];
+        for ($i = 0; $i < rand(1, 3); $i++) {
+            $authors[] = fake()->name();
+        }
         return [
-            'author' => fake()->name(),
+            'authors' => json_encode($authors),
             'cover_type' => fake()->randomElement(['hardcover', 'paperback']),
             'publisher' => fake()->company(),
             'pages' => fake()->numberBetween(100, 1000),
