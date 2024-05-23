@@ -22,68 +22,53 @@ CREATE TABLE IF NOT EXISTS public.products
 (
     id serial NOT NULL,
     type integer NOT NULL,
+    name character varying NOT NULL,
     description character varying,
+    price double precision NOT NULL,
+    in_stock integer NOT NULL,
+    genre character,
+    created_at date,
+    updated_at date,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.books
 (
     id serial NOT NULL,
-    name character varying NOT NULL,
     product_id integer NOT NULL,
-    product_type integer NOT NULL,
-    price double precision NOT NULL,
-    in_stock bigint NOT NULL,
     authors character varying[] NOT NULL,
     cover_type character varying NOT NULL,
     publisher character varying NOT NULL,
     number_of_pages integer,
     language character varying,
-    genre character varying,
     publication_date date NOT NULL,
-    created_at date,
-    updated_at date,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public."CDs"
 (
     id serial NOT NULL,
-    name character varying NOT NULL,
     product_id integer NOT NULL,
-    product_type integer NOT NULL,
-    price double precision NOT NULL,
-    in_stock bigint NOT NULL,
     albums character varying[] NOT NULL,
     collections character varying[] NOT NULL,
     artists character varying[] NOT NULL,
     record_label character varying NOT NULL,
     track_list character varying NOT NULL,
-    genre character varying,
     release_date date,
-    created_at date,
-    updated_at date,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public."DVDs"
 (
     id serial NOT NULL,
-    name character varying NOT NULL,
     product_id integer NOT NULL,
-    product_type integer NOT NULL,
-    price double precision NOT NULL,
-    in_stock bigint NOT NULL,
     disc_type character varying NOT NULL,
     director character varying NOT NULL,
     runtime bigint NOT NULL,
     studio character varying NOT NULL,
     language character varying NOT NULL,
     subtitle character varying NOT NULL,
-    genre character varying,
     release_date date,
-    created_at date,
-    updated_at date,
     PRIMARY KEY (id)
 );
 
@@ -97,7 +82,7 @@ CREATE TABLE IF NOT EXISTS public.carts
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS public.carts_products
+CREATE TABLE IF NOT EXISTS public.cart_items
 (
     id serial NOT NULL,
     cart_id integer NOT NULL,
@@ -112,9 +97,9 @@ CREATE TABLE IF NOT EXISTS public.orders
     cart_id integer NOT NULL,
     user_id integer NOT NULL,
     shipping_fee double precision NOT NULL,
-    discount double precision NOT NULL DEFAULT 0,
+    freeship_discount double precision NOT NULL DEFAULT 0,
     total_cost double precision NOT NULL,
-    shipping_option character varying NOT NULL DEFAULT normal,
+    delivery_option character varying NOT NULL DEFAULT normal,
     status character varying,
     created_at date,
     updated_at date,
@@ -136,45 +121,36 @@ CREATE TABLE IF NOT EXISTS public.deliveries
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS public.invoices
-(
-    id serial NOT NULL,
-    order_id integer NOT NULL,
-    place_order_time date NOT NULL,
-    payment_time date NOT NULL,
-    delivery_status character varying NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS public.transactions
+CREATE TABLE IF NOT EXISTS public.payment_details
 (
     id serial NOT NULL,
     order_id integer NOT NULL,
     payment_method character varying NOT NULL,
     total_payment double precision NOT NULL,
     payment_time date NOT NULL,
+    created_at date,
     PRIMARY KEY (id)
 );
 
 ALTER TABLE IF EXISTS public.books
-    ADD FOREIGN KEY (product_id, product_type)
-    REFERENCES public.products (id, type) MATCH SIMPLE
+    ADD FOREIGN KEY (product_id)
+    REFERENCES public.products (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
 ALTER TABLE IF EXISTS public."CDs"
-    ADD FOREIGN KEY (product_id, product_type)
-    REFERENCES public.products (id, type) MATCH SIMPLE
+    ADD FOREIGN KEY (product_id)
+    REFERENCES public.products (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
 ALTER TABLE IF EXISTS public."DVDs"
-    ADD FOREIGN KEY (product_id, product_type)
-    REFERENCES public.products (id, type) MATCH SIMPLE
+    ADD FOREIGN KEY (product_id)
+    REFERENCES public.products (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -188,7 +164,7 @@ ALTER TABLE IF EXISTS public.carts
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.carts_products
+ALTER TABLE IF EXISTS public.cart_items
     ADD FOREIGN KEY (cart_id)
     REFERENCES public.carts (id) MATCH SIMPLE
     ON UPDATE NO ACTION
@@ -196,17 +172,9 @@ ALTER TABLE IF EXISTS public.carts_products
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.carts_products
+ALTER TABLE IF EXISTS public.cart_items
     ADD FOREIGN KEY (product_id)
     REFERENCES public.products (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.orders
-    ADD FOREIGN KEY (cart_id)
-    REFERENCES public.carts (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -220,6 +188,14 @@ ALTER TABLE IF EXISTS public.orders
     NOT VALID;
 
 
+ALTER TABLE IF EXISTS public.orders
+    ADD FOREIGN KEY (cart_id)
+    REFERENCES public.carts (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
 ALTER TABLE IF EXISTS public.deliveries
     ADD FOREIGN KEY (order_id)
     REFERENCES public.orders (id) MATCH SIMPLE
@@ -228,15 +204,7 @@ ALTER TABLE IF EXISTS public.deliveries
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.invoices
-    ADD FOREIGN KEY (order_id)
-    REFERENCES public.orders (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.transactions
+ALTER TABLE IF EXISTS public.payment_details
     ADD FOREIGN KEY (order_id)
     REFERENCES public.orders (id) MATCH SIMPLE
     ON UPDATE NO ACTION
