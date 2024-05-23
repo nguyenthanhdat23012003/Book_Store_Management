@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Http\Resources\CDResource;
+use App\Http\Resources\DVDResource;
+use App\Http\Resources\BookResource;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductController extends Controller
 {
@@ -13,14 +18,31 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
+        $products = Product::with(['book', 'cd', 'dvd'])->paginate(20);
 
-        foreach ($products as $product) {
-            $category = $product->type;
-            $product->load($category);
-        }
+        $transformedProducts = $products->getCollection()->map(function ($product) {
+            switch ($product->type) {
+                case 'book':
+                    return new BookResource($product->book);
+                case 'cd':
+                    return new CDResource($product->cd);
+                case 'dvd':
+                    return new DVDResource($product->dvd);
+                default:
+                    return $product;
+            }
+        });
+
+        $paginatedProducts = new LengthAwarePaginator(
+            $transformedProducts,
+            $products->total(),
+            $products->perPage(),
+            $products->currentPage(),
+            ['path' => Paginator::resolveCurrentPath()]
+        );
+
         return Inertia::render('Products/Index', [
-            'products' => $products,
+            'products' => $paginatedProducts,
         ]);
     }
 

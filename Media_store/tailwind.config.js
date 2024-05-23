@@ -57,6 +57,6 @@ export default {
             "nord",
             "sunset",
         ],
-        darkTheme: "dark", // name of one of the included themes for dark mode
+        darkTheme: "valentine", // name of one of the included themes for dark mode
     },
 };
