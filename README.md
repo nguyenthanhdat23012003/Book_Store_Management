@@ -1,6 +1,6 @@
 # ISD_ICT_20232_147822_nhom_22
 
-# group members:
+## group members:
 
 - Nguyen Huu Dat 20215192
 - Le Tuan Anh 20205141
@@ -10,18 +10,29 @@
 
 ## Feature:
 
--
+- (coming soon)
 
-## How to run?
+# How to run?
 
-Requirement: install docker, docker compose and wsl2
+## Requirement
 
-open Ubuntu(WSL) in your terminal
+Make sure you already install docker, docker compose and wsl2
+
+## open Ubuntu(WSL) in your terminal
+
 $cd Media_store
+$cp .env.example .env
 
-$alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)' && sail up
-or 
+### build project
+
 $ ./vendor/bin/sail up -d
 
-$ ./vendor/bin/sail bash
-$ npm run dev
+### seed data
+
+$ ./vendor/bin/sail artisan migrate:fresh --seed
+
+Now application is running at http://localhost/
+
+### Running the Development Server in Sail on WSL2
+
+$ ./vendor/bin/sail npm run dev
