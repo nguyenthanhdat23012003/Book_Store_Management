@@ -6,6 +6,8 @@ use App\Models\CD;
 use App\Models\DVD;
 use App\Models\Book;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Cart;
+use App\Models\Cart_item;
 use App\Models\User;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
@@ -26,14 +28,14 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        User::factory()->create([
+        Product::factory(100)->create();
+
+        User::factory()->has(Cart::factory()->count(1))->create([
             'name' => 'dat icy',
             'email' => 'icy@example.com',
             'password' => bcrypt('12345678'),
             'email_verified_at' => now(),
         ]);
-
-        Product::factory(100)->create();
 
         $books = Product::where('type', 'book')->get();
         $cds = Product::where('type', 'cd')->get();
@@ -50,5 +52,7 @@ class DatabaseSeeder extends Seeder
         foreach ($dvds as $dvd) {
             DVD::factory()->create(['product_id' => $dvd->id]);
         }
+
+        Cart_item::factory(rand(2, 5))->create();
     }
 }

@@ -5,15 +5,16 @@ import {
     faCartShopping,
     faRectangleXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { Head } from "@inertiajs/react";
-import React, { useEffect } from "react";
+import { Head, usePage, Link } from "@inertiajs/react";
+import React from "react";
 
-const index = ({ auth, products, cart = [] }) => {
+const index = ({ products }) => {
     const [alert, setAlert] = React.useState(false);
+    const [message, setMessage] = React.useState("");
 
-    useEffect(() => {
-        console.log(cart);
-    }, [cart]);
+    const page = usePage();
+    const myCart = page.props.cart;
+    const [nbItemInCart, setNbItemInCart] = React.useState(myCart.data.length);
 
     const closeAlert = () => {
         setTimeout(() => {
@@ -21,61 +22,77 @@ const index = ({ auth, products, cart = [] }) => {
         }, 3000);
     };
 
-    const addToCart = (product_id) => {
-        console.log(product_id);
-        cart = [...cart, product_id];
+    const addToCart = (product) => {
         setAlert(true);
         closeAlert();
-        console.log(cart);
+        axios
+            .get(route("product.addToCart", product.id))
+            .then((response) => {
+                console.log(response);
+                if (response.data === "new") {
+                    setNbItemInCart(nbItemInCart + 1);
+                    setMessage(
+                        "Add this " + product.type + " to cart successfully"
+                    );
+                } else {
+                    setMessage("This " + product.type + " already in cart");
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <div className="flex justify-between">
-                    <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                        Products
-                    </h2>
-                    <button className="indicator btn btn-outline btn-warning">
-                        <span className="indicator-item badge badge-secondary">
-                            {cart.length}
-                        </span>
-                        <span className="text-lg">
-                            <FontAwesomeIcon
-                                icon={faCartShopping}
-                                className="w-8"
-                            />
-                            View cart
-                        </span>
-                    </button>
-                    {alert && (
-                        <div
-                            role="alert"
-                            className="alert alert-info absolute w-[70%] top-10 right-auto left-auto flex justify-between"
-                        >
-                            <span>Add to cart successfully</span>
-                            <FontAwesomeIcon
-                                icon={faRectangleXmark}
-                                className="w-10 hover:opacity-75 cursor-pointer"
-                                onClick={() => setAlert(false)}
-                            />
-                        </div>
-                    )}
-                </div>
-            }
-        >
-            <Head title="Dashboard" />
+        <>
+            <Head title="Product" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <header className="bg-white dark:bg-gray-800 shadow">
+                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between">
+                        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                            Media store
+                        </h2>
+                        <Link
+                            href={route("cart.index")}
+                            className="indicator btn btn-outline btn-warning"
+                        >
+                            <span className="indicator-item badge badge-secondary">
+                                {nbItemInCart}
+                            </span>
+                            <span className="text-lg">
+                                <FontAwesomeIcon
+                                    icon={faCartShopping}
+                                    className="w-8"
+                                />
+                                View cart
+                            </span>
+                        </Link>
+                        {alert && (
+                            <div
+                                role="alert"
+                                className="alert alert-info fixed z-10 w-[70%] top-10 right-auto left-auto flex justify-between opacity-75 shadow"
+                            >
+                                <span>{message}</span>
+                                <FontAwesomeIcon
+                                    icon={faRectangleXmark}
+                                    className="w-24 hover:opacity-75 cursor-pointer text-red-300"
+                                    onClick={() => setAlert(false)}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </header>
+            <div className="h-screen overflow-auto">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12">
+                    <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             <div className="flex flex-wrap">
                                 {products.data.map((product, index) => (
                                     <div
                                         key={index}
-                                        className="lg:w-1/4 md:w-1/3 sm:w-1/2 w-full p-4"
+                                        className="xl:w-1/4 lg:w-1/3 md:w-1/2 w-full p-4"
                                     >
                                         <div className="card indicator w-full bg-base-100 shadow-xl">
                                             <figure className="min-h-[100px]">
@@ -96,16 +113,16 @@ const index = ({ auth, products, cart = [] }) => {
                                                         {product.name}
                                                     </p>
                                                 </div>
-                                                <div className="text-2xl ">
-                                                    {product.price + " vnd"}
+                                                <div className="text-2xl text-orange-400">
+                                                    {Intl.NumberFormat().format(
+                                                        product.price
+                                                    ) + " vnd"}
                                                 </div>
                                                 <div className="card-actions justify-end">
                                                     <button
                                                         className="btn btn-outline btn-error"
                                                         onClick={() =>
-                                                            addToCart(
-                                                                product.id
-                                                            )
+                                                            addToCart(product)
                                                         }
                                                     >
                                                         Add to cart
@@ -116,14 +133,19 @@ const index = ({ auth, products, cart = [] }) => {
                                     </div>
                                 ))}
                             </div>
+                            <Pagination links={products.links} />
                         </div>
-
-                        <Pagination links={products.links} />
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 };
+
+index.layout = (page) => (
+    <AuthenticatedLayout user={page.props.auth.user}>
+        {page}
+    </AuthenticatedLayout>
+);
 
 export default index;

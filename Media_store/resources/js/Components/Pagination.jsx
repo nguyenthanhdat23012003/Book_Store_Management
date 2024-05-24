@@ -11,10 +11,10 @@ export default function Pagination({ links }) {
                     dangerouslySetInnerHTML={{ __html: link.label }}
                     className={
                         "inline-block px-3 py-2 rounded-lg text-gray-600 text-xs " +
-                        (link.active ? "bg-blue-400 " : " ") +
+                        (link.active ? "bg-amber-400 " : " ") +
                         (!link.url
                             ? "!text-gray-300 cursor-not-allowed "
-                            : "hover:bg-blue-400 ")
+                            : "hover:bg-amber-400 ")
                     }
                 ></Link>
             ))}
