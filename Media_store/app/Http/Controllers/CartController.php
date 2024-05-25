@@ -13,7 +13,9 @@ class CartController extends Controller
     public function index(Request $request)
     {
         // $cart = $request->user()->cart ?? $request->user()->cart()->create();
-        return Inertia::render('Carts/Index');
+        return Inertia::render('Carts/Index', [
+            'error' => session('error')
+        ]);
     }
 
     /**

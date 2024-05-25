@@ -1,5 +1,5 @@
-import Pagination from "@/Components/Pagination";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Pagination from "@/Components/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faCartShopping,
@@ -28,7 +28,6 @@ const index = ({ products }) => {
         axios
             .get(route("product.addToCart", product.id))
             .then((response) => {
-                console.log(response);
                 if (response.data === "new") {
                     setNbItemInCart(nbItemInCart + 1);
                     setMessage(
@@ -50,9 +49,26 @@ const index = ({ products }) => {
             <header className="bg-white dark:bg-gray-800 shadow">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between">
-                        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                            Media store
-                        </h2>
+                        <div className="breadcrumbs">
+                            <ul>
+                                <li>
+                                    <Link
+                                        href={route("dashboard")}
+                                        className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
+                                    >
+                                        Media store
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        href={route("products.index")}
+                                        className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
+                                    >
+                                        Products
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
                         <Link
                             href={route("cart.index")}
                             className="indicator btn btn-outline btn-warning"

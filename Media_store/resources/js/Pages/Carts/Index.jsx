@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head, router, usePage, Link } from "@inertiajs/react";
 import TextInput from "@/Components/TextInput";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faMinus,
     faPlus,
     faCircleExclamation,
+    faRectangleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 
-const Index = ({}) => {
+const Index = ({ error = null }) => {
     const page = usePage();
     const cart_items = page.props.cart.data;
+
+    const [alert, setAlert] = React.useState(false);
+
+    useEffect(() => {
+        if (error) {
+            setAlert(true);
+            setTimeout(() => {
+                setAlert(false);
+            }, 3000);
+        }
+    }, [page]);
 
     const [selectedProducts, setSelectedProducts] = React.useState([]);
     const [selectAll, setSelectAll] = useState(false);
@@ -22,11 +34,20 @@ const Index = ({}) => {
     const [sendingRequest, setSendingRequest] = useState(false);
 
     const getSelectedProducts = () => {
-        return cart_items.filter((product) =>
+        let items = cart_items.filter((product) =>
             selectedProducts.includes(product.id)
         );
+        items.forEach((item) => {
+            item.quantity = quantities[item.id];
+        });
+        return items;
     };
 
+    const checkout = () => {
+        router.post(route("order.store"), { products: getSelectedProducts() });
+    };
+
+    // remove items from cart
     const removeItems = () => {
         router.get(route("product.removeFromCart", removeProductID));
     };
@@ -43,6 +64,7 @@ const Index = ({}) => {
     const changeQuantity = (product_id, quantity) => {
         // console.log("change quantity to", product_id, quantity);
         if (quantity === 0) {
+            setSendingRequest(false);
             setOpenModal(true);
             setRemoveProductID(product_id);
         } else {
@@ -67,8 +89,10 @@ const Index = ({}) => {
         }
     };
 
+    // handle checkbox change
     const handleCheckboxChanged = (product_id) => {
         setSelectedProducts((prev) => {
+            // if the product is already selected, remove it
             if (prev.includes(product_id)) {
                 return prev.filter((id) => id !== product_id);
             } else {
@@ -77,6 +101,7 @@ const Index = ({}) => {
         });
     };
 
+    // handle select all checkbox change
     const handleSelectAllChange = () => {
         setSelectAll(!selectAll);
         if (!selectAll) {
@@ -86,6 +111,7 @@ const Index = ({}) => {
         }
     };
 
+    // calculate total price of selected products
     const calculateTotalPrice = () => {
         return cart_items.reduce((total, product) => {
             if (selectedProducts.includes(product.id)) {
@@ -101,16 +127,51 @@ const Index = ({}) => {
 
             <header className="bg-white dark:bg-gray-800 shadow">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between">
-                        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                            Your cart
-                        </h2>
+                    <div className="flex justify-between breadcrumbs">
+                        <ul>
+                            <li>
+                                <Link
+                                    href={route("products.index")}
+                                    className="font-semibold text-lg text-gray-800 dark:text-gray-200 leading-tight"
+                                >
+                                    Media store
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href={route("cart.index")}
+                                    className="font-semibold text-lg text-gray-800 dark:text-gray-200 leading-tight"
+                                >
+                                    Your cart
+                                </Link>
+                            </li>
+                        </ul>
                     </div>
+                    {alert && (
+                        <div
+                            role="alert"
+                            className="alert alert-warning fixed z-10 w-[70%] top-10 right-auto left-auto flex justify-between opacity-75 shadow text-white"
+                        >
+                            <span>{error}</span>
+                            <FontAwesomeIcon
+                                icon={faRectangleXmark}
+                                className="w-24 hover:opacity-75 cursor-pointer text-red-300"
+                                onClick={() => setAlert(false)}
+                            />
+                        </div>
+                    )}
                 </div>
             </header>
             <div className="h-screen overflow-auto">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12 mb-12">
                     <div className="flex flex-col gap-5 flex-1 p-4 text-gray-900 dark:text-gray-100">
+                        {cart_items.length === 0 && (
+                            <div className="p-6 bg-white rounded">
+                                <div className="text-center text-2xl text-warning">
+                                    Your cart is empty!
+                                </div>
+                            </div>
+                        )}
                         {cart_items.length > 0 &&
                             cart_items.map((item) => (
                                 <div
@@ -121,11 +182,9 @@ const Index = ({}) => {
                                         <div className="sm:px-2">
                                             <TextInput
                                                 type="checkbox"
-                                                checked={
-                                                    selectedProducts.includes(
-                                                        item.id
-                                                    ) || selectAll
-                                                }
+                                                checked={selectedProducts.includes(
+                                                    item.id
+                                                )}
                                                 onChange={() =>
                                                     handleCheckboxChanged(
                                                         item.id
@@ -171,6 +230,9 @@ const Index = ({}) => {
                                                     disabled={sendingRequest}
                                                     onClick={() => {
                                                         if (!sendingRequest) {
+                                                            setSendingRequest(
+                                                                true
+                                                            );
                                                             changeQuantity(
                                                                 item.id,
                                                                 quantities[
@@ -192,6 +254,9 @@ const Index = ({}) => {
                                                     disabled={sendingRequest}
                                                     onClick={() => {
                                                         if (!sendingRequest) {
+                                                            setSendingRequest(
+                                                                true
+                                                            );
                                                             changeQuantity(
                                                                 item.id,
                                                                 quantities[
@@ -211,14 +276,15 @@ const Index = ({}) => {
                                                     đ
                                                 </span>
                                                 {Intl.NumberFormat().format(
-                                                    item.quantity * item.price
+                                                    quantities[item.id] *
+                                                        item.price
                                                 )}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="lg:w-1/5 w-full flex sm:justify-end justify-center">
                                         <button
-                                            className="btn btn-primary my-4"
+                                            className="btn btn-outline btn-primary my-4"
                                             onClick={() => {
                                                 setRemoveProductID(item.id);
                                                 setOpenModal(true);
@@ -293,7 +359,7 @@ const Index = ({}) => {
                         </div>
                         <button
                             className="btn btn-primary text-slate-200 text-lg"
-                            onClick={() => console.log(getSelectedProducts())}
+                            onClick={checkout}
                             disabled={getSelectedProducts().length === 0}
                         >
                             Checkout

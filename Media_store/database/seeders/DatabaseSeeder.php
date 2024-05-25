@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
         Product::factory(100)->create();
 
         User::factory()->has(Cart::factory()->count(1))->create([
-            'name' => 'dat icy',
+            'name' => 'daicy',
             'email' => 'icy@example.com',
             'password' => bcrypt('12345678'),
             'email_verified_at' => now(),
@@ -52,7 +52,5 @@ class DatabaseSeeder extends Seeder
         foreach ($dvds as $dvd) {
             DVD::factory()->create(['product_id' => $dvd->id]);
         }
-
-        Cart_item::factory(rand(2, 5))->create();
     }
 }
