@@ -22,11 +22,6 @@ class Cart extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function order()
-    {
-        return $this->hasOne(Order::class);
-    }
-
     public function cart_items()
     {
         return $this->hasMany(Cart_item::class);

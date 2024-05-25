@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('payment_method');
             $table->string('total_payment');
             $table->timestamp('paid_at');
+
+            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
         });
     }
 

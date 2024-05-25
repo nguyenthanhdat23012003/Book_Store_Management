@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 
@@ -17,9 +18,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/product-change-quantity/{product}', [ProductController::class, 'changeQuantity'])->name('product.changeQuantity');
     Route::resource('products', ProductController::class);
     Route::resource('cart', CartController::class)->only(['index', 'store', 'destroy']);
-    Route::resource('orders', OrderController::class)->only(['index', 'store', 'show']);
+    Route::resource('order', OrderController::class)->only(['index', 'show', 'store', 'update']);
+    Route::get('/order/pay/vn-pay', [PaymentController::class, 'payOrder'])->name('order.payOrder');
 });
-
 
 
 Route::middleware('auth')->group(function () {

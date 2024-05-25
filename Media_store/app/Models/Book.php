@@ -9,6 +9,8 @@ class Book extends Model
 {
     use HasFactory;
 
+    protected $table = 'books';
+
     protected $guarded = [];
 
     public $timestamps = false;
