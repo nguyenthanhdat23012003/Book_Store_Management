@@ -63,7 +63,7 @@ invoice, shipping information, and payment transaction information.
 	+ An additional fee of 2,500 VND is charged for every subsequent 0.5kg
 	+ for rush order delivery, customers will be charged an additional 10,000 VND per rush order delivery item.
 
-	After success payment, software display general info (name, phone, delivery address, province, amount, total price and transaction info (content, date time)  
+	After success payment, software display general info (name, phone, delivery address, province, amount, total price and transaction info (content, date time))
 	initial status: pending. software send invoice and payment transaction to customer email. 
 	customers can go back to any step or exit the software during the ordering process.
 

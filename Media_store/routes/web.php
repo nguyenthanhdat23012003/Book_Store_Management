@@ -7,6 +7,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\CORSMiddleware;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::redirect('/', 'dashboard');
@@ -19,7 +20,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('cart', CartController::class)->only(['index', 'store', 'destroy']);
     Route::resource('order', OrderController::class)->only(['index', 'show', 'store', 'update']);
-    Route::get('/order/pay/vn-pay', [PaymentController::class, 'payOrder'])->name('order.payOrder');
+    Route::get('/products/manage', [ProductController::class, 'manage'])->name('products.manage');
+
+    Route::get('/checkout/{order_id}', [PaymentController::class, 'checkout'])->name('checkout');
+    Route::get('/vn-pay-bill', [PaymentController::class, 'getBill'])->name('vnPay.getBill');
 });
 
 

@@ -32,6 +32,7 @@ const Index = ({ error = null }) => {
     const [removeProductID, setRemoveProductID] = useState(null);
     const [openModal, setOpenModal] = useState(false);
     const [sendingRequest, setSendingRequest] = useState(false);
+    const [Subtotal, setSubtotal] = useState(0);
 
     const getSelectedProducts = () => {
         let items = cart_items.filter((product) =>
@@ -62,7 +63,6 @@ const Index = ({ error = null }) => {
 
     // change the quantity of a product
     const changeQuantity = (product_id, quantity) => {
-        // console.log("change quantity to", product_id, quantity);
         if (quantity === 0) {
             setSendingRequest(false);
             setOpenModal(true);
@@ -81,6 +81,7 @@ const Index = ({ error = null }) => {
                         ...prevQuantities,
                         [product_id]: quantity,
                     }));
+                    // setSubtotal(calculateTotalPrice());
                 })
                 .catch((error) => {
                     console.error("Error updating quantity:", error);
@@ -91,6 +92,7 @@ const Index = ({ error = null }) => {
 
     // handle checkbox change
     const handleCheckboxChanged = (product_id) => {
+        // setSubtotal(calculateTotalPrice());
         setSelectedProducts((prev) => {
             // if the product is already selected, remove it
             if (prev.includes(product_id)) {
@@ -103,6 +105,7 @@ const Index = ({ error = null }) => {
 
     // handle select all checkbox change
     const handleSelectAllChange = () => {
+        // setSubtotal(calculateTotalPrice());
         setSelectAll(!selectAll);
         if (!selectAll) {
             setSelectedProducts(cart_items.map((product) => product.id));

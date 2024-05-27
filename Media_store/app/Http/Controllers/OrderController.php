@@ -15,11 +15,13 @@ class OrderController extends Controller
     public function index()
     {
         return Inertia::render('Orders/Index', [
-            'orders' => Order::with('order_items.product')
+            'orders' => Order::with(['order_items.product', 'delivery'])
                 ->where('user_id', auth()->id())
                 ->where('status', '<>', 'pending')
+                ->latest()
                 ->paginate(12),
-            'message' => session('success'),
+            'message' => session('success') ?? session('error'),
+            'success' => session('success') ? true : false,
         ]);
     }
 
@@ -69,8 +71,12 @@ class OrderController extends Controller
      */
     public function show(string $id)
     {
+        $order = Order::with('order_items.product')->findOrFail($id);
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
         return Inertia::render('Orders/Show', [
-            'order' => Order::with('order_items.product')->findOrFail($id),
+            'order' => $order,
         ]);
     }
 
@@ -94,7 +100,7 @@ class OrderController extends Controller
             'free_ship_discount' => $data['free_ship_discount'],
             'delivery_type' => $data['delivery_type'],
             'total_price' => $data['total_price'],
-            'status' => 'in progress',
+            'status' => 'unpaid',
         ]);
 
         // store the delivery
@@ -117,7 +123,11 @@ class OrderController extends Controller
         $cart = $request->user()->cart;
         $cart->products()->detach($order_products);
 
-        return redirect('order.index')->with('success', 'Place order successfully');
+        if ($data['payment_method'] === 'vn pay') {
+            return to_route('checkout', $order->id);
+        } else {
+            return to_route('order.index')->with('success', 'Place order successfully');
+        }
     }
 
     /**
