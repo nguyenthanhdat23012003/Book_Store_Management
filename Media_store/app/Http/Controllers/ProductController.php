@@ -126,4 +126,14 @@ class ProductController extends Controller
         $res = $cart->changeQuantity($product->id, $request->quantity);
         return response()->json($res ? 'success' : 'fail');
     }
+
+    // For admin and manager
+    public function manage()
+    {
+        $products = Product::paginate(12);
+
+        return Inertia::render('Products/Manage', [
+            'products' => $products,
+        ]);
+    }
 }

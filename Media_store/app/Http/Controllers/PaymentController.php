@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function payOrder(Request $request)
+    public function checkout($order_id)
     {
+        $order = Order::with('order_items.product')->find($order_id);
+        // return $order;
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = url('dashboard');
+        $vnp_Returnurl = url('vn-pay-bill');
         $vnp_TmnCode = "PY794GHE"; //Mã website tại VNPAY 
         $vnp_HashSecret = "7CSW3GKZE6V29EQJXGBMOVU60VPDMGEU"; //Chuỗi bí mật
 
         $vnp_TxnRef = date("YmdHis");
-        $vnp_OrderInfo = "Pay order";
+        $vnp_OrderInfo = "Pay order:" . $order->id;
         $vnp_OrderType = "Media store";
-        $vnp_Amount = 100000 * 100;
+        $vnp_Amount = $order->total_price * 100;
         $vnp_Locale = 'us';
         $vnp_BankCode = 'NCB';
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
@@ -63,17 +68,31 @@ class PaymentController extends Controller
             $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //  
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
-        // $returnData = array(
-        //     'code' => '00', 'message' => 'success', 'data' => $vnp_Url
-        // );
-        // if (isset($_POST['redirect'])) {
-        //     header('Location: ' . $vnp_Url);
-        //     die();
-        // } else {
-        //     echo json_encode($returnData);
-        // }
+        $returnData = array(
+            'code' => '00', 'message' => 'success', 'data' => $vnp_Url
+        );
+        header('Location: ' . $vnp_Url);
 
-        // return redirect($vnp_Url);
+        return Inertia::location($vnp_Url);
+    }
 
+    public function getBill(Request $request)
+    {
+        $order_info = $request->vnp_OrderInfo;
+        $order_id = explode(':', $order_info)[1];
+
+        $order = Order::find($order_id);
+        $status = $request->vnp_TransactionStatus;
+        if ($status == 00) {
+            $order->update([
+                'status' => 'paid',
+            ]);
+            return to_route('order.index')->with('success', 'Payment successfully');
+        } else {
+            $order->update([
+                'status' => 'failed',
+            ]);
+            return to_route('order.index')->with('error', 'Payment failed');
+        }
     }
 }

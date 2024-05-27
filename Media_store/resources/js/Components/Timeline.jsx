@@ -1,8 +1,12 @@
-export default function Timeline() {
+export default function Timeline({ completeSteps }) {
     return (
         <ul className="timeline timeline-vertical sm:timeline-horizontal">
             <li>
-                <div className="timeline-start timeline-box bg-primary text-white">
+                <div
+                    className={`timeline-start timeline-box ${
+                        completeSteps >= 1 && "bg-primary text-white"
+                    }`}
+                >
                     Choose a product
                 </div>
                 <div className="timeline-middle">
@@ -10,7 +14,9 @@ export default function Timeline() {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-5 h-5 text-primary"
+                        className={`w-5 h-5 ${
+                            completeSteps >= 1 && "text-primary"
+                        }`}
                     >
                         <path
                             fillRule="evenodd"
@@ -23,7 +29,11 @@ export default function Timeline() {
             </li>
             <li>
                 <hr />
-                <div className="timeline-start timeline-box bg-primary text-white">
+                <div
+                    className={`timeline-start timeline-box ${
+                        completeSteps >= 2 && "bg-primary text-white"
+                    }`}
+                >
                     Add to cart
                 </div>
                 <div className="timeline-middle">
@@ -31,7 +41,9 @@ export default function Timeline() {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-5 h-5 text-primary"
+                        className={`w-5 h-5 ${
+                            completeSteps >= 2 && "text-primary"
+                        }`}
                     >
                         <path
                             fillRule="evenodd"
@@ -44,7 +56,11 @@ export default function Timeline() {
             </li>
             <li>
                 <hr />
-                <div className="timeline-start timeline-box bg-primary text-white">
+                <div
+                    className={`timeline-start timeline-box ${
+                        completeSteps >= 3 && "bg-primary text-white"
+                    }`}
+                >
                     View cart
                 </div>
                 <div className="timeline-middle">
@@ -52,7 +68,9 @@ export default function Timeline() {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-5 h-5 text-primary"
+                        className={`w-5 h-5 ${
+                            completeSteps >= 4 && "text-primary"
+                        }`}
                     >
                         <path
                             fillRule="evenodd"
@@ -65,7 +83,11 @@ export default function Timeline() {
             </li>
             <li>
                 <hr />
-                <div className="timeline-start timeline-box bg-primary text-white">
+                <div
+                    className={`timeline-start timeline-box ${
+                        completeSteps >= 4 && "bg-primary text-white"
+                    }`}
+                >
                     Checkout
                 </div>
                 <div className="timeline-middle">
@@ -73,7 +95,9 @@ export default function Timeline() {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-5 h-5 text-primary"
+                        className={`w-5 h-5 ${
+                            completeSteps >= 4 && "text-primary"
+                        }`}
                     >
                         <path
                             fillRule="evenodd"
@@ -86,13 +110,21 @@ export default function Timeline() {
             </li>
             <li>
                 <hr />
-                <div className="timeline-start timeline-box">Pay</div>
+                <div
+                    className={`timeline-start timeline-box ${
+                        completeSteps >= 5 && "bg-primary text-white"
+                    }`}
+                >
+                    Pay
+                </div>
                 <div className="timeline-middle">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-5 h-5"
+                        className={`w-5 h-5 ${
+                            completeSteps >= 5 && "text-primary"
+                        }`}
                     >
                         <path
                             fillRule="evenodd"

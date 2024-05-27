@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import OrderItem from "@/Components/OrderItem";
 import Timeline from "@/Components/Timeline";
 
@@ -11,9 +11,9 @@ const show = ({ order }) => {
         province: "Ha Noi",
         address: "Hai Ba Trung",
         delivery_type: "normal",
-        shipping_fee: 0,
-        free_ship_discount: 0,
-        total_price: 0,
+        shipping_fee: order.shipping_fee || 0,
+        free_ship_discount: order.free_ship_discount || 0,
+        total_price: order.total_price || 0,
         payment_method: "vn pay",
     });
 
@@ -23,12 +23,11 @@ const show = ({ order }) => {
     });
 
     useEffect(() => {
-        let free_ship =
-            Math.max(0, totalWeight + 250 - 3000) * 5 +
-            (data.province === "Ha Noi" || data.province === "Ho Chi Minh City")
+        let free_ship = Math.max(0, totalWeight + 250 - 3000) * 5;
+        free_ship +=
+            data.province === "Ha Noi" || data.province === "Ho Chi Minh City"
                 ? 22000
                 : 30000;
-
         free_ship +=
             data.delivery_type === "normal"
                 ? 0
@@ -189,99 +188,111 @@ const show = ({ order }) => {
                                 </div>
 
                                 <div className="flex sm:flex-row flex-col justify-between items-center sm:px-4 px-2">
-                                    <form
-                                        onSubmit={pay}
-                                        id="deliveryForm"
-                                        className="flex flex-col gap-2"
+                                    {(order.status === "pending" ||
+                                        order.status === "unpaid") && (
+                                        <form
+                                            onSubmit={pay}
+                                            id="deliveryForm"
+                                            className="flex flex-col gap-2"
+                                        >
+                                            <select
+                                                value={data.province}
+                                                className="select select-bordered w-full "
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "province",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            >
+                                                {provinces.map(
+                                                    (province, index) => (
+                                                        <option
+                                                            key={index}
+                                                            value={province}
+                                                        >
+                                                            {province}
+                                                        </option>
+                                                    )
+                                                )}
+                                            </select>
+                                            <label className="input input-bordered flex items-center gap-2">
+                                                Phone number
+                                                <input
+                                                    value={data.phone}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "phone",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    type="tel"
+                                                    pattern="[0-9]{10}"
+                                                    className="grow border-none focus-within:ring-0"
+                                                    placeholder="0123456789"
+                                                    required
+                                                />
+                                            </label>
+                                            <label className="input input-bordered flex items-center gap-2">
+                                                Address
+                                                <input
+                                                    required
+                                                    value={data.address}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "address",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    type="text"
+                                                    className="grow border-none focus-within:ring-0"
+                                                    placeholder="Enter your address"
+                                                />
+                                            </label>
+                                            <select
+                                                value={data.delivery_type}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "delivery_type",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="select select-bordered w-full "
+                                            >
+                                                <option value="normal">
+                                                    Normal order
+                                                </option>
+                                                <option value="rush">
+                                                    Rush order
+                                                </option>
+                                            </select>
+                                            <select
+                                                value={data.payment_method}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "payment_method",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="select select-bordered w-full "
+                                            >
+                                                <option value="vn pay">
+                                                    VN pay
+                                                </option>
+                                                <option value="cash">
+                                                    Cash
+                                                </option>
+                                            </select>
+                                        </form>
+                                    )}
+                                    <div
+                                        className={`flex w-full flex-col gap-2 text-sm sm:mt-0 mt-4 ${
+                                            order.status === "pending" ||
+                                            order.status === "unpaid"
+                                                ? "sm:w-2/5"
+                                                : ""
+                                        }`}
                                     >
-                                        <select
-                                            value={data.province}
-                                            className="select select-bordered w-full "
-                                            onChange={(e) =>
-                                                setData(
-                                                    "province",
-                                                    e.target.value
-                                                )
-                                            }
-                                        >
-                                            {provinces.map(
-                                                (province, index) => (
-                                                    <option
-                                                        key={index}
-                                                        value={province}
-                                                    >
-                                                        {province}
-                                                    </option>
-                                                )
-                                            )}
-                                        </select>
-                                        <label className="input input-bordered flex items-center gap-2">
-                                            Phone number
-                                            <input
-                                                value={data.phone}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "phone",
-                                                        e.target.value
-                                                    )
-                                                }
-                                                type="tel"
-                                                pattern="[0-9]{10}"
-                                                className="grow border-none focus-within:ring-0"
-                                                placeholder="0123456789"
-                                                required
-                                            />
-                                        </label>
-                                        <label className="input input-bordered flex items-center gap-2">
-                                            Address
-                                            <input
-                                                required
-                                                value={data.address}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "address",
-                                                        e.target.value
-                                                    )
-                                                }
-                                                type="text"
-                                                className="grow border-none focus-within:ring-0"
-                                                placeholder="Enter your address"
-                                            />
-                                        </label>
-                                        <select
-                                            value={data.delivery_type}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "delivery_type",
-                                                    e.target.value
-                                                )
-                                            }
-                                            className="select select-bordered w-full "
-                                        >
-                                            <option value="normal">
-                                                Normal order
-                                            </option>
-                                            <option value="rush">
-                                                Rush order
-                                            </option>
-                                        </select>
-                                        <select
-                                            value={data.payment_method}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "payment_method",
-                                                    e.target.value
-                                                )
-                                            }
-                                            className="select select-bordered w-full "
-                                        >
-                                            <option value="vn pay">
-                                                VN pay
-                                            </option>
-                                            <option value="cash">Cash</option>
-                                        </select>
-                                    </form>
-                                    <div className="flex sm:w-2/5 w-full flex-col gap-2 text-sm sm:mt-0 mt-4">
                                         <div className="flex justify-between items-center">
                                             <h3 className="text-nowrap">
                                                 Merchandise Subtotal:
@@ -354,7 +365,14 @@ const show = ({ order }) => {
                             </div>
 
                             <div className="flex justify-center mb-12">
-                                <Timeline />
+                                <Timeline
+                                    completeSteps={
+                                        order.status === "pending" ||
+                                        order.status === "unpaid"
+                                            ? 4
+                                            : 5
+                                    }
+                                />
                             </div>
                         </div>
                     </div>
@@ -362,17 +380,19 @@ const show = ({ order }) => {
             </div>
 
             {/* Pay button */}
-            <div className="fixed right-0 left-0 bottom-0 bg-pink-100 px-4 py-4 shadow">
-                <div className="max-w-3xl mx-auto flex justify-end items-center">
-                    <button
-                        type="submit"
-                        form="deliveryForm"
-                        className="btn btn-primary text-slate-200 text-lg w-32"
-                    >
-                        Place order
-                    </button>
+            {(order.status === "pending" || order.status === "unpaid") && (
+                <div className="fixed right-0 left-0 bottom-0 bg-pink-100 px-4 py-4 shadow">
+                    <div className="max-w-3xl mx-auto flex justify-end items-center">
+                        <button
+                            type="submit"
+                            form="deliveryForm"
+                            className="btn btn-primary text-slate-200 text-lg w-32"
+                        >
+                            Place order
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
         </>
     );
 };
