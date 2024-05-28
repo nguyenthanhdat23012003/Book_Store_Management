@@ -25,14 +25,16 @@ $cp .env.example .env
 
 ### build project
 
-$ ./vendor/bin/sail up -d
+$ docker compose up -d
+
+### install dependencies
+$ docker compose exec php composer install
+$ docker compose exec php npm install
 
 ### seed data
 
-$ ./vendor/bin/sail artisan migrate:fresh --seed
+$  docker compose exec php php artisan migrate:fresh --seed
 
 Now application is running at http://localhost/
 
-### Running the Development Server in Sail on WSL2
 
-$ ./vendor/bin/sail npm run dev
