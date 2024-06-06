@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('province');
             $table->string('address');
-            $table->enum('status', ['in progress', 'completed', 'rejected'])->default('in progress');
+            $table->enum('status', ['pending', 'in progress', 'completed', 'rejected'])->default('in progress');
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('rejected_at')->nullable();
 

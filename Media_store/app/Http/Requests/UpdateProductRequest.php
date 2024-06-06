@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidPriceChange;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +23,16 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $productID = $this->route('product');
         return [
-            //
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', Rule::in(['book', 'cd', 'dvd'])],
+            'image' => ['nullable', 'image', 'max:1024'],
+            'description' => ['required', 'string'],
+            'price' => ['required', 'integer', new ValidPriceChange($productID)],
+            'in_stock' => ['required', 'integer'],
+            'genre' => ['required', 'string', Rule::in(['fiction', 'comedy', 'drama', 'horror', 'action', 'romance', 'thriller'])],
+
         ];
     }
 }

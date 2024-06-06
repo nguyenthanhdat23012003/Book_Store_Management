@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -14,12 +16,20 @@ class OrderController extends Controller
      */
     public function index()
     {
+        $orders = Order::with(['order_items.product', 'delivery'])
+            ->where('user_id', auth()->id())
+            ->where('status', '<>', 'pending')
+            ->latest()
+            ->paginate(12);
+
+        foreach ($orders as $order) {
+            $order->order_items->transform(function ($item) {
+                $item->product->image_path = Storage::url($item->product->image_path);
+                return $item;
+            });
+        }
         return Inertia::render('Orders/Index', [
-            'orders' => Order::with(['order_items.product', 'delivery'])
-                ->where('user_id', auth()->id())
-                ->where('status', '<>', 'pending')
-                ->latest()
-                ->paginate(12),
+            'orders' => $orders,
             'message' => session('success') ?? session('error'),
             'success' => session('success') ? true : false,
         ]);
@@ -75,6 +85,11 @@ class OrderController extends Controller
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }
+        // add the image path to the product
+        $order->order_items->transform(function ($item) {
+            $item->product->image_path = Storage::url($item->product->image_path);
+            return $item;
+        });
         return Inertia::render('Orders/Show', [
             'order' => $order,
         ]);
@@ -108,14 +123,13 @@ class OrderController extends Controller
             'phone' => $data['phone'],
             'province' => $data['province'],
             'address' => $data['address'],
-            'status' => 'in progress'
+            'status' => 'pending'
         ]);
 
         // store the payment
         $order->payment()->create([
             'payment_method' => $data['payment_method'],
             'total_payment' => $data['total_price'],
-            'paid_at' => now(),
         ]);
 
         // remove the items from the cart
@@ -136,5 +150,16 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function manage()
+    {
+        $orders = Order::with(['order_items.product', 'delivery', 'payment', 'user'])
+            ->latest()
+            ->paginate(12);
+
+        return Inertia::render('Orders/Manage', [
+            'orders' => $orders,
+        ]);
     }
 }

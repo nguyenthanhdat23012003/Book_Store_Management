@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
@@ -16,13 +17,28 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $type = ['book', 'cd', 'dvd'];
+        $type = fake()->randomElement(['book', 'cd', 'dvd']);
         $genre = ['fiction', 'comedy', 'drama', 'action', 'horror', 'romance', 'thriller'];
+        $path = '';
+        switch ($type) {
+            case 'book':
+                $files = Storage::disk('public')->allFiles('books');
+                $path = $files[array_rand($files)];
+                break;
+            case 'cd':
+                $files = Storage::disk('public')->allFiles('cds');
+                $path = $files[array_rand($files)];
+                break;
+            case 'dvd':
+                $files = Storage::disk('public')->allFiles('dvds');
+                $path = $files[array_rand($files)];
+                break;
+        }
         return [
-            'name' => fake()->sentence(),
-            'type' => fake()->randomElement($type),
+            'name' => fake()->sentence(rand(2, 4)),
+            'type' => $type,
+            'image_path' => $path,
             'description' => fake()->realText(),
-            'image_path' => fake()->imageUrl(),
             'price' => fake()->numberBetween(10, 100) * 1000,
             'in_stock' => fake()->numberBetween(0, 100),
             'genre' => fake()->randomElement($genre),

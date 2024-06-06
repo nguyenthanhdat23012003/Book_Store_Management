@@ -2,10 +2,11 @@ export default function OrderItem({ item }) {
     return (
         <div className="flex flex-wrap sm:items-center px-4 py-2 rounded bg-fuchsia-100 shadow-lg border border-gray">
             <div className="flex grow lg:w-1/2 w-full justify-center sm:px-4">
-                <div className="w-1/4 m-1">
+                <div className="w-1/4 m-1 h-32 flex items-center justify-center">
                     <img
                         src={item.product.image_path}
-                        className="rounded-lg shadow-2xl w-"
+                        alt={item.product.type}
+                        className="rounded-lg w-full h-full object-contain object-center"
                     />
                 </div>
                 <div className="w-3/4 overflow-hidden px-4">

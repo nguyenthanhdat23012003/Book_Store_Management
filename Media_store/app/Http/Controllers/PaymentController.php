@@ -87,6 +87,12 @@ class PaymentController extends Controller
             $order->update([
                 'status' => 'paid',
             ]);
+            $order->delivery->update([
+                'status' => 'in progress',
+            ]);
+            $order->payment->update([
+                'paid_at' => now(),
+            ]);
             return to_route('order.index')->with('success', 'Payment successfully');
         } else {
             $order->update([

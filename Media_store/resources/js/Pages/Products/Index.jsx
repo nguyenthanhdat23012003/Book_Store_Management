@@ -71,9 +71,9 @@ const index = ({ products }) => {
                         </div>
                         <Link
                             href={route("cart.index")}
-                            className="indicator btn btn-outline btn-warning"
+                            className="indicator btn btn-outline btn-error"
                         >
-                            <span className="indicator-item badge badge-secondary">
+                            <span className="indicator-item badge badge-primary">
                                 {nbItemInCart}
                             </span>
                             <span className="text-lg">
@@ -85,72 +85,65 @@ const index = ({ products }) => {
                             </span>
                         </Link>
                         {alert && (
-                            <div
-                                role="alert"
-                                className="alert alert-info fixed z-10 w-[70%] top-10 right-auto left-auto flex justify-between opacity-75 shadow"
-                            >
-                                <span>{message}</span>
-                                <FontAwesomeIcon
-                                    icon={faRectangleXmark}
-                                    className="w-24 hover:opacity-75 cursor-pointer text-red-300"
-                                    onClick={() => setAlert(false)}
-                                />
+                            <div className="toast toast-top toast-center">
+                                <div className="alert alert-info">
+                                    <span>{message}</span>
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
             </header>
-            <div className="h-screen overflow-auto">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12">
-                    <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900 dark:text-gray-100">
-                            <div className="flex flex-wrap">
-                                {products.data.map((product, index) => (
-                                    <div
-                                        key={index}
-                                        className="xl:w-1/4 lg:w-1/3 md:w-1/2 w-full p-4"
-                                    >
-                                        <div className="card indicator w-full bg-base-100 shadow-xl">
-                                            <figure className="min-h-[100px]">
-                                                <span className="indicator-item badge badge-primary">
-                                                    new
-                                                </span>
-                                                <img
-                                                    src={product.image_path}
-                                                    alt="Shoes"
-                                                />
-                                            </figure>
-                                            <div className="card-body">
-                                                <h2 className="card-title uppercase">
-                                                    {product.type}
-                                                </h2>
-                                                <div className="h-20 overflow-hidden">
-                                                    <p className="text-ellipsis">
-                                                        {product.name}
-                                                    </p>
-                                                </div>
-                                                <div className="text-2xl text-orange-400">
-                                                    {Intl.NumberFormat().format(
-                                                        product.price
-                                                    ) + " vnd"}
-                                                </div>
-                                                <div className="card-actions justify-end">
-                                                    <button
-                                                        className="btn btn-outline btn-error"
-                                                        onClick={() =>
-                                                            addToCart(product)
-                                                        }
-                                                    >
-                                                        Add to cart
-                                                    </button>
-                                                </div>
+            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12">
+                <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+                    <div className="p-6 text-gray-900 dark:text-gray-100">
+                        <div className="flex flex-wrap">
+                            {products.data.map((product, index) => (
+                                <div
+                                    key={index}
+                                    className="xl:w-1/4 lg:w-1/3 md:w-1/2 w-full p-4"
+                                >
+                                    <div className="card indicator w-full bg-cyan-50 shadow-xl">
+                                        <figure className="h-80 bg-fuchsia-100">
+                                            <span className="indicator-item badge badge-primary">
+                                                new
+                                            </span>
+                                            <img
+                                                className="object-cover object-center"
+                                                src={product.image_path}
+                                                alt="Oop! Something went wrong!"
+                                            />
+                                        </figure>
+                                        <div className="card-body">
+                                            <h2 className="card-title uppercase">
+                                                {product.type}
+                                            </h2>
+                                            <div className="h-20 overflow-hidden">
+                                                <p className="text-ellipsis">
+                                                    {product.name}
+                                                </p>
+                                            </div>
+                                            <div className="text-2xl text-orange-400">
+                                                {Intl.NumberFormat().format(
+                                                    product.price
+                                                ) + " vnd"}
+                                            </div>
+                                            <div className="card-actions justify-end">
+                                                <button
+                                                    className="btn btn-outline btn-error"
+                                                    onClick={() =>
+                                                        addToCart(product)
+                                                    }
+                                                >
+                                                    Add to cart
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                            <Pagination links={products.links} />
+                                </div>
+                            ))}
                         </div>
+                        <Pagination links={products.links} />
                     </div>
                 </div>
             </div>

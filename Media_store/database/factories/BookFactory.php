@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Book>
@@ -20,6 +21,7 @@ class BookFactory extends Factory
         for ($i = 0; $i < rand(1, 3); $i++) {
             $authors[] = fake()->name();
         }
+
         return [
             'authors' => json_encode($authors),
             'cover_type' => fake()->randomElement(['hardcover', 'paperback']),

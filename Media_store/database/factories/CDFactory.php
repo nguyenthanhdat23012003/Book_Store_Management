@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,10 +25,11 @@ class CDFactory extends Factory
         for ($i = 0; $i < $numberOfTracks; $i++) {
             $rand_min += rand(2, 5); // Randomly increment the duration by 2 to 5 minutes
             $duration = sprintf('%d:%02d', $rand_min, rand(0, 59)); // Generate random duration like "3:45"
-            $title = fake()->sentence(3); // Generate a random song title with 3 words
+            $title = fake()->sentence(rand(3, 5)); // Generate a random song title with 3-5 words
             $tracks[$duration] = $title;
             $track_list[] = "$title ($duration)";
         }
+
 
         return [
             'collections' => fake()->word(),

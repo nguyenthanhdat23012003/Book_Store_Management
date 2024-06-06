@@ -151,154 +151,141 @@ const Index = ({ error = null }) => {
                         </ul>
                     </div>
                     {alert && (
-                        <div
-                            role="alert"
-                            className="alert alert-warning fixed z-10 w-[70%] top-10 right-auto left-auto flex justify-between opacity-75 shadow text-white"
-                        >
-                            <span>{error}</span>
-                            <FontAwesomeIcon
-                                icon={faRectangleXmark}
-                                className="w-24 hover:opacity-75 cursor-pointer text-red-300"
-                                onClick={() => setAlert(false)}
-                            />
+                        <div className="toast toast-top toast-center">
+                            <div className="alert alert-error">
+                                <span>{error}</span>
+                                <FontAwesomeIcon
+                                    icon={faRectangleXmark}
+                                    className="w-24 hover:opacity-75 cursor-pointer text-error"
+                                    onClick={() => setAlert(false)}
+                                />
+                            </div>
                         </div>
                     )}
                 </div>
             </header>
-            <div className="h-screen overflow-auto">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12 mb-12">
-                    <div className="flex flex-col gap-5 flex-1 p-4 text-gray-900 dark:text-gray-100">
-                        {cart_items.length === 0 && (
-                            <div className="p-6 bg-white rounded">
-                                <div className="text-center text-2xl text-warning">
-                                    Your cart is empty!
+            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12 mb-12">
+                <div className="flex flex-col gap-5 flex-1 p-4 text-gray-900 dark:text-gray-100">
+                    {cart_items.length === 0 && (
+                        <div className="p-6 bg-white rounded">
+                            <div className="text-center text-2xl text-warning">
+                                Your cart is empty!
+                            </div>
+                        </div>
+                    )}
+                    {cart_items.length > 0 &&
+                        cart_items.map((item) => (
+                            <div
+                                key={item.id}
+                                className="flex flex-wrap sm:items-center px-4 py-2 rounded bg-base-100 shadow-lg border border-gray"
+                            >
+                                <div className="flex grow lg:w-1/5 md:w-1/3 w-2/5 justify-center items-center h-full sm:px-4">
+                                    <div className="sm:px-2">
+                                        <TextInput
+                                            type="checkbox"
+                                            checked={selectedProducts.includes(
+                                                item.id
+                                            )}
+                                            onChange={() =>
+                                                handleCheckboxChanged(item.id)
+                                            }
+                                            className="w-5 h-5 checkbox checkbox-primary"
+                                        />
+                                    </div>
+                                    <div className="m-1 sm:h-40 h-32 w-full flex items-center justify-center">
+                                        <img
+                                            src={item.image_url}
+                                            className="rounded-lg h-full w-full object-contain object-center"
+                                            alt={item.type}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex grow flex-wrap lg:w-3/5 md:w-2/3 w-3/5 justify-between items-center">
+                                    <div className="lg:w-1/2 w-full overflow-hidden px-4">
+                                        <h1 className="sm:text-2xl font-bold uppercase ">
+                                            {item.type}
+                                        </h1>
+                                        <p className="sm:py-3 py-1 text-ellipsis">
+                                            {item.name}
+                                        </p>
+                                    </div>
+                                    <div className="text-orange-400 lg:w-3/12 md:w-1/2 w-full px-4">
+                                        <h1 className="sm:text-2xl text-md font-bold">
+                                            Unit price
+                                        </h1>
+                                        <p className="sm:py-3 py-1">
+                                            <span className="text-xs">đ</span>
+                                            {Intl.NumberFormat().format(
+                                                item.price
+                                            )}
+                                        </p>
+                                    </div>
+                                    <div className="sm:flex justify-between items-center lg:w-3/12 md:w-1/2 w-full">
+                                        <div className="flex justify-between items-center mx-3">
+                                            <button
+                                                className="btn px-2"
+                                                disabled={sendingRequest}
+                                                onClick={() => {
+                                                    if (!sendingRequest) {
+                                                        setSendingRequest(true);
+                                                        changeQuantity(
+                                                            item.id,
+                                                            quantities[
+                                                                item.id
+                                                            ] - 1
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faMinus}
+                                                />
+                                            </button>
+                                            <span className="px-4 py-2">
+                                                {quantities[item.id]}
+                                            </span>
+                                            <button
+                                                className="btn px-2"
+                                                disabled={sendingRequest}
+                                                onClick={() => {
+                                                    if (!sendingRequest) {
+                                                        setSendingRequest(true);
+                                                        changeQuantity(
+                                                            item.id,
+                                                            quantities[
+                                                                item.id
+                                                            ] + 1
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faPlus}
+                                                />
+                                            </button>
+                                        </div>
+                                        <p className="text-red-600 font-bold text-xl text-center">
+                                            <span className="text-xs">đ</span>
+                                            {Intl.NumberFormat().format(
+                                                quantities[item.id] * item.price
+                                            )}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="lg:w-1/5 w-full flex sm:justify-end justify-center">
+                                    <button
+                                        className="btn btn-outline btn-primary my-4"
+                                        onClick={() => {
+                                            setRemoveProductID(item.id);
+                                            setOpenModal(true);
+                                        }}
+                                    >
+                                        Remove
+                                    </button>
                                 </div>
                             </div>
-                        )}
-                        {cart_items.length > 0 &&
-                            cart_items.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="flex flex-wrap sm:items-center px-4 py-2 rounded bg-fuchsia-100 shadow-lg border border-gray"
-                                >
-                                    <div className="flex grow lg:w-1/5 md:w-1/3 w-2/5 justify-center items-center h-full sm:px-4">
-                                        <div className="sm:px-2">
-                                            <TextInput
-                                                type="checkbox"
-                                                checked={selectedProducts.includes(
-                                                    item.id
-                                                )}
-                                                onChange={() =>
-                                                    handleCheckboxChanged(
-                                                        item.id
-                                                    )
-                                                }
-                                                className="w-5 h-5 checkbox checkbox-primary"
-                                            />
-                                        </div>
-                                        <div className="m-1">
-                                            <img
-                                                src={item.image_url}
-                                                className="rounded-lg shadow-2xl w-40"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="flex grow flex-wrap lg:w-3/5 md:w-2/3 w-3/5 justify-between items-center">
-                                        <div className="lg:w-1/2 w-full overflow-hidden px-4">
-                                            <h1 className="sm:text-2xl font-bold uppercase ">
-                                                {item.type}
-                                            </h1>
-                                            <p className="sm:py-3 py-1 text-ellipsis">
-                                                {item.name}
-                                            </p>
-                                        </div>
-                                        <div className="text-orange-400 lg:w-3/12 md:w-1/2 w-full px-4">
-                                            <h1 className="sm:text-2xl text-md font-bold">
-                                                Unit price
-                                            </h1>
-                                            <p className="sm:py-3 py-1">
-                                                <span className="text-xs">
-                                                    đ
-                                                </span>
-                                                {Intl.NumberFormat().format(
-                                                    item.price
-                                                )}
-                                            </p>
-                                        </div>
-                                        <div className="sm:flex justify-between items-center lg:w-3/12 md:w-1/2 w-full">
-                                            <div className="flex justify-between items-center mx-3">
-                                                <button
-                                                    className="btn px-2"
-                                                    disabled={sendingRequest}
-                                                    onClick={() => {
-                                                        if (!sendingRequest) {
-                                                            setSendingRequest(
-                                                                true
-                                                            );
-                                                            changeQuantity(
-                                                                item.id,
-                                                                quantities[
-                                                                    item.id
-                                                                ] - 1
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    <FontAwesomeIcon
-                                                        icon={faMinus}
-                                                    />
-                                                </button>
-                                                <span className="px-4 py-2">
-                                                    {quantities[item.id]}
-                                                </span>
-                                                <button
-                                                    className="btn px-2"
-                                                    disabled={sendingRequest}
-                                                    onClick={() => {
-                                                        if (!sendingRequest) {
-                                                            setSendingRequest(
-                                                                true
-                                                            );
-                                                            changeQuantity(
-                                                                item.id,
-                                                                quantities[
-                                                                    item.id
-                                                                ] + 1
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    <FontAwesomeIcon
-                                                        icon={faPlus}
-                                                    />
-                                                </button>
-                                            </div>
-                                            <p className="text-red-600 font-bold text-xl text-center">
-                                                <span className="text-xs">
-                                                    đ
-                                                </span>
-                                                {Intl.NumberFormat().format(
-                                                    quantities[item.id] *
-                                                        item.price
-                                                )}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="lg:w-1/5 w-full flex sm:justify-end justify-center">
-                                        <button
-                                            className="btn btn-outline btn-primary my-4"
-                                            onClick={() => {
-                                                setRemoveProductID(item.id);
-                                                setOpenModal(true);
-                                            }}
-                                        >
-                                            Remove
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                    </div>
+                        ))}
                 </div>
             </div>
 
@@ -332,7 +319,7 @@ const Index = ({ error = null }) => {
                 </div>
             </Modal>
 
-            <div className="fixed right-0 left-0 bottom-0 bg-pink-100 px-4 py-4 shadow">
+            <div className="fixed right-0 left-0 bottom-0 bg-rose-200 px-4 py-4 shadow">
                 <div className="max-w-3xl mx-auto flex justify-between items-center">
                     <div className="flex gap-2 items-center">
                         <TextInput

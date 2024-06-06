@@ -3,9 +3,12 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, useForm } from "@inertiajs/react";
 import OrderItem from "@/Components/OrderItem";
 import Timeline from "@/Components/Timeline";
+import InputLabel from "@/Components/InputLabel";
+import TextInput from "@/Components/TextInput";
+import InputError from "@/Components/InputError";
 
 const show = ({ order }) => {
-    const { data, setData, put } = useForm({
+    const { data, setData, put, errors } = useForm({
         order_id: order.id,
         phone: "1234567890",
         province: "Ha Noi",
@@ -187,38 +190,22 @@ const show = ({ order }) => {
                                     Delivery
                                 </div>
 
-                                <div className="flex sm:flex-row flex-col justify-between items-center sm:px-4 px-2">
+                                <div className="flex md:flex-row flex-col justify-between sm:px-4 px-2">
                                     {(order.status === "pending" ||
                                         order.status === "unpaid") && (
                                         <form
                                             onSubmit={pay}
                                             id="deliveryForm"
-                                            className="flex flex-col gap-2"
+                                            className="flex flex-col gap-2 md:w-2/5"
                                         >
-                                            <select
-                                                value={data.province}
-                                                className="select select-bordered w-full "
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "province",
-                                                        e.target.value
-                                                    )
-                                                }
-                                            >
-                                                {provinces.map(
-                                                    (province, index) => (
-                                                        <option
-                                                            key={index}
-                                                            value={province}
-                                                        >
-                                                            {province}
-                                                        </option>
-                                                    )
-                                                )}
-                                            </select>
-                                            <label className="input input-bordered flex items-center gap-2">
-                                                Phone number
-                                                <input
+                                            <div>
+                                                <InputLabel
+                                                    htmlFor="phone"
+                                                    value="Phone number"
+                                                />
+
+                                                <TextInput
+                                                    id="phone"
                                                     value={data.phone}
                                                     onChange={(e) =>
                                                         setData(
@@ -228,15 +215,57 @@ const show = ({ order }) => {
                                                     }
                                                     type="tel"
                                                     pattern="[0-9]{10}"
-                                                    className="grow border-none focus-within:ring-0"
                                                     placeholder="0123456789"
-                                                    required
+                                                    className="mt-1 block w-full"
+                                                    isFocused={true}
                                                 />
-                                            </label>
-                                            <label className="input input-bordered flex items-center gap-2">
-                                                Address
-                                                <input
-                                                    required
+
+                                                <InputError
+                                                    message={errors.phone}
+                                                    className="mt-2"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <InputLabel
+                                                    htmlFor="province"
+                                                    value="Province"
+                                                />
+                                                <select
+                                                    id="province"
+                                                    value={data.province}
+                                                    className="rounded-lg w-full "
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "province",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                >
+                                                    {provinces.map(
+                                                        (province, index) => (
+                                                            <option
+                                                                key={index}
+                                                                value={province}
+                                                            >
+                                                                {province}
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                                <InputError
+                                                    message={errors.province}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <InputLabel
+                                                    htmlFor="address"
+                                                    value="Address"
+                                                />
+
+                                                <TextInput
+                                                    id="address"
                                                     value={data.address}
                                                     onChange={(e) =>
                                                         setData(
@@ -245,44 +274,73 @@ const show = ({ order }) => {
                                                         )
                                                     }
                                                     type="text"
-                                                    className="grow border-none focus-within:ring-0"
-                                                    placeholder="Enter your address"
+                                                    className="mt-1 block w-full"
                                                 />
-                                            </label>
-                                            <select
-                                                value={data.delivery_type}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "delivery_type",
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className="select select-bordered w-full "
-                                            >
-                                                <option value="normal">
-                                                    Normal order
-                                                </option>
-                                                <option value="rush">
-                                                    Rush order
-                                                </option>
-                                            </select>
-                                            <select
-                                                value={data.payment_method}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "payment_method",
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className="select select-bordered w-full "
-                                            >
-                                                <option value="vn pay">
-                                                    VN pay
-                                                </option>
-                                                <option value="cash">
-                                                    Cash
-                                                </option>
-                                            </select>
+
+                                                <InputError
+                                                    message={errors.address}
+                                                    className="mt-2"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <InputLabel
+                                                    htmlFor="delivery"
+                                                    value="Delivery type"
+                                                />
+                                                <select
+                                                    id="delivery"
+                                                    value={data.delivery_type}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "delivery_type",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="w-full rounded-lg"
+                                                >
+                                                    <option value="normal">
+                                                        Normal order
+                                                    </option>
+                                                    <option value="rush">
+                                                        Rush order
+                                                    </option>
+                                                </select>
+                                                <InputError
+                                                    message={
+                                                        errors.delivery_type
+                                                    }
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <InputLabel
+                                                    htmlFor="payment"
+                                                    value="Payment method"
+                                                />
+                                                <select
+                                                    value={data.payment_method}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "payment_method",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="w-full rounded-lg "
+                                                >
+                                                    <option value="vn pay">
+                                                        VN pay
+                                                    </option>
+                                                    <option value="cash">
+                                                        Cash
+                                                    </option>
+                                                </select>
+                                                <InputError
+                                                    message={
+                                                        errors.payment_method
+                                                    }
+                                                />
+                                            </div>
                                         </form>
                                     )}
                                     <div
@@ -348,7 +406,7 @@ const show = ({ order }) => {
                                     </div>
                                 </div>
 
-                                <div className="text-pink-700 sm:px-6 px-2 py-4 text-justify">
+                                <div className="text-pink-700 sm:px-4 px-2 py-4 text-justify">
                                     <span className="text-bold text-lg">
                                         Note:&emsp;
                                     </span>

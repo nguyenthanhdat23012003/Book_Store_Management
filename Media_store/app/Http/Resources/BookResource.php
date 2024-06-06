@@ -24,7 +24,6 @@ class BookResource extends JsonResource
             'authors' => json_decode($this->authors),
             'cover_type' => $this->cover_type,
             'number_of_pages' => $this->pages,
-            // 'language' => Languages::getName($this->language),
             'language' => $this->language,
             'publisher' => $this->publisher,
             'publication_date' => $this->publication_date,

@@ -42,4 +42,9 @@ class Product extends Model
     {
         return $this->hasMany(Order_item::class);
     }
+
+    public function productActions()
+    {
+        return $this->hasMany(ProductHistory::class);
+    }
 }

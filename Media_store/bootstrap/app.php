@@ -15,10 +15,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-            CORSMiddleware::class,
+            \App\Http\Middleware\RestrictProductUpdate::class,
+            \App\Http\Middleware\RestrictProductDeletion::class,
         ]);
 
-        //
+        // Add alias middleware here
+        // $middleware->web([
+        //     'restrict_product_updation' => \App\Http\Middleware\RestrictProductUpdate::class,
+        //     'restrict_product_deletion' => \App\Http\Middleware\RestrictProductDeletion::class,
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
