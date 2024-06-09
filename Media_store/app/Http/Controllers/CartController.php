@@ -2,28 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Repositories\Cart\CartEloquentRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CartController extends Controller
 {
+    protected $cartRepository;
+
+    public function __construct(CartEloquentRepository $cartRepo)
+    {
+        $this->cartRepository = $cartRepo;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        // $cart = $request->user()->cart ?? $request->user()->cart()->create();
         return Inertia::render('Carts/Index', [
             'error' => session('error')
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -35,34 +34,25 @@ class CartController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
         //
+    }
+
+    public function addToCart(Request $request, Product $product)
+    {
+        return $this->cartRepository->addToCart($request, $product);
+    }
+
+    public function removeFromCart(Request $request, Product $product)
+    {
+        return $this->cartRepository->removeFromCart($request, $product);
+    }
+
+    public function updateCart(Request $request, Product $product)
+    {
+        return $this->cartRepository->changeQuantity($request, $product);
     }
 }

@@ -2,45 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ProductResource;
+use App\Http\Requests\StoreOrderRequest;
 use Inertia\Inertia;
 use App\Models\Order;
-use App\Models\Product;
+use App\Repositories\Order\OrderEloquentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
+    protected $orderRepository;
+
+    public function __construct(OrderEloquentRepository $orderRepo)
+    {
+        $this->orderRepository = $orderRepo;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $orders = Order::with(['order_items.product', 'delivery'])
-            ->where('user_id', auth()->id())
-            ->where('status', '<>', 'pending')
+        $orders = Order::with([
+            'order_items' => function ($query) {
+                $query->with(['product' => function ($query) {
+                    $query->withTrashed();
+                }]);
+            },
+            'delivery',
+            'payment'
+        ])->where('user_id', auth()->id())
             ->latest()
             ->paginate(12);
 
         foreach ($orders as $order) {
             $order->order_items->transform(function ($item) {
-                $item->product->image_path = Storage::url($item->product->image_path);
+                if ($item->product) { // Check if product is not null
+                    $item->product->image_path = Storage::url($item->product->image_path);
+                }
                 return $item;
             });
         }
+
         return Inertia::render('Orders/Index', [
             'orders' => $orders,
             'message' => session('success') ?? session('error'),
             'success' => session('success') ? true : false,
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -61,19 +68,10 @@ class OrderController extends Controller
         // calculate the total price of the order
         $order = $request->user()->orders()->create([
             'total_price' => $total_price,
+            'status' => 'cancelled',
         ]);
 
-        // create the order items
-        $order->order_items()->createMany(
-            $items->map(function ($item) {
-                return [
-                    'product_id' => $item['id'],
-                    'quantity' => $item['quantity'],
-                ];
-            })->toArray()
-        );
-
-        return to_route('order.show', $order->id);
+        return to_route('order.edit', $order->id);
     }
 
     /**
@@ -81,18 +79,6 @@ class OrderController extends Controller
      */
     public function show(string $id)
     {
-        $order = Order::with('order_items.product')->findOrFail($id);
-        if ($order->user_id !== auth()->id()) {
-            abort(403);
-        }
-        // add the image path to the product
-        $order->order_items->transform(function ($item) {
-            $item->product->image_path = Storage::url($item->product->image_path);
-            return $item;
-        });
-        return Inertia::render('Orders/Show', [
-            'order' => $order,
-        ]);
     }
 
     /**
@@ -100,66 +86,67 @@ class OrderController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $order = Order::with([
+            'order_items' => function ($query) {
+                $query->with(['product' => function ($query) {
+                    $query->withTrashed();
+                }]);
+            }
+        ])->findOrFail($id);
+
+        if (auth()->user()->cannot('update', $order)) {
+            return to_route('orders.index')->with('fail', 'You are not authorized to edit this order.');
+        }
+
+        // add the image path to the product
+        $order->order_items->transform(function ($item) {
+            $item->product->image_path = Storage::url($item->product->image_path);
+            return $item;
+        });
+        return Inertia::render('Orders/Edit', [
+            'order' => $order,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreOrderRequest $request, string $id)
     {
         $order = Order::findOrFail($id);
-        $data = $request->all();
+        if (auth()->user()->cannot('update', $order)) {
+            return to_route('orders.index')->with('fail', 'You are not authorized to edit this order.');
+        }
+
+        $data = $request->validated();
+        // dd($data);
+
         $order->update([
             'shipping_fee' => $data['shipping_fee'],
             'free_ship_discount' => $data['free_ship_discount'],
-            'delivery_type' => $data['delivery_type'],
             'total_price' => $data['total_price'],
-            'status' => 'unpaid',
+            'status' => $data['payment_method'] === 'vnpay' ? 'unpaid' : 'pending',
         ]);
 
-        // store the delivery
-        $order->delivery()->create([
-            'phone' => $data['phone'],
-            'province' => $data['province'],
-            'address' => $data['address'],
-            'status' => 'pending'
-        ]);
-
-        // store the payment
-        $order->payment()->create([
-            'payment_method' => $data['payment_method'],
-            'total_payment' => $data['total_price'],
-        ]);
-
-        // remove the items from the cart
-        $order_products = $order->order_items->pluck('product_id');
-        $cart = $request->user()->cart;
-        $cart->products()->detach($order_products);
-
-        if ($data['payment_method'] === 'vn pay') {
+        if ($data['payment_method'] === 'vnpay') {
             return to_route('checkout', $order->id);
         } else {
             return to_route('order.index')->with('success', 'Place order successfully');
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
     public function manage()
     {
-        $orders = Order::with(['order_items.product', 'delivery', 'payment', 'user'])
-            ->latest()
-            ->paginate(12);
+        return $this->orderRepository->manageOrders();
+    }
 
-        return Inertia::render('Orders/Manage', [
-            'orders' => $orders,
-        ]);
+    public function confirm(Order $order)
+    {
+        return $this->orderRepository->confirmOrder($order);
+    }
+
+    public function reject(Order $order)
+    {
+        return $this->orderRepository->rejectOrder($order);
     }
 }

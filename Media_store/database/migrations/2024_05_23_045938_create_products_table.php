@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('genre');
             $table->integer('weight');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

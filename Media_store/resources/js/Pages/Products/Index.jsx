@@ -1,44 +1,47 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Pagination from "@/Components/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faCartShopping,
-    faRectangleXmark,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { Head, usePage, Link } from "@inertiajs/react";
-import React from "react";
+import React, { useEffect } from "react";
+import Toast from "@/Components/Toast";
 
 const index = ({ products }) => {
-    const [alert, setAlert] = React.useState(false);
-    const [message, setMessage] = React.useState("");
-
     const page = usePage();
     const myCart = page.props.cart;
     const [nbItemInCart, setNbItemInCart] = React.useState(myCart.data.length);
 
-    const closeAlert = () => {
-        setTimeout(() => {
-            setAlert(false);
+    const [messages, setMessages] = React.useState([]);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setMessages((currentMessages) => currentMessages.slice(1));
         }, 3000);
-    };
+
+        // Cleanup the interval on component unmount
+        return () => clearInterval(timer);
+    }, []);
 
     const addToCart = (product) => {
-        setAlert(true);
-        closeAlert();
         axios
-            .get(route("product.addToCart", product.id))
+            .get(route("cart.addToCart", product.id))
             .then((response) => {
                 if (response.data === "new") {
                     setNbItemInCart(nbItemInCart + 1);
-                    setMessage(
-                        "Add this " + product.type + " to cart successfully"
-                    );
+                    setMessages([
+                        ...messages,
+                        "Add this " + product.type + " to cart successfully",
+                    ]);
                 } else {
-                    setMessage("This " + product.type + " already in cart");
+                    setMessages([
+                        ...messages,
+                        "This " + product.type + " already in cart",
+                    ]);
                 }
             })
             .catch((error) => {
                 console.log(error);
+                setMessages("Oop! Something went wrong!");
             });
     };
 
@@ -54,7 +57,7 @@ const index = ({ products }) => {
                                 <li>
                                     <Link
                                         href={route("dashboard")}
-                                        className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
+                                        className="font-semibold hover:text-primary text-lg text-slate-800 dark:text-gray-200 leading-tight"
                                     >
                                         Media store
                                     </Link>
@@ -62,7 +65,7 @@ const index = ({ products }) => {
                                 <li>
                                     <Link
                                         href={route("products.index")}
-                                        className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
+                                        className="font-semibold hover:text-primary text-lg text-slate-800 dark:text-gray-200 leading-tight"
                                     >
                                         Products
                                     </Link>
@@ -84,16 +87,12 @@ const index = ({ products }) => {
                                 View cart
                             </span>
                         </Link>
-                        {alert && (
-                            <div className="toast toast-top toast-center">
-                                <div className="alert alert-info">
-                                    <span>{message}</span>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </header>
+
+            <Toast messages={messages} />
+
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12">
                 <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
                     <div className="p-6 text-gray-900 dark:text-gray-100">
@@ -101,11 +100,11 @@ const index = ({ products }) => {
                             {products.data.map((product, index) => (
                                 <div
                                     key={index}
-                                    className="xl:w-1/4 lg:w-1/3 md:w-1/2 w-full p-4"
+                                    className="xl:w-1/4 lg:w-1/3 md:w-1/2 w-full p-4 hover:p-2 hover:opacity-80 hover:border-primary hover:border-2 transition duration-500 ease-in-out"
                                 >
-                                    <div className="card indicator w-full bg-cyan-50 shadow-xl">
-                                        <figure className="h-80 bg-fuchsia-100">
-                                            <span className="indicator-item badge badge-primary">
+                                    <div className="card indicator w-full bg-base-100 shadow-xl">
+                                        <figure className="h-80 m-4 ">
+                                            <span className="indicator-item badge badge-primary text-white">
                                                 new
                                             </span>
                                             <img
@@ -123,7 +122,7 @@ const index = ({ products }) => {
                                                     {product.name}
                                                 </p>
                                             </div>
-                                            <div className="text-2xl text-orange-400">
+                                            <div className="text-2xl text-neutral">
                                                 {Intl.NumberFormat().format(
                                                     product.price
                                                 ) + " vnd"}

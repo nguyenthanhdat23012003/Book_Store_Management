@@ -31,8 +31,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $cart = $request->user() ? Cart::getCartOfThisUser() : null;
-        $cart_items = $cart ? Cart_itemResource::collection($cart->cart_items) : [];
+        $cart = $request->user() ? $request->user()->cart : null;
+        $cart_items = $cart ? Cart_itemResource::collection(
+            $cart->cart_items()->whereHas('product', function ($query) {
+                $query->whereNull('deleted_at');
+            })->get()
+        ) : [];
+
         return [
             ...parent::share($request),
             'auth' => [

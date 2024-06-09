@@ -84,20 +84,29 @@ class PaymentController extends Controller
         $order = Order::find($order_id);
         $status = $request->vnp_TransactionStatus;
         if ($status == 00) {
-            $order->update([
-                'status' => 'paid',
-            ]);
-            $order->delivery->update([
-                'status' => 'in progress',
-            ]);
-            $order->payment->update([
-                'paid_at' => now(),
-            ]);
+            // Disable events temporarily and update the order
+            Order::withoutEvents(
+                function () use ($order) {
+                    $order->update([
+                        'status' => 'paid',
+                    ]);
+                    $order->delivery->update([
+                        'status' => 'in progress',
+                    ]);
+                    $order->payment->update([
+                        'paid_at' => now(),
+                    ]);
+                }
+            );
             return to_route('order.index')->with('success', 'Payment successfully');
         } else {
-            $order->update([
-                'status' => 'failed',
-            ]);
+            Order::withoutEvents(
+                function () use ($order) {
+                    $order->update([
+                        'status' => 'failed',
+                    ]);
+                }
+            );
             return to_route('order.index')->with('error', 'Payment failed');
         }
     }

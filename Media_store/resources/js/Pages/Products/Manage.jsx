@@ -12,7 +12,7 @@ import Modal from "@/Components/Modal";
 import TextInput from "@/Components/TextInput";
 import Select from "@/Components/Select";
 
-const manage = ({ products, queryParams = null, alert, success }) => {
+const Manage = ({ products, queryParams = null, alert, success }) => {
     const [showModal, setShowModal] = React.useState(false);
     const [productID, setProductID] = React.useState(null);
     queryParams = queryParams || { sort_field: "id", sort_dir: "asc" };
@@ -362,10 +362,10 @@ const manage = ({ products, queryParams = null, alert, success }) => {
     );
 };
 
-manage.layout = (page) => (
+Manage.layout = (page) => (
     <AuthenticatedLayout user={page.props.auth.user}>
         {page}
     </AuthenticatedLayout>
 );
 
-export default manage;
+export default Manage;

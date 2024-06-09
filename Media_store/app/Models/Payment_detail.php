@@ -11,12 +11,7 @@ class Payment_detail extends Model
 
     protected $table = 'payment_details';
 
-    protected $fillable = [
-        'order_id',
-        'payment_method',
-        'total_payment',
-        'paid_at',
-    ];
+    protected $guarded = [];
 
     public $timestamps = false;
 

@@ -32,7 +32,6 @@ const Index = ({ error = null }) => {
     const [removeProductID, setRemoveProductID] = useState(null);
     const [openModal, setOpenModal] = useState(false);
     const [sendingRequest, setSendingRequest] = useState(false);
-    const [Subtotal, setSubtotal] = useState(0);
 
     const getSelectedProducts = () => {
         let items = cart_items.filter((product) =>
@@ -50,7 +49,7 @@ const Index = ({ error = null }) => {
 
     // remove items from cart
     const removeItems = () => {
-        router.get(route("product.removeFromCart", removeProductID));
+        router.get(route("cart.removeFromCart", removeProductID));
     };
 
     // keep track of the quantity of each product
@@ -69,13 +68,12 @@ const Index = ({ error = null }) => {
             setRemoveProductID(product_id);
         } else {
             axios
-                .get(route("product.changeQuantity", product_id), {
+                .get(route("cart.changeQuantity", product_id), {
                     params: {
                         quantity: quantity,
                     },
                 })
                 .then((res) => {
-                    // console.log(res);
                     setSendingRequest(false);
                     setQuantities((prevQuantities) => ({
                         ...prevQuantities,
@@ -210,7 +208,8 @@ const Index = ({ error = null }) => {
                                             {item.name}
                                         </p>
                                     </div>
-                                    <div className="text-orange-400 lg:w-3/12 md:w-1/2 w-full px-4">
+
+                                    <div className="text-neutral lg:w-3/12 md:w-1/2 w-full px-4">
                                         <h1 className="sm:text-2xl text-md font-bold">
                                             Unit price
                                         </h1>
@@ -221,8 +220,9 @@ const Index = ({ error = null }) => {
                                             )}
                                         </p>
                                     </div>
+
                                     <div className="sm:flex justify-between items-center lg:w-3/12 md:w-1/2 w-full">
-                                        <div className="flex justify-between items-center mx-3">
+                                        <div className="flex justify-between items-center mx-3 my-2">
                                             <button
                                                 className="btn px-2"
                                                 disabled={sendingRequest}
@@ -265,7 +265,7 @@ const Index = ({ error = null }) => {
                                                 />
                                             </button>
                                         </div>
-                                        <p className="text-red-600 font-bold text-xl text-center">
+                                        <p className="text-primary font-bold text-xl sm:text-center px-4">
                                             <span className="text-xs">đ</span>
                                             {Intl.NumberFormat().format(
                                                 quantities[item.id] * item.price
@@ -273,6 +273,7 @@ const Index = ({ error = null }) => {
                                         </p>
                                     </div>
                                 </div>
+
                                 <div className="lg:w-1/5 w-full flex sm:justify-end justify-center">
                                     <button
                                         className="btn btn-outline btn-primary my-4"

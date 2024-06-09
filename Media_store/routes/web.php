@@ -14,15 +14,30 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/add-to-cart/{product}', [ProductController::class, 'addToCart'])->name('product.addToCart');
-    Route::get('/remove-from-cart/{product}', [ProductController::class, 'removeFromCart'])->name('product.removeFromCart');
-    Route::get('/product-change-quantity/{product}', [ProductController::class, 'changeQuantity'])->name('product.changeQuantity');
+    Route::get('/add-to-cart/{product}', [CartController::class, 'addToCart'])->name('cart.addToCart');
+    Route::get('/remove-from-cart/{product}', [CartController::class, 'removeFromCart'])->name('cart.removeFromCart');
+    Route::get('/product-change-quantity/{product}', [CartController::class, 'updateCart'])->name('cart.changeQuantity');
+
     Route::get('/products/manage', [ProductController::class, 'manage'])->name('products.manage');
     Route::get('/orders/manage', [OrderController::class, 'manage'])->name('orders.manage');
 
+    Route::put('/order/{order}/reject', [OrderController::class, 'reject'])->name('order.reject');
+    Route::put('/order/{order}/confirm', [OrderController::class, 'confirm'])->name('order.confirm');
+
     Route::resource('cart', CartController::class)->only(['index', 'store', 'destroy']);
-    Route::resource('order', OrderController::class)->only(['index', 'show', 'store', 'update']);
-    Route::resource('products', ProductController::class);
+    Route::resource('order', OrderController::class)->except(['destroy']);
+    Route::resource('products', ProductController::class)->except(['update', 'destroy', 'edit']);
+
+    Route::middleware('restrict_product_updation')->group(function () {
+        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])
+            ->name('products.edit');
+        Route::put('/products/{product}/update', [ProductController::class, 'update'])
+            ->name('products.update');
+    });
+
+    Route::delete('/products/{product}/delete', [ProductController::class, 'destroy'])
+        ->middleware('restrict_product_deletion')
+        ->name('products.destroy');
 
     Route::get('/checkout/{order_id}', [PaymentController::class, 'checkout'])->name('checkout');
     Route::get('/vn-pay-bill', [PaymentController::class, 'getBill'])->name('vnPay.getBill');

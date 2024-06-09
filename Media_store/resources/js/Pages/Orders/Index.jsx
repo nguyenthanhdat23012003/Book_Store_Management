@@ -1,13 +1,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faRectangleXmark,
-    faTruck,
-    faCircleQuestion,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTruck, faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "@/Components/Pagination";
 import { Head, usePage, Link } from "@inertiajs/react";
 import React, { useEffect } from "react";
+import OrderDetails from "./OrderDetails";
 
 const index = ({ orders, message = "", success = false }) => {
     console.log(orders);
@@ -34,7 +31,7 @@ const index = ({ orders, message = "", success = false }) => {
                             <li>
                                 <Link
                                     href={route("products.index")}
-                                    className="font-semibold text-lg text-gray-800 dark:text-gray-200 leading-tight"
+                                    className="font-semibold text-lg hover:text-primary text-gray-800 dark:text-gray-200 leading-tight"
                                 >
                                     Media store
                                 </Link>
@@ -42,7 +39,7 @@ const index = ({ orders, message = "", success = false }) => {
                             <li>
                                 <Link
                                     href={route("order.index")}
-                                    className="font-semibold text-lg text-gray-800 dark:text-gray-200 leading-tight"
+                                    className="font-semibold text-lg hover:text-primary text-gray-800 dark:text-gray-200 leading-tight"
                                 >
                                     Order history
                                 </Link>
@@ -57,11 +54,6 @@ const index = ({ orders, message = "", success = false }) => {
                                 }`}
                             >
                                 <span>{message}</span>
-                                <FontAwesomeIcon
-                                    icon={faRectangleXmark}
-                                    className="w-24 hover:opacity-75 cursor-pointer text-error"
-                                    onClick={() => setAlert(false)}
-                                />
                             </div>
                         </div>
                     )}
@@ -82,19 +74,19 @@ const index = ({ orders, message = "", success = false }) => {
                             orders.data.map((item, index) => (
                                 <div
                                     key={index}
-                                    className="flex flex-col flex-1 px-4 py-2 rounded bg-fuchsia-50 shadow-lg border border-gray"
+                                    className="flex flex-col flex-1 px-4 py-2 rounded bg-base-100 shadow-lg border border-gray"
                                 >
                                     <div className="flex gap-4 justify-end items-center border-b py-2 mb-2 border-amber-600">
                                         <h3 className="text-success uppercase flex gap-2 items-center">
                                             <FontAwesomeIcon icon={faTruck} />
-                                            <span>{item.delivery.status}</span>
+                                            <span>{item.delivery?.status}</span>
                                             <span
                                                 className="tooltip tooltip-bottom"
                                                 data-tip={
-                                                    item.delivery.created_at
+                                                    item.delivery?.created_at
                                                         ? "Delivered at " +
                                                           item.delivery
-                                                              .created_at
+                                                              ?.created_at
                                                         : "No new update"
                                                 }
                                             >
@@ -115,8 +107,8 @@ const index = ({ orders, message = "", success = false }) => {
                                                     key={index}
                                                     className="flex justify-between items-center h-full sm:px-4"
                                                 >
-                                                    <div className="md:w-2/3 w-full flex flex-wrap items-start">
-                                                        <div className="md:w-1/4 sm:w-1/3 w-full sm:h-32 p-1">
+                                                    <div className="md:w-2/3 w-full flex flex-wrap items-start sm:justify-start justify-center">
+                                                        <div className="md:w-1/4 sm:w-1/3 w-1/2 sm:h-32 p-1 border rounded border-primary">
                                                             <img
                                                                 src={
                                                                     productItem
@@ -189,13 +181,18 @@ const index = ({ orders, message = "", success = false }) => {
                                                     Rate
                                                 </button>
                                             )}
-                                            {["completed", "failed"].includes(
-                                                item.status
-                                            ) ? (
+                                            {[
+                                                "completed",
+                                                "failed",
+                                                "rejected",
+                                                "cancelled",
+                                            ].includes(item.status) && (
                                                 <button className="btn btn-outline btn-primary my-4 min-w-[100px]">
                                                     Buy again
                                                 </button>
-                                            ) : (
+                                            )}
+                                            {item.delivery?.status ===
+                                                "completed" && (
                                                 <button className="btn btn-outline btn-primary my-4 min-w-[100px]">
                                                     Confirm received
                                                 </button>

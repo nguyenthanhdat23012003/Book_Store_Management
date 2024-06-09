@@ -30,7 +30,7 @@ export default function Timeline({ completeSteps }) {
             <li>
                 <hr />
                 <div
-                    className={`timeline-start timeline-box ${
+                    className={`sm:timeline-start timeline-end timeline-box ${
                         completeSteps >= 2 && "bg-primary text-white"
                     }`}
                 >
@@ -84,7 +84,7 @@ export default function Timeline({ completeSteps }) {
             <li>
                 <hr />
                 <div
-                    className={`timeline-start timeline-box ${
+                    className={`sm:timeline-start timeline-end timeline-box ${
                         completeSteps >= 4 && "bg-primary text-white"
                     }`}
                 >

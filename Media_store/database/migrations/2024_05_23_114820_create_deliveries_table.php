@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('email');
             $table->string('phone');
+            $table->enum('type', ['rush', 'normal']);
             $table->string('province');
             $table->string('address');
             $table->enum('status', ['pending', 'in progress', 'completed', 'rejected'])->default('in progress');

@@ -16,7 +16,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            \App\Repositories\Product\ProductRepositoryInterface::class,
+            \App\Repositories\Product\ProductEloquentRepository::class,
+            \App\Repositories\Order\OrderEloquentRepository::class,
+            \App\Repositories\Order\OrderRepositoryInterface::class,
+
+        );
     }
 
     /**
@@ -26,5 +32,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Product::class, ProductPolicy::class);
         Gate::policy(Order::class, OrderPolicy::class);
+        Product::observe(\App\Observers\ProductObserver::class);
+        Order::observe(\App\Observers\OrderObserver::class);
     }
 }

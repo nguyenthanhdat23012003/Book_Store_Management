@@ -16,9 +16,8 @@ return new class extends Migration
             $table->integer('shipping_fee')->default(0);
             $table->integer('free_ship_discount')->default(0);
             $table->integer('total_price')->default(0);
-            $table->enum('status', ['pending', 'unpaid', 'paid', 'failed', 'completed', 'cancelled'])->default('pending');
-            $table->enum('delivery_type', ['normal', 'rush'])->default('normal');
-            $table->timestamp('cancel_at')->nullable();
+            $table->enum('status', ['pending', 'unpaid', 'confirmed', 'paid', 'failed', 'completed', 'cancelled', 'rejected'])->default('pending');
+            $table->timestamp('cancelled_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->string('session_id')->nullable();
             $table->timestamps();

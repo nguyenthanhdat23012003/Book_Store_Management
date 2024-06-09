@@ -33,7 +33,7 @@ const Dashboard = () => {
                                     </NavLink>
                                 </div>
 
-                                {user && user.role != "customer" ? (
+                                {user && user.role !== "customer" ? (
                                     <>
                                         <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                             <NavLink
@@ -47,9 +47,9 @@ const Dashboard = () => {
                                         </div>
                                         <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                             <NavLink
-                                                href={route("order.index")}
+                                                href={route("orders.manage")}
                                                 active={route().current(
-                                                    "order.index"
+                                                    "orders.manage"
                                                 )}
                                             >
                                                 Manage orders
@@ -186,7 +186,7 @@ const Dashboard = () => {
                     </div>
                 </nav>
 
-                <div className="h-screen overflow-auto">
+                <div className="h-screen overflow-auto no-scrollbar">
                     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             <div className="diff sm:aspect-[16/9] aspect-[3/4] rounded-box mb-6 shadow-xl shadow-base-200">

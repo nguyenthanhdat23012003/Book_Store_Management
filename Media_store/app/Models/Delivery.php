@@ -11,15 +11,7 @@ class Delivery extends Model
 
     protected $table = 'deliveries';
 
-    protected $fillable = [
-        'order_id',
-        'phone',
-        'address',
-        'province',
-        'status',
-        'completed_at',
-        'rejected_at'
-    ];
+    protected $guarded = [];
 
     public $timestamps = false;
 

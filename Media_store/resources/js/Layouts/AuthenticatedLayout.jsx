@@ -216,7 +216,7 @@ export default function Authenticated({ user, header, children }) {
                 </header>
             )}
 
-            <div className="h-screen overflow-auto">
+            <div className="h-screen overflow-auto no-scrollbar">
                 <div className="min-h-screen">{children}</div>
                 <footer className="footer footer-center bg-base-100 p-10 text-base-content rounded">
                     <nav className="grid grid-flow-col gap-4">
