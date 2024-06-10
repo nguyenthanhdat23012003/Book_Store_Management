@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Symfony\Component\Intl\Languages;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class DVDResource extends JsonResource
 {
@@ -21,22 +22,22 @@ class DVDResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'director' => $this->director,
             'disc_type' => $this->disc_type,
-            // 'language' => Languages::getName($this->language),
-            'language' => $this->language,
+            'director' => $this->director,
             'runtime' => $this->runtime,
             'studio' => $this->studio,
+            'language' => $this->language,
+            'release_date' => $this->release_date->format('d/m/Y'),
             'name' => $product->name,
             'type' => $product->type,
             'description' => $product->description,
-            'image_path' => $product->image_path,
-            'price' => number_format($product->price),
+            'image_path' => Storage::url($product->image_path),
+            'price' => $product->price,
             'in_stock' => $product->in_stock,
             'genre' => $product->genre,
             'weight' => $product->weight,
-            'created_at' => $product->created_at,
-            'updated_at' => $product->updated_at,
+            'created_at' => $product->created_at->format('i:H d/m/Y'),
+            'updated_at' => $product->updated_at->format('i:H d/m/Y'),
         ];
     }
 }

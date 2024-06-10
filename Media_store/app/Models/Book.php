@@ -15,6 +15,11 @@ class Book extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'authors' => 'array',
+        'publication_date' => 'datetime',
+    ];
+
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -15,6 +15,14 @@ class CD extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'artists' => 'array',
+        'albums' => 'array',
+        'record_label' => 'array',
+        'track_list' => 'array',
+        'release_date' => 'datetime',
+    ];
+
     public function product()
     {
         return $this->belongsTo(Product::class);

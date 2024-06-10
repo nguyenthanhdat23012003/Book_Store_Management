@@ -2,12 +2,14 @@
 
 namespace App\Repositories\Order;
 
-use App\Http\Resources\OrderResource;
 use Inertia\Inertia;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\Paginator;
+use App\Http\Resources\OrderResource;
 use App\Repositories\EloquentRepository;
-use App\Repositories\Order\OrderRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Repositories\Order\OrderRepositoryInterface;
 
 class OrderEloquentRepository extends EloquentRepository implements OrderRepositoryInterface
 {
@@ -39,7 +41,7 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
         ]);
 
         $sortField = request('sort_field', 'id');
-        $sortDirection = request('sort_dir', 'asc');
+        $sortDirection = request('sort_dir', 'desc');
 
         if (request('name')) {
             $query->whereHas('user', function ($q) {
@@ -78,8 +80,6 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
         return Inertia::render('Orders/Manage', [
             'orders' => $paginatedOrders,
             'queryParams' => request()->query() ?: null,
-            'alert' => session('success') ?? session('fail'),
-            'success' => session('success') ? true : false
         ]);
     }
 
@@ -89,15 +89,32 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
      */
     public function confirmOrder($order)
     {
+
+        $outOfStock = $order->productsAreAvailable();
+        if (!empty($outOfStock)) {
+            return response()->json(['status' => 'fail', 'message' => 'Some products are out of stock']);
+        }
+        // dd($outOfStock);
         // Disable events temporarily and update the order
         $this->_model::withoutEvents(
             function () use ($order) {
                 $order->status = 'confirmed';
-                $order->delivery->status = 'in progress';
-                $order->delivery->save();
                 $order->save();
             }
         );
+
+        // Disable events temporarily and update the stock of products
+        Product::withoutEvents(
+            function () use ($order) {
+                foreach ($order->order_items as $item) {
+                    $item->product->update([
+                        'in_stock' => $item->product->in_stock - $item->quantity
+                    ]);
+                };
+            }
+        );
+
+        return response()->json(['status' => 'success', 'message' => 'You have comfirmed order from ' . $order->user->name]);
     }
 
     /**
@@ -111,7 +128,6 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
         // Disable events temporarily and update the order
         $this->_model::withoutEvents(
             function () use ($order) {
-
                 $order->status = 'rejected';
                 $reason = request('reason');
                 switch ($reason) {
@@ -132,5 +148,48 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
                 $order->save();
             }
         );
+
+        return response()->json(['status' => 'success', 'message' => 'You have rejected order from ' . $order->user->name]);
+    }
+
+    /**
+     * Place order again
+     * @var Order $order
+     */
+    public function buyAgain($order)
+    {
+        // dd($order);
+        if ($order->status !== 'completed') {
+            return to_route('order.edit', $order);
+        } else {
+            $cart = auth()->user()->cart;
+            foreach ($order->order_items as $item) {
+                $cart->cart_items()->updateOrCreate(
+                    ['product_id' => $item->product_id],
+                    ['quantity' => DB::raw("quantity + {$item->quantity}")]
+                );
+            }
+
+            return to_route('cart.index');
+        }
+    }
+
+    /**
+     * Confirm receipt of order
+     * @var Order $order
+     */
+    public function confirmReceipt($order)
+    {
+
+        // Disable events temporarily and update the order
+        $this->_model::withoutEvents(
+            function () use ($order) {
+                $order->status = 'completed';
+                $order->completed_at = now();
+                $order->save();
+            }
+        );
+
+        return response()->json(['status' => 'success', 'message' => 'Confirm receipt of order successfully']);
     }
 }

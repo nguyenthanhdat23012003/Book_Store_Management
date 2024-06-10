@@ -7,13 +7,13 @@ import { faCaretUp, faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/Components/Modal";
 import TextInput from "@/Components/TextInput";
 import Select from "@/Components/Select";
-import OrderDetails from "./OrderDetails";
 import InputLabel from "@/Components/InputLabel";
+import DeliveryDetails from "./DeliveryDetails";
 import Toast from "@/Components/Toast";
 
-const Manage = ({ orders, queryParams = null }) => {
+const Manage = ({ deliveries, queryParams = null }) => {
     const [showModal, setShowModal] = React.useState(false);
-    const [orderdetail, setOrderDetail] = React.useState(null);
+    const [deliverydetail, setdeliveryDetail] = React.useState(null);
     const [reason, setReason] = React.useState("");
 
     const [messages, setMessages] = React.useState([]);
@@ -27,17 +27,6 @@ const Manage = ({ orders, queryParams = null }) => {
         return () => clearInterval(timer);
     }, [messages]);
 
-    const orderStatus = {
-        pending: "bg-warning",
-        unpaid: "bg-primary",
-        confirmed: "bg-info",
-        paid: "bg-info",
-        failed: "bg-error",
-        completed: "bg-success",
-        cancelled: "bg-error",
-        rejected: "bg-error",
-    };
-
     queryParams = queryParams || { sort_field: "id", sort_dir: "desc" };
 
     const searchFieldChanged = (name, value) => {
@@ -47,7 +36,7 @@ const Manage = ({ orders, queryParams = null }) => {
             delete queryParams[name];
         }
 
-        router.get(route("orders.manage"), queryParams);
+        router.get(route("deliveries.manage"), queryParams);
     };
 
     const sort = (name) => {
@@ -59,7 +48,7 @@ const Manage = ({ orders, queryParams = null }) => {
             queryParams.sort_dir = "asc";
         }
 
-        router.get(route("orders.manage"), queryParams);
+        router.get(route("deliveries.manage"), queryParams);
     };
 
     const onKeyPress = (name, e) => {
@@ -67,8 +56,15 @@ const Manage = ({ orders, queryParams = null }) => {
         searchFieldChanged(name, e.target.value);
     };
 
-    const rejectOrder = (order) => {
-        axios.post(route("order.reject", order.id), { reason }).then((res) => {
+    const deliveriestatus = {
+        pending: "bg-warning",
+        "in progress": "bg-info",
+        completed: "bg-success",
+        rejected: "bg-error",
+    };
+
+    const confirmDelivery = (delivery) => {
+        axios.post(route("delivery.confirm", delivery.id)).then((res) => {
             setMessages([
                 ...messages,
                 {
@@ -83,8 +79,26 @@ const Manage = ({ orders, queryParams = null }) => {
         });
     };
 
-    const confirmOrder = (order) => {
-        axios.post(route("order.confirm", order.id)).then((res) => {
+    const rejectDelivery = (delivery) => {
+        axios
+            .post(route("delivery.reject", delivery.id), { reason })
+            .then((res) => {
+                setMessages([
+                    ...messages,
+                    {
+                        type:
+                            res.data.status === "success"
+                                ? "alert-success"
+                                : "alert-error",
+                        message: res.data.message,
+                    },
+                ]);
+                router.reload();
+            });
+    };
+
+    const completedDelivery = (delivery) => {
+        axios.post(route("delivery.complete", delivery.id)).then((res) => {
             setMessages([
                 ...messages,
                 {
@@ -101,7 +115,7 @@ const Manage = ({ orders, queryParams = null }) => {
 
     return (
         <>
-            <Head title="orders" />
+            <Head title="deliveries" />
 
             <header className="bg-white dark:bg-gray-800 shadow">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -118,10 +132,10 @@ const Manage = ({ orders, queryParams = null }) => {
                                 </li>
                                 <li>
                                     <Link
-                                        href={route("orders.manage")}
+                                        href={route("deliveries.manage")}
                                         className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
                                     >
-                                        Manage orders
+                                        Manage deliveries
                                     </Link>
                                 </li>
                             </ul>
@@ -141,7 +155,7 @@ const Manage = ({ orders, queryParams = null }) => {
                                     <th
                                         scope="col"
                                         className="text-nowrap"
-                                        onClick={(e) => sort("id")}
+                                        onClick={() => sort("id")}
                                     >
                                         <div className="flex items-center justify-between gap-2 cursor-pointer">
                                             ID
@@ -173,40 +187,20 @@ const Manage = ({ orders, queryParams = null }) => {
                                         </div>
                                     </th>
 
-                                    <th scope="col" className="text-nowrap">
-                                        User
-                                    </th>
-
-                                    <th scope="col" className="text-nowrap">
-                                        Total price
-                                    </th>
-
-                                    <th scope="col" className="text-nowrap">
-                                        Status
-                                    </th>
-
-                                    <th scope="col" className="text-nowrap">
-                                        Payment method
-                                    </th>
-
-                                    <th scope="col" className="text-nowrap">
-                                        Delivery type
-                                    </th>
-
                                     <th
                                         scope="col"
                                         className="text-nowrap"
-                                        onClick={(e) => sort("created_at")}
+                                        onClick={() => sort("delivery_id")}
                                     >
                                         <div className="flex items-center justify-between gap-2 cursor-pointer">
-                                            Created at
+                                            Order ID
                                             <div className="flex flex-col">
                                                 <FontAwesomeIcon
                                                     icon={faCaretUp}
                                                     className={
                                                         "-mb-1 " +
                                                         (queryParams.sort_field ===
-                                                            "created_at" &&
+                                                            "delivery_id" &&
                                                         queryParams.sort_dir ===
                                                             "desc"
                                                             ? "text-gray-300"
@@ -217,7 +211,54 @@ const Manage = ({ orders, queryParams = null }) => {
                                                     icon={faCaretDown}
                                                     className={
                                                         queryParams.sort_field ===
-                                                            "created_at" &&
+                                                            "delivery_id" &&
+                                                        queryParams.sort_dir ===
+                                                            "asc"
+                                                            ? "text-gray-300"
+                                                            : ""
+                                                    }
+                                                />
+                                            </div>
+                                        </div>
+                                    </th>
+
+                                    <th scope="col" className="text-nowrap">
+                                        Customer name
+                                    </th>
+
+                                    <th scope="col" className="text-nowrap">
+                                        Status
+                                    </th>
+
+                                    <th scope="col" className="text-nowrap">
+                                        Delivery type
+                                    </th>
+
+                                    <th
+                                        scope="col"
+                                        className="text-nowrap"
+                                        onClick={() => sort("rejected_at")}
+                                    >
+                                        <div className="flex items-center justify-between gap-2 cursor-pointer">
+                                            rejected at
+                                            <div className="flex flex-col">
+                                                <FontAwesomeIcon
+                                                    icon={faCaretUp}
+                                                    className={
+                                                        "-mb-1 " +
+                                                        (queryParams.sort_field ===
+                                                            "rejected_at" &&
+                                                        queryParams.sort_dir ===
+                                                            "desc"
+                                                            ? "text-gray-300"
+                                                            : "")
+                                                    }
+                                                />
+                                                <FontAwesomeIcon
+                                                    icon={faCaretDown}
+                                                    className={
+                                                        queryParams.sort_field ===
+                                                            "rejected_at" &&
                                                         queryParams.sort_dir ===
                                                             "asc"
                                                             ? "text-gray-300"
@@ -272,6 +313,7 @@ const Manage = ({ orders, queryParams = null }) => {
                             <thead>
                                 <tr>
                                     <th scope="col"></th>
+                                    <th scope="col"></th>
                                     <th scope="col">
                                         <TextInput
                                             className="w-full min-w-32"
@@ -288,7 +330,6 @@ const Manage = ({ orders, queryParams = null }) => {
                                             defaultValue={queryParams.name}
                                         />
                                     </th>
-                                    <th scope="col"></th>
                                     <th scope="col">
                                         <Select
                                             onChange={(e) =>
@@ -301,50 +342,31 @@ const Manage = ({ orders, queryParams = null }) => {
                                             defaultValue={queryParams.status}
                                         >
                                             <option value="all">All</option>
-                                            {Object.keys(orderStatus).map(
-                                                (status, index) => (
-                                                    <option
-                                                        key={index}
-                                                        value={status}
-                                                    >
-                                                        {status}
-                                                    </option>
-                                                )
-                                            )}
-                                        </Select>
-                                    </th>
-                                    <th scope="col">
-                                        <Select
-                                            className="w-full min-w-32"
-                                            onChange={(e) =>
-                                                searchFieldChanged(
-                                                    "payment_method",
-                                                    e.target.value
-                                                )
-                                            }
-                                            defaultValue={
-                                                queryParams.payment_method
-                                            }
-                                        >
-                                            <option value="all">All</option>
-                                            <option value="cod">COD</option>
-                                            <option value="vnpay">
-                                                VN Pay
+                                            <option value="pending">
+                                                Pending
+                                            </option>
+                                            <option value="in progress">
+                                                In Progress
+                                            </option>
+                                            <option value="completed">
+                                                Completed
+                                            </option>
+                                            <option value="rejected">
+                                                Rejected
                                             </option>
                                         </Select>
                                     </th>
+
                                     <th scope="col">
                                         <Select
                                             className="w-full min-w-32"
                                             onChange={(e) =>
                                                 searchFieldChanged(
-                                                    "delivery_type",
+                                                    "type",
                                                     e.target.value
                                                 )
                                             }
-                                            defaultValue={
-                                                queryParams.delivery_type
-                                            }
+                                            defaultValue={queryParams.type}
                                         >
                                             <option value="all">All</option>
                                             <option value="rush">
@@ -362,68 +384,56 @@ const Manage = ({ orders, queryParams = null }) => {
                             </thead>
 
                             <tbody>
-                                {orders.data.map((order, index) => (
+                                {deliveries.data.map((delivery, index) => (
                                     <tr
                                         key={index}
                                         className="odd:bg-rose-50 even:bg-base-50 hover:opacity-75"
                                     >
                                         <td scope="col" className="text-nowrap">
-                                            {order.data.id}
+                                            {delivery.data.id}
+                                        </td>
+
+                                        <td scope="col" className="text-nowrap">
+                                            {delivery.data.order?.id}
                                         </td>
                                         <td
                                             scope="col"
                                             className="oberflow-hidden"
                                         >
-                                            <Link
-                                                href={route(
-                                                    "order.show",
-                                                    order.data.id
-                                                )}
-                                                className="hover:underline hover:text-primary cursor-pointer"
-                                            >
-                                                {order.data.user_name}
-                                            </Link>
-                                        </td>
-                                        <td scope="col" className="text-nowrap">
-                                            {Intl.NumberFormat().format(
-                                                order.data.total_price
-                                            ) + " vnd"}
+                                            {delivery.data.name}
                                         </td>
                                         <td scope="col">
                                             <span
                                                 className={`text-nowrap uppercase px-4 py-2 rounded-lg font-semibold text-white ${
-                                                    orderStatus[
-                                                        order.data.status
+                                                    deliveriestatus[
+                                                        delivery.data.status
                                                     ]
                                                 }`}
                                             >
-                                                {order.data.status}
+                                                {delivery.data.status}
                                             </span>
                                         </td>
                                         <td
                                             scope="col"
                                             className="text-nowrap uppercase"
                                         >
-                                            {order.data.payment_method}
+                                            {delivery.data.type}
                                         </td>
-                                        <td
-                                            scope="col"
-                                            className="text-nowrap uppercase"
-                                        >
-                                            {order.data.delivery_type}
+
+                                        <td scope="col" className="text-nowrap">
+                                            {delivery.data.rejected_at}
                                         </td>
                                         <td scope="col" className="text-nowrap">
-                                            {order.data.created_at}
-                                        </td>
-                                        <td scope="col" className="text-nowrap">
-                                            {order.data.completed_at}
+                                            {delivery.data.completed_at}
                                         </td>
                                         <td scope="col" className="text-nowrap">
                                             <button
-                                                className="btn btn-outline btn-info rounded-2xl"
-                                                onClick={(e) => {
+                                                className="btn btn-outline rounded-2xl btn-info"
+                                                onClick={() => {
                                                     setShowModal(true);
-                                                    setOrderDetail(order.data);
+                                                    setdeliveryDetail(
+                                                        delivery.data
+                                                    );
                                                 }}
                                             >
                                                 Detail
@@ -434,18 +444,16 @@ const Manage = ({ orders, queryParams = null }) => {
                             </tbody>
                         </table>
 
-                        <Pagination links={orders.links} />
+                        <Pagination links={deliveries.links} />
                     </div>
                 </div>
             </div>
 
-            <Modal show={showModal} onClose={() => setShowModal(false)}>
-                <div className="py-8">
-                    <h3 className="mb-5 text-center text-lg">
-                        {`Order form "${orderdetail?.user_name}"`}
-                    </h3>
-                    <OrderDetails order={orderdetail} />
-                    {orderdetail?.status === "pending" && (
+            <Modal show={showModal} onClose={(e) => setShowModal(false)}>
+                <div className="py-8 w-96 sm:w-auto">
+                    <DeliveryDetails delivery={deliverydetail} />
+
+                    {deliverydetail?.status === "pending" && (
                         <div className="flex justify-center items-center mb-4">
                             <div>
                                 <InputLabel
@@ -463,12 +471,6 @@ const Manage = ({ orders, queryParams = null }) => {
                                     <option value="undeliveried">
                                         Delivery does not support
                                     </option>
-                                    <option value="out_of_stock">
-                                        Out of stock
-                                    </option>
-                                    <option value="item_not_found">
-                                        Can find item in stock
-                                    </option>
                                     <option value="other">Other...</option>
                                 </Select>
                             </div>
@@ -476,31 +478,43 @@ const Manage = ({ orders, queryParams = null }) => {
                     )}
 
                     <div className="flex justify-end gap-4 mx-4">
-                        {orderdetail?.status === "pending" && (
+                        {deliverydetail?.status === "pending" && (
                             <>
                                 <button
-                                    className="btn btn-outline btn-success rounded-2xl"
+                                    className="btn btn-outline rounded-2xl btn-success"
                                     onClick={() => {
                                         setShowModal(false);
                                         setReason("");
-                                        confirmOrder(orderdetail);
+                                        confirmDelivery(deliverydetail);
                                     }}
                                 >
                                     Confirm
                                 </button>
 
                                 <button
-                                    className="btn btn-outline btn-error rounded-2xl"
+                                    className="btn btn-outline rounded-2xl btn-error"
                                     onClick={() => {
                                         setShowModal(false);
                                         setReason("");
-                                        rejectOrder(orderdetail);
+                                        rejectDelivery(deliverydetail);
                                     }}
                                     disabled={reason === ""}
                                 >
                                     Reject
                                 </button>
                             </>
+                        )}
+
+                        {deliverydetail?.status === "in progress" && (
+                            <button
+                                className="btn btn-outline rounded-2xl btn-success"
+                                onClick={() => {
+                                    setShowModal(false);
+                                    completedDelivery(deliverydetail);
+                                }}
+                            >
+                                Complete
+                            </button>
                         )}
 
                         <button

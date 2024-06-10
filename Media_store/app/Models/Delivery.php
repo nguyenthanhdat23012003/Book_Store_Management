@@ -13,6 +13,11 @@ class Delivery extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'completed_at' => 'datetime',
+        'rejected_at' => 'datetime',
+    ];
+
     public $timestamps = false;
 
     public function order()

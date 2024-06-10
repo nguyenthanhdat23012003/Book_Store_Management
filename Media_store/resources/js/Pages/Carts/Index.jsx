@@ -7,25 +7,14 @@ import {
     faMinus,
     faPlus,
     faCircleExclamation,
-    faRectangleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
+import Toast from "@/Components/Toast";
 
-const Index = ({ error = null }) => {
+const Index = () => {
     const page = usePage();
     const cart_items = page.props.cart.data;
-
-    const [alert, setAlert] = React.useState(false);
-
-    useEffect(() => {
-        if (error) {
-            setAlert(true);
-            setTimeout(() => {
-                setAlert(false);
-            }, 3000);
-        }
-    }, [page]);
 
     const [selectedProducts, setSelectedProducts] = React.useState([]);
     const [selectAll, setSelectAll] = useState(false);
@@ -43,8 +32,33 @@ const Index = ({ error = null }) => {
         return items;
     };
 
+    const [messages, setMessages] = React.useState([]);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setMessages((currentMessages) => currentMessages.slice(1));
+        }, 5000);
+
+        // Cleanup the interval on component unmount
+        return () => clearInterval(timer);
+    }, []);
+
     const checkout = () => {
-        router.post(route("order.store"), { products: getSelectedProducts() });
+        axios
+            .post(route("order.store"), { products: getSelectedProducts() })
+            .then((res) => {
+                console.log(res.data);
+                if (res.data.status === "error") {
+                    let outOfStockProducts = [];
+                    res.data.products.forEach((item) => {
+                        outOfStockProducts.push({
+                            message: `"${item.name}" is out of stock. Avalable: ${item.available}.`,
+                            type: "alert-error",
+                        });
+                    });
+                    setMessages([...messages, ...outOfStockProducts]);
+                }
+            });
     };
 
     // remove items from cart
@@ -124,7 +138,7 @@ const Index = ({ error = null }) => {
 
     return (
         <>
-            <Head title="Product" />
+            <Head title="Cart" />
 
             <header className="bg-white dark:bg-gray-800 shadow">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -148,20 +162,11 @@ const Index = ({ error = null }) => {
                             </li>
                         </ul>
                     </div>
-                    {alert && (
-                        <div className="toast toast-top toast-center">
-                            <div className="alert alert-error">
-                                <span>{error}</span>
-                                <FontAwesomeIcon
-                                    icon={faRectangleXmark}
-                                    className="w-24 hover:opacity-75 cursor-pointer text-error"
-                                    onClick={() => setAlert(false)}
-                                />
-                            </div>
-                        </div>
-                    )}
                 </div>
             </header>
+
+            <Toast messages={messages} />
+
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12 mb-12">
                 <div className="flex flex-col gap-5 flex-1 p-4 text-gray-900 dark:text-gray-100">
                     {cart_items.length === 0 && (
@@ -276,7 +281,7 @@ const Index = ({ error = null }) => {
 
                                 <div className="lg:w-1/5 w-full flex sm:justify-end justify-center">
                                     <button
-                                        className="btn btn-outline btn-primary my-4"
+                                        className="btn btn-outline rounded-2xl btn-primary my-4"
                                         onClick={() => {
                                             setRemoveProductID(item.id);
                                             setOpenModal(true);
@@ -298,11 +303,11 @@ const Index = ({ error = null }) => {
                         icon={faCircleExclamation}
                     />
                     <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                        Are you sure you want to delete this product?
+                        Are you sure you want to remove this product?
                     </h3>
                     <div className="flex justify-center gap-4">
                         <button
-                            className="btn btn-success"
+                            className="btn btn-success rounded-2xl text-white text-lg"
                             onClick={() => {
                                 setOpenModal(false);
                                 removeItems();
@@ -311,7 +316,7 @@ const Index = ({ error = null }) => {
                             Confirm
                         </button>
                         <button
-                            className="btn btn-error"
+                            className="btn btn-error rounded-2xl text-white text-lg"
                             onClick={() => setOpenModal(false)}
                         >
                             Cancel
@@ -320,7 +325,7 @@ const Index = ({ error = null }) => {
                 </div>
             </Modal>
 
-            <div className="fixed right-0 left-0 bottom-0 bg-rose-200 px-4 py-4 shadow">
+            <div className="fixed right-0 left-0 bottom-0 bg-white px-4 py-4 shadow-[0_-5px_40px_2px_rgba(0,0,0,0.2)]">
                 <div className="max-w-3xl mx-auto flex justify-between items-center">
                     <div className="flex gap-2 items-center">
                         <TextInput
@@ -349,7 +354,7 @@ const Index = ({ error = null }) => {
                             </span>
                         </div>
                         <button
-                            className="btn btn-primary text-slate-200 text-lg"
+                            className="btn btn-primary text-white text-lg"
                             onClick={checkout}
                             disabled={getSelectedProducts().length === 0}
                         >

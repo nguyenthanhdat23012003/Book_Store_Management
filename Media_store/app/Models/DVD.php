@@ -13,6 +13,10 @@ class DVD extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'release_date' => 'datetime',
+    ];
+
     public $timestamps = false;
 
     public function product()

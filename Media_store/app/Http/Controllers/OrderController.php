@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreOrderRequest;
 use Inertia\Inertia;
 use App\Models\Order;
-use App\Repositories\Order\OrderEloquentRepository;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
+use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\StoreOrderRequest;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Repositories\Order\OrderEloquentRepository;
 
 class OrderController extends Controller
 {
@@ -34,19 +37,20 @@ class OrderController extends Controller
             ->latest()
             ->paginate(12);
 
-        foreach ($orders as $order) {
-            $order->order_items->transform(function ($item) {
-                if ($item->product) { // Check if product is not null
-                    $item->product->image_path = Storage::url($item->product->image_path);
-                }
-                return $item;
-            });
-        }
+        $transformedOrders = OrderResource::collection($orders);
+
+        $paginatedOrders = new LengthAwarePaginator(
+            $transformedOrders,
+            $orders->total(),
+            $orders->perPage(),
+            $orders->currentPage(),
+            ['path' => Paginator::resolveCurrentPath()]
+        );
 
         return Inertia::render('Orders/Index', [
-            'orders' => $orders,
-            'message' => session('success') ?? session('error'),
-            'success' => session('success') ? true : false,
+            'orders' => $paginatedOrders,
+            'alert' => session('success') ?? session('fail'),
+            'success' => session('success') ? true : false
         ]);
     }
 
@@ -55,14 +59,27 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the number of items in stock
         $items = collect($request->products);
         $total_price = 0;
+
+        // Validate the number of items in stock
+        $outOfStockProducts = [];
         foreach ($items as $item) {
             if ($item['in_stock'] < $item['quantity']) {
-                return redirect()->back()->with('error', 'Not enough stock for ' . $item['name']);
+                $outOfStockProducts[] = [
+                    'name' => $item['name'],
+                    'available' => $item['in_stock'],
+                ];
             }
-            $total_price += $item['price'] * $item['quantity'];
+            $total_price += (int) $item['price'] * (int) $item['quantity'];
+        }
+
+        if (!empty($outOfStockProducts)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The following products are out of stock',
+                'products' => $outOfStockProducts,
+            ]);
         }
 
         // calculate the total price of the order
@@ -148,5 +165,15 @@ class OrderController extends Controller
     public function reject(Order $order)
     {
         return $this->orderRepository->rejectOrder($order);
+    }
+
+    public function buyAgain(Order $order)
+    {
+        return $this->orderRepository->buyAgain($order);
+    }
+
+    public function confirmReceipt(Order $order)
+    {
+        return $this->orderRepository->confirmReceipt($order);
     }
 }

@@ -906,7 +906,7 @@ const Create = () => {
 
                                 <div className="flex items-center justify-end gap-2 col-span-2">
                                     <button
-                                        className="btn btn-outline btn-success"
+                                        className="btn btn-outline rounded-2xl btn-success"
                                         type="submit"
                                         disabled={processing}
                                     >
@@ -914,7 +914,7 @@ const Create = () => {
                                     </button>
                                     <Link
                                         href={route("products.manage")}
-                                        className="btn btn-outline btn-warning"
+                                        className="btn btn-outline rounded-2xl btn-warning"
                                     >
                                         Cancel
                                     </Link>

@@ -92,7 +92,7 @@ const Edit = ({ product, alert, success }) => {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 flex flex-wrap justify-center">
-                            <div className="md:w-1/3 w-full max-w-3xl self-center mb-4">
+                            <div className="lg:w-1/3 w-full max-w-3xl self-center mb-4">
                                 <div className="flex items-center justify-center">
                                     <img
                                         src={img}
@@ -103,7 +103,7 @@ const Edit = ({ product, alert, success }) => {
                             </div>
 
                             <form
-                                className="grid grid-cols-2 gap-6 md:w-2/3 w-full max-w-3xl"
+                                className="md:grid md:grid-cols-2 flex flex-col gap-6 lg:w-2/3 w-full max-w-3xl"
                                 onSubmit={onSubmit}
                             >
                                 <div>
@@ -152,7 +152,7 @@ const Edit = ({ product, alert, success }) => {
                                     <InputError message={errors.image} />
                                 </div>
 
-                                <div className="col-span-2">
+                                <div className="lg:col-span-2">
                                     <div className="mb-2 block">
                                         <InputLabel
                                             htmlFor="description"
@@ -273,7 +273,7 @@ const Edit = ({ product, alert, success }) => {
 
                                 <div className="flex items-center justify-end gap-2 col-span-2">
                                     <button
-                                        className="btn btn-outline btn-success"
+                                        className="btn btn-outline rounded-2xl btn-success"
                                         type="submit"
                                         disabled={processing}
                                     >
@@ -281,7 +281,7 @@ const Edit = ({ product, alert, success }) => {
                                     </button>
                                     <Link
                                         href={route("products.manage")}
-                                        className="btn btn-outline btn-warning"
+                                        className="btn btn-outline rounded-2xl btn-warning"
                                     >
                                         Cancel
                                     </Link>

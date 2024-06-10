@@ -13,6 +13,10 @@ class Payment_detail extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'paid_at' => 'datetime',
+    ];
+
     public $timestamps = false;
 
     public function order()

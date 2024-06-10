@@ -7,14 +7,41 @@ import {
     faCaretDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { Head, Link, router } from "@inertiajs/react";
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "@/Components/Modal";
 import TextInput from "@/Components/TextInput";
 import Select from "@/Components/Select";
+import Toast from "@/Components/Toast";
 
-const Manage = ({ products, queryParams = null, alert, success }) => {
+const Manage = ({
+    products,
+    queryParams = null,
+    alert = null,
+    success = false,
+}) => {
     const [showModal, setShowModal] = React.useState(false);
     const [productID, setProductID] = React.useState(null);
+
+    const [messages, setMessages] = React.useState(
+        alert
+            ? [
+                  {
+                      message: alert,
+                      type: success ? "alert-success" : "alert-error",
+                  },
+              ]
+            : []
+    );
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setMessages((messages) => messages.slice(1));
+        }, 3000);
+
+        // Cleanup the interval on component unmount
+        return () => clearInterval(timer);
+    }, []);
+
     queryParams = queryParams || { sort_field: "id", sort_dir: "asc" };
 
     const searchFieldChanged = (name, value) => {
@@ -77,7 +104,7 @@ const Manage = ({ products, queryParams = null, alert, success }) => {
                         </div>
                         <Link
                             href={route("products.create")}
-                            className="btn btn-outline btn-success"
+                            className="btn btn-outline rounded-2xl btn-success -mb-4"
                         >
                             Add new
                         </Link>
@@ -85,18 +112,9 @@ const Manage = ({ products, queryParams = null, alert, success }) => {
                 </div>
             </header>
 
-            {alert && (
-                <div className="toast toast-top toast-center">
-                    <div
-                        className={`alert ${
-                            success ? "alert-success" : "alert-error"
-                        }`}
-                    >
-                        <span>{alert}</span>
-                    </div>
-                </div>
-            )}
-            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12">
+            <Toast messages={messages} />
+
+            <div className="md:mx-12 md:px-4 lg:px-8 py-12">
                 <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg overflow-x-auto">
                     <div className="p-6 text-gray-900 dark:text-gray-100">
                         <table className="table table-pin-rows">
@@ -176,8 +194,39 @@ const Manage = ({ products, queryParams = null, alert, success }) => {
                                             </div>
                                         </div>
                                     </th>
-                                    <th scope="col" className="text-nowrap">
-                                        In stock
+                                    <th
+                                        scope="col"
+                                        className="text-nowrap"
+                                        onClick={(e) => sort("in_stock")}
+                                    >
+                                        <div className="flex items-center justify-between gap-2 cursor-pointer">
+                                            In stock
+                                            <div className="flex flex-col">
+                                                <FontAwesomeIcon
+                                                    icon={faCaretUp}
+                                                    className={
+                                                        "-mb-1 " +
+                                                        (queryParams.sort_field ===
+                                                            "in_stock" &&
+                                                        queryParams.sort_dir ===
+                                                            "desc"
+                                                            ? "text-gray-300"
+                                                            : "")
+                                                    }
+                                                />
+                                                <FontAwesomeIcon
+                                                    icon={faCaretDown}
+                                                    className={
+                                                        queryParams.sort_field ===
+                                                            "in_stock" &&
+                                                        queryParams.sort_dir ===
+                                                            "asc"
+                                                            ? "text-gray-300"
+                                                            : ""
+                                                    }
+                                                />
+                                            </div>
+                                        </div>
                                     </th>
                                     <th
                                         scope="col"
@@ -218,6 +267,7 @@ const Manage = ({ products, queryParams = null, alert, success }) => {
                                     </th>
                                 </tr>
                             </thead>
+
                             <thead>
                                 <tr>
                                     <th scope="col"></th>
@@ -262,6 +312,7 @@ const Manage = ({ products, queryParams = null, alert, success }) => {
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 {products.data.map((product, index) => (
                                     <tr
@@ -271,19 +322,18 @@ const Manage = ({ products, queryParams = null, alert, success }) => {
                                         <td scope="col" className="text-nowrap">
                                             {product.id}
                                         </td>
-                                        <td
-                                            scope="col"
-                                            className="oberflow-hidden"
-                                        >
-                                            <Link
-                                                href={route(
-                                                    "products.show",
-                                                    product.id
-                                                )}
-                                                className="hover:underline hover:text-primary cursor-pointer"
-                                            >
-                                                {product.name}
-                                            </Link>
+                                        <td scope="col">
+                                            <div className="max-w-60 overflow-hidden text-ellipsis">
+                                                <Link
+                                                    href={route(
+                                                        "products.show",
+                                                        product.id
+                                                    )}
+                                                    className="text-nowrap hover:underline hover:text-primary cursor-pointer"
+                                                >
+                                                    {product.name}
+                                                </Link>
+                                            </div>
                                         </td>
                                         <td scope="col" className="text-nowrap">
                                             {product.type}
@@ -294,7 +344,14 @@ const Manage = ({ products, queryParams = null, alert, success }) => {
                                             ) + " vnd"}
                                         </td>
                                         <td scope="col" className="text-nowrap">
-                                            {product.in_stock}
+                                            <span
+                                                className={`${
+                                                    product.in_stock == 0 &&
+                                                    "text-error"
+                                                }`}
+                                            >
+                                                {product.in_stock}
+                                            </span>
                                         </td>
                                         <td scope="col" className="text-nowrap">
                                             {product.created_at}
@@ -340,7 +397,7 @@ const Manage = ({ products, queryParams = null, alert, success }) => {
                     </h3>
                     <div className="flex justify-center gap-4">
                         <button
-                            className="btn btn-outline btn-success"
+                            className="btn btn-outline rounded-2xl btn-success"
                             onClick={() => {
                                 setShowModal(false);
                                 confirmDeleteProduct();
@@ -350,7 +407,7 @@ const Manage = ({ products, queryParams = null, alert, success }) => {
                         </button>
 
                         <button
-                            className="btn btn-outline btn-error"
+                            className="btn btn-outline rounded-2xl btn-error"
                             onClick={() => setShowModal(false)}
                         >
                             Cancel

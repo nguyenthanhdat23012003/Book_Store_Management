@@ -2,23 +2,50 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruck, faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "@/Components/Pagination";
-import { Head, usePage, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import React, { useEffect } from "react";
-import OrderDetails from "./OrderDetails";
+import Toast from "@/Components/Toast";
 
-const index = ({ orders, message = "", success = false }) => {
-    console.log(orders);
-    const page = usePage();
-    const [alert, setAlert] = React.useState(false);
+const index = ({ orders, alert = null, success = false }) => {
+    const [messages, setMessages] = React.useState(
+        alert
+            ? [
+                  {
+                      message: alert,
+                      type: success ? "alert-success" : "alert-error",
+                  },
+              ]
+            : []
+    );
 
     useEffect(() => {
-        if (message) {
-            setAlert(true);
-            setTimeout(() => {
-                setAlert(false);
-            }, 3000);
-        }
-    }, [page]);
+        const timer = setInterval(() => {
+            setMessages((currentMessages) => currentMessages.slice(1));
+        }, 3000);
+
+        // Cleanup the interval on component unmount
+        return () => clearInterval(timer);
+    }, [messages]);
+
+    const buyAgain = (order) => {
+        router.post(route("order.buyAgain", order.id));
+    };
+
+    const confirmReceipt = (order) => {
+        axios.post(route("order.confirmReceipt", order.id)).then((res) => {
+            setMessages([
+                ...messages,
+                {
+                    type:
+                        res.data.status === "success"
+                            ? "alert-success"
+                            : "alert-error",
+                    message: res.data.message,
+                },
+            ]);
+            router.reload();
+        });
+    };
 
     return (
         <>
@@ -46,19 +73,10 @@ const index = ({ orders, message = "", success = false }) => {
                             </li>
                         </ul>
                     </div>
-                    {alert && (
-                        <div className="toast toast-top toast-center">
-                            <div
-                                className={`alert ${
-                                    success ? "alert-success" : "alert-error"
-                                }`}
-                            >
-                                <span>{message}</span>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </header>
+
+            <Toast messages={messages} />
 
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12 mb-12">
                 <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
@@ -79,13 +97,16 @@ const index = ({ orders, message = "", success = false }) => {
                                     <div className="flex gap-4 justify-end items-center border-b py-2 mb-2 border-amber-600">
                                         <h3 className="text-success uppercase flex gap-2 items-center">
                                             <FontAwesomeIcon icon={faTruck} />
-                                            <span>{item.delivery?.status}</span>
+                                            <span>
+                                                {item.data.delivery?.status}
+                                            </span>
                                             <span
                                                 className="tooltip tooltip-bottom"
                                                 data-tip={
-                                                    item.delivery?.created_at
+                                                    item.data.delivery
+                                                        ?.created_at
                                                         ? "Delivered at " +
-                                                          item.delivery
+                                                          item.data.delivery
                                                               ?.created_at
                                                         : "No new update"
                                                 }
@@ -96,12 +117,12 @@ const index = ({ orders, message = "", success = false }) => {
                                             </span>
                                         </h3>
                                         <h3 className="text-orange-500 uppercase border-l border-orange-300 px-3">
-                                            {item.status}
+                                            {item.data.status}
                                         </h3>
                                     </div>
 
                                     <div className="flex flex-col gap-2">
-                                        {item.order_items.map(
+                                        {item.data.order_items.map(
                                             (productItem, index) => (
                                                 <div
                                                     key={index}
@@ -166,18 +187,27 @@ const index = ({ orders, message = "", success = false }) => {
                                             <h1 className="sm:text-lg text-md font-bold text-slate-600">
                                                 Total:
                                             </h1>
-                                            <p className="sm:py-3 py-1 text-2xl font-semibold text-red-600">
+                                            <p className="sm:py-3 lg:w-1/12 sm:w-1/6 py-1 text-right text-2xl font-semibold text-primary">
                                                 <span className="text-xs">
                                                     đ
                                                 </span>
                                                 {Intl.NumberFormat().format(
-                                                    item.total_price
+                                                    item.data.total_price
                                                 )}
                                             </p>
                                         </div>
+                                        <div className="flex sm:justify-end justify-between items-center gap-3 px-4">
+                                            <h1 className="sm:text-lg text-md font-bold text-slate-600">
+                                                Payment method:
+                                            </h1>
+                                            <p className="sm:py-3 lg:w-1/12 sm:w-1/6 py-1 text-right text-2xl uppercase font-semibold text-info">
+                                                {item.data.payment_method}
+                                            </p>
+                                        </div>
                                         <div className="flex sm:justify-end justify-center gap-3">
-                                            {item.status === "completed" && (
-                                                <button className="btn btn-outline btn-primary my-4 min-w-[100px]">
+                                            {item.data.status ===
+                                                "completed" && (
+                                                <button className="btn btn-outline rounded-2xl btn-primary my-4 min-w-[100px]">
                                                     Rate
                                                 </button>
                                             )}
@@ -186,19 +216,33 @@ const index = ({ orders, message = "", success = false }) => {
                                                 "failed",
                                                 "rejected",
                                                 "cancelled",
-                                            ].includes(item.status) && (
-                                                <button className="btn btn-outline btn-primary my-4 min-w-[100px]">
+                                            ].includes(item.data.status) && (
+                                                <button
+                                                    onClick={() =>
+                                                        buyAgain(item.data)
+                                                    }
+                                                    className="btn btn-outline rounded-2xl btn-primary my-4 min-w-[100px]"
+                                                >
                                                     Buy again
                                                 </button>
                                             )}
-                                            {item.delivery?.status ===
-                                                "completed" && (
-                                                <button className="btn btn-outline btn-primary my-4 min-w-[100px]">
-                                                    Confirm received
-                                                </button>
-                                            )}
+                                            {item.data.delivery?.status ===
+                                                "completed" &&
+                                                item.data.status !==
+                                                    "completed" && (
+                                                    <button
+                                                        onClick={() =>
+                                                            confirmReceipt(
+                                                                item.data
+                                                            )
+                                                        }
+                                                        className="btn btn-outline rounded-2xl btn-primary my-4 min-w-[100px]"
+                                                    >
+                                                        Confirm receipt
+                                                    </button>
+                                                )}
 
-                                            <button className="btn btn-outline btn-primary my-4 min-w-[100px]">
+                                            <button className="btn btn-outline rounded-2xl btn-primary my-4 min-w-[100px]">
                                                 Contact us
                                             </button>
                                         </div>

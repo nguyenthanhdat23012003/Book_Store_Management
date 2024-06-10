@@ -15,8 +15,10 @@ class OrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $items = $this->order_items->transform(function ($item) {
-            $item->product->image_path = Storage::url($item->product->image_path);
+        $this->order_items->transform(function ($item) {
+            if (!str_contains($item->product->image_path, "/storage/")) {
+                $item->product->image_path = Storage::url($item->product->image_path);
+            }
             return $item;
         });
         return [
@@ -27,7 +29,7 @@ class OrderResource extends JsonResource
             'payment_method' => $this->payment ? $this->payment->method : null,
             'delivery_type' => $this->delivery ? $this->delivery->type : null,
             'created_at' => $this->created_at->format('Y-m-d'),
-            'completed_at' => $this->completed_at ? $this->completed_at->format('Y-m-d') : '',
+            'completed_at' => $this->completed_at ? $this->completed_at->format('Y-m-d') : null,
             'order_items' => $this->order_items,
             'delivery' => $this->delivery,
         ];

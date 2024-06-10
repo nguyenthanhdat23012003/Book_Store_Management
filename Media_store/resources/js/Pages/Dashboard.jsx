@@ -55,6 +55,30 @@ const Dashboard = () => {
                                                 Manage orders
                                             </NavLink>
                                         </div>
+                                        <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                            <NavLink
+                                                href={route(
+                                                    "deliveries.manage"
+                                                )}
+                                                active={route().current(
+                                                    "deliveries.manage"
+                                                )}
+                                            >
+                                                Manage deliveries
+                                            </NavLink>
+                                        </div>
+                                        {user.role === "admin" && (
+                                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                                <NavLink
+                                                    href={route("users.manage")}
+                                                    active={route().current(
+                                                        "users.manage"
+                                                    )}
+                                                >
+                                                    Manage users
+                                                </NavLink>
+                                            </div>
+                                        )}
                                     </>
                                 ) : (
                                     <>
@@ -192,7 +216,7 @@ const Dashboard = () => {
                             <div className="diff sm:aspect-[16/9] aspect-[3/4] rounded-box mb-6 shadow-xl shadow-base-200">
                                 <div className="diff-item-1">
                                     <div className="bg-primary text-center text-emerald-900 text-9xl font-black grid place-content-center">
-                                        DAICY
+                                        D@ICY
                                         <div className="hero py-12">
                                             <p className="text-3xl text-white">
                                                 Welcome to Media Store
@@ -203,7 +227,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="diff-item-2">
                                     <div className="bg-base-200 text-center text-neutral text-9xl font-black grid place-content-center">
-                                        DAICY
+                                        D@ICY
                                         <div className="hero py-12">
                                             <p className="text-3xl text-primary-content">
                                                 Welcome to Media Store

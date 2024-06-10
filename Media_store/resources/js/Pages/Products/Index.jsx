@@ -20,22 +20,32 @@ const index = ({ products }) => {
 
         // Cleanup the interval on component unmount
         return () => clearInterval(timer);
-    }, []);
+    }, [messages]);
 
     const addToCart = (product) => {
         axios
-            .get(route("cart.addToCart", product.id))
+            .post(route("cart.addToCart", product.id))
             .then((response) => {
                 if (response.data === "new") {
                     setNbItemInCart(nbItemInCart + 1);
                     setMessages([
                         ...messages,
-                        "Add this " + product.type + " to cart successfully",
+                        {
+                            message:
+                                "This " +
+                                product.type +
+                                " has been added to cart",
+                            type: "alert-info",
+                        },
                     ]);
                 } else {
                     setMessages([
                         ...messages,
-                        "This " + product.type + " already in cart",
+                        {
+                            message:
+                                "This " + product.type + " already in cart",
+                            type: "alert-info",
+                        },
                     ]);
                 }
             })
@@ -74,7 +84,7 @@ const index = ({ products }) => {
                         </div>
                         <Link
                             href={route("cart.index")}
-                            className="indicator btn btn-outline btn-error"
+                            className="indicator btn btn-outline rounded-2xl btn-error -mb-4"
                         >
                             <span className="indicator-item badge badge-primary">
                                 {nbItemInCart}
@@ -102,17 +112,24 @@ const index = ({ products }) => {
                                     key={index}
                                     className="xl:w-1/4 lg:w-1/3 md:w-1/2 w-full p-4 hover:p-2 hover:opacity-80 hover:border-primary hover:border-2 transition duration-500 ease-in-out"
                                 >
-                                    <div className="card indicator w-full bg-base-100 shadow-xl">
-                                        <figure className="h-80 m-4 ">
-                                            <span className="indicator-item badge badge-primary text-white">
-                                                new
-                                            </span>
-                                            <img
-                                                className="object-cover object-center"
-                                                src={product.image_path}
-                                                alt="Oop! Something went wrong!"
-                                            />
-                                        </figure>
+                                    <div className="card rounded-lg indicator w-full bg-base-100 shadow-xl">
+                                        <Link
+                                            href={route(
+                                                "products.show",
+                                                product.id
+                                            )}
+                                        >
+                                            <figure className="h-80 m-2">
+                                                <span className="indicator-item badge badge-primary text-white">
+                                                    new
+                                                </span>
+                                                <img
+                                                    className="object-cover object-center"
+                                                    src={product.image_path}
+                                                    alt="Oop! Something went wrong!"
+                                                />
+                                            </figure>
+                                        </Link>
                                         <div className="card-body">
                                             <h2 className="card-title uppercase">
                                                 {product.type}
@@ -129,7 +146,7 @@ const index = ({ products }) => {
                                             </div>
                                             <div className="card-actions justify-end">
                                                 <button
-                                                    className="btn btn-outline btn-error"
+                                                    className="btn btn-outline rounded-2xl btn-error"
                                                     onClick={() =>
                                                         addToCart(product)
                                                     }

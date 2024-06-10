@@ -9,16 +9,18 @@ import InputError from "@/Components/InputError";
 
 const edit = ({ order }) => {
     const { data, setData, put, errors } = useForm({
-        name: order.delivery?.name || "Nguyen Huu Dat",
-        email: order.delivery?.email || "dat@gmail.com",
+        name: order.delivery?.name || "John Doe",
+        email: order.delivery?.email || "john@email.com",
         phone: order.delivery?.phone || "0981237343",
         province: order.delivery?.province || "Ha Noi",
-        address: order.delivery?.address || "Address 1",
+        address:
+            order.delivery?.address ||
+            "Line 30 Cau Giay street, Tay Ho district",
         delivery_type: order.delivery?.type || "normal",
         shipping_fee: order.shipping_fee || 0,
         free_ship_discount: order.free_ship_discount || 0,
         total_price: order.total_price || 0,
-        payment_method: "vnpay",
+        payment_method: "cod",
     });
 
     let totalWeight = 0;
@@ -50,23 +52,6 @@ const edit = ({ order }) => {
             free_ship_discount: discount,
             total_price: order.total_price + free_ship - discount,
         });
-    };
-
-    useEffect(() => {
-        calTotalPrice();
-        if (data.delivery_type === "rush") {
-            setProvinces(["Ha Noi", "Ho Chi Minh City"]);
-            // setData("province", "Ha Noi");
-        } else {
-            setProvinces(listProvinces);
-        }
-
-        return () => {};
-    }, [data.province, data.delivery_type, data.payment_method]);
-
-    const pay = (e) => {
-        e.preventDefault();
-        put(route("order.update", order.id), data);
     };
 
     const listProvinces = [
@@ -136,6 +121,22 @@ const edit = ({ order }) => {
     ];
 
     const [provinces, setProvinces] = useState(listProvinces);
+
+    useEffect(() => {
+        calTotalPrice();
+        if (data.delivery_type === "rush") {
+            setProvinces(["Ha Noi", "Ho Chi Minh City"]);
+        } else {
+            setProvinces(listProvinces);
+        }
+
+        return () => {};
+    }, [data.province, data.delivery_type, data.payment_method]);
+
+    const pay = (e) => {
+        e.preventDefault();
+        put(route("order.update", order.id), data);
+    };
 
     return (
         <>

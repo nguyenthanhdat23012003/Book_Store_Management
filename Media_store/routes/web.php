@@ -3,10 +3,12 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 
 Route::redirect('/', 'dashboard');
 Route::get('/dashboard', function () {
@@ -14,17 +16,18 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/add-to-cart/{product}', [CartController::class, 'addToCart'])->name('cart.addToCart');
+    Route::post('/add-to-cart/{product}', [CartController::class, 'addToCart'])->name('cart.addToCart');
     Route::get('/remove-from-cart/{product}', [CartController::class, 'removeFromCart'])->name('cart.removeFromCart');
     Route::get('/product-change-quantity/{product}', [CartController::class, 'updateCart'])->name('cart.changeQuantity');
 
     Route::get('/products/manage', [ProductController::class, 'manage'])->name('products.manage');
     Route::get('/orders/manage', [OrderController::class, 'manage'])->name('orders.manage');
+    Route::get('/deliveries/manage', [DeliveryController::class, 'manage'])->name('deliveries.manage');
 
-    Route::put('/order/{order}/reject', [OrderController::class, 'reject'])->name('order.reject');
-    Route::put('/order/{order}/confirm', [OrderController::class, 'confirm'])->name('order.confirm');
+    Route::post('/order/{order}/confirm', [OrderController::class, 'confirm'])->name('order.confirm');
+    Route::post('/order/{order}/reject', [OrderController::class, 'reject'])->name('order.reject');
 
-    Route::resource('cart', CartController::class)->only(['index', 'store', 'destroy']);
+    Route::resource('cart', CartController::class)->only(['index', 'store']);
     Route::resource('order', OrderController::class)->except(['destroy']);
     Route::resource('products', ProductController::class)->except(['update', 'destroy', 'edit']);
 
@@ -41,6 +44,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/checkout/{order_id}', [PaymentController::class, 'checkout'])->name('checkout');
     Route::get('/vn-pay-bill', [PaymentController::class, 'getBill'])->name('vnPay.getBill');
+
+    Route::post('/buy-again/{order}', [OrderController::class, 'buyAgain'])->name('order.buyAgain');
+    Route::post('/confirm-receipt/{order}', [OrderController::class, 'confirmReceipt'])->name('order.confirmReceipt');
+
+    Route::post('/delivery/{delivery}/confirm', [DeliveryController::class, 'confirm'])->name('delivery.confirm');
+    Route::post('/delivery/{delivery}/reject', [DeliveryController::class, 'reject'])->name('delivery.reject');
+    Route::post('/delivery/{delivery}/complete', [DeliveryController::class, 'complete'])->name('delivery.complete');
+
+    Route::get('/users', [UserController::class, 'manage'])->name('users.manage');
 });
 
 

@@ -99,25 +99,23 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::findOrfail($id)->with(['book', 'cd', 'dvd']);
-
+        $product = Product::findOrfail($id);
+        // dd($product);
         switch ($product->type) {
             case 'book':
-                return Inertia::render('Products/Show', [
-                    'product' => new BookResource($product),
-                ]);
+                $transformedProduct = new BookResource($product->book);
                 break;
             case 'cd':
-                return Inertia::render('Products/Show', [
-                    'product' => new CDResource($product),
-                ]);
+                $transformedProduct = new CDResource($product->cd);
                 break;
             case 'dvd':
-                return Inertia::render('Products/Show', [
-                    'product' => new DVDResource($product),
-                ]);
+                $transformedProduct = new DVDResource($product->dvd);
                 break;
         }
+
+        return Inertia::render('Products/Show', [
+            'product' => $transformedProduct,
+        ]);
     }
 
     /**

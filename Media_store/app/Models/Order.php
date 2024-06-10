@@ -9,14 +9,13 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'shipping_fee',
-        'free_ship_discount',
-        'total_price',
-        'status',
-        'delivery_type',
-        'cancel_at',
-        'completed_at',
+    protected $table = 'orders';
+
+    protected $guarded = [];
+
+    protected $casts = [
+        'completed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
     ];
 
     public function user()
@@ -37,5 +36,34 @@ class Order extends Model
     public function order_items()
     {
         return $this->hasMany(Order_item::class);
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'order_items')->withPivot('quantity');
+    }
+
+    /**
+     * Check if all products in the order are available in stock.
+     * 
+     * @return array An array containing out-of-stock products.
+     */
+    public function productsAreAvailable()
+    {
+        $outOfStockProducts = [];
+
+        foreach ($this->order_items as $orderItem) {
+            $product = $orderItem->product;
+            if ($product->in_stock < $orderItem->quantity) {
+                $outOfStockProducts[] = [
+                    'product_id' => $product->id,
+                    'product_name' => $product->name,
+                    'requested_quantity' => $orderItem->quantity,
+                    'available_stock' => $product->in_stock,
+                ];
+            }
+        }
+
+        return $outOfStockProducts;
     }
 }

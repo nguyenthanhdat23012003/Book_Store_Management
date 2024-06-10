@@ -25,4 +25,16 @@ interface OrderRepositoryInterface
      * @var Order $order
      */
     public function rejectOrder(Order $order);
+
+    /**
+     * Place order again
+     * @var Order $order
+     */
+    public function buyAgain(Order $order);
+
+    /**
+     * Confirm receipt of order
+     * @var Order $order
+     */
+    public function confirmReceipt(Order $order);
 }

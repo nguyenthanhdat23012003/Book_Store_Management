@@ -75,7 +75,28 @@ export default function Authenticated({ user, header, children }) {
                                             Manage orders
                                         </NavLink>
                                     </div>
+                                    <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                        <NavLink
+                                            href={route("deliveries.manage")}
+                                            active={route().current(
+                                                "deliveries.manage"
+                                            )}
+                                        >
+                                            Manage deliveries
+                                        </NavLink>
+                                    </div>
                                 </>
+                            )}
+
+                            {user.role === "admin" && (
+                                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                    <NavLink
+                                        href={route("users.manage")}
+                                        active={route().current("users.manage")}
+                                    >
+                                        Manage users
+                                    </NavLink>
+                                </div>
                             )}
                         </div>
 

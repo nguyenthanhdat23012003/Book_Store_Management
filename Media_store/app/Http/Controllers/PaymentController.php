@@ -107,7 +107,7 @@ class PaymentController extends Controller
                     ]);
                 }
             );
-            return to_route('order.index')->with('error', 'Payment failed');
+            return to_route('order.index')->with('fail', 'Payment failed');
         }
     }
 }
