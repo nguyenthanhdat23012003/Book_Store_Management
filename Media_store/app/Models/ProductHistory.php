@@ -13,6 +13,11 @@ class ProductHistory extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'details' => 'object',
+        'done_at' => 'datetime'
+    ];
+
     public $timestamps = false;
 
     public function product()

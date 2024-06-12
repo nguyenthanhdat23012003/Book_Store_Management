@@ -23,7 +23,7 @@ class BookFactory extends Factory
         }
 
         return [
-            'authors' => json_encode($authors),
+            'authors' => $authors,
             'cover_type' => fake()->randomElement(['hardcover', 'paperback']),
             'publisher' => fake()->company(),
             'pages' => fake()->numberBetween(100, 1000),

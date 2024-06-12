@@ -3,12 +3,13 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\ProductHistoryController;
 
 Route::redirect('/', 'dashboard');
 Route::get('/dashboard', function () {
@@ -16,10 +17,12 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // routing for cart
     Route::post('/add-to-cart/{product}', [CartController::class, 'addToCart'])->name('cart.addToCart');
-    Route::get('/remove-from-cart/{product}', [CartController::class, 'removeFromCart'])->name('cart.removeFromCart');
+    Route::post('/remove-from-cart/{product}', [CartController::class, 'removeFromCart'])->name('cart.removeFromCart');
     Route::get('/product-change-quantity/{product}', [CartController::class, 'updateCart'])->name('cart.changeQuantity');
 
+    // routing for manage products, orders, deliveries
     Route::get('/products/manage', [ProductController::class, 'manage'])->name('products.manage');
     Route::get('/orders/manage', [OrderController::class, 'manage'])->name('orders.manage');
     Route::get('/deliveries/manage', [DeliveryController::class, 'manage'])->name('deliveries.manage');
@@ -27,6 +30,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/order/{order}/confirm', [OrderController::class, 'confirm'])->name('order.confirm');
     Route::post('/order/{order}/reject', [OrderController::class, 'reject'])->name('order.reject');
 
+    Route::post('/buy-again/{order}', [OrderController::class, 'buyAgain'])->name('order.buyAgain');
+    Route::post('/confirm-receipt/{order}', [OrderController::class, 'confirmReceipt'])->name('order.confirmReceipt');
+
+    Route::get('/products-history', [ProductHistoryController::class, 'index'])->name('products.history');
+
+    // routing for resource 
     Route::resource('cart', CartController::class)->only(['index', 'store']);
     Route::resource('order', OrderController::class)->except(['destroy']);
     Route::resource('products', ProductController::class)->except(['update', 'destroy', 'edit']);
@@ -42,17 +51,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('restrict_product_deletion')
         ->name('products.destroy');
 
+    Route::post('/restore-product/{product}', [ProductController::class, 'restore'])->name('products.restore');
+
     Route::get('/checkout/{order_id}', [PaymentController::class, 'checkout'])->name('checkout');
     Route::get('/vn-pay-bill', [PaymentController::class, 'getBill'])->name('vnPay.getBill');
 
-    Route::post('/buy-again/{order}', [OrderController::class, 'buyAgain'])->name('order.buyAgain');
-    Route::post('/confirm-receipt/{order}', [OrderController::class, 'confirmReceipt'])->name('order.confirmReceipt');
-
+    // routing for delivery
     Route::post('/delivery/{delivery}/confirm', [DeliveryController::class, 'confirm'])->name('delivery.confirm');
     Route::post('/delivery/{delivery}/reject', [DeliveryController::class, 'reject'])->name('delivery.reject');
     Route::post('/delivery/{delivery}/complete', [DeliveryController::class, 'complete'])->name('delivery.complete');
 
-    Route::get('/users', [UserController::class, 'manage'])->name('users.manage');
+    // routing for admin actions
+    Route::middleware('admin')->group(function () {
+        Route::get('/users', [UserController::class, 'manage'])->name('users.manage');
+        Route::post('/users/{user}/change-role', [UserController::class, 'changeRole'])->name('users.changeRole');
+        Route::post('/users/{user}/change-active', [UserController::class, 'block'])->name('users.changeActive');
+    });
 });
 
 

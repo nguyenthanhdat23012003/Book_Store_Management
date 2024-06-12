@@ -32,11 +32,11 @@ class CDFactory extends Factory
 
 
         return [
-            'collections' => fake()->word(),
-            'albums' => json_encode(fake()->sentences(random_int(3, 5))),
-            'artists' => json_encode(fake()->words(random_int(1, 3))),
-            'record_label' => json_encode($tracks),
-            'track_list' => json_encode($track_list),
+            'collections' => fake()->realText(20),
+            'albums' => fake()->sentences(random_int(3, 5)),
+            'artists' => fake()->words(random_int(1, 3)),
+            'record_label' => $tracks,
+            'track_list' => $track_list,
             'release_date' => fake()->date(),
         ];
     }

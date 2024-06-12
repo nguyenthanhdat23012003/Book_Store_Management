@@ -10,11 +10,13 @@ import {
     faCircleExclamation,
     faCartPlus,
     faCartShopping,
+    faArrowLeftLong,
 } from "@fortawesome/free-solid-svg-icons";
 import NumberInput from "@/Components/NumberInput";
 import Modal from "@/Components/Modal";
 import ProductDetails from "./ProductDetails";
 import Toast from "@/Components/Toast";
+import { Rating } from "@mui/material";
 
 const Show = ({ product }) => {
     const page = usePage();
@@ -32,6 +34,7 @@ const Show = ({ product }) => {
     const [messages, setMessages] = React.useState([]);
 
     useEffect(() => {
+        if (messages.length === 0) return;
         const timer = setInterval(() => {
             setMessages((currentMessages) => currentMessages.slice(1));
         }, 3000);
@@ -42,8 +45,9 @@ const Show = ({ product }) => {
 
     const addToCart = () => {
         axios
-            .post(route("cart.addToCart", product.id), { quantity })
+            .post(route("cart.addToCart", product), { quantity })
             .then((response) => {
+                console.log(response.data);
                 if (response.data === "new") {
                     setNbItemInCart(nbItemInCart + 1);
                     setMessages([
@@ -79,13 +83,21 @@ const Show = ({ product }) => {
         router.post(route("order.store"), { products: [item] });
     };
 
+    const formatNum = (num) => {
+        if (num < 1000) return num;
+        let thousands = num / 1000;
+        let [integerPart, decimalPart] = thousands.toString().split(".");
+
+        return integerPart + "," + decimalPart.slice(0, 1) + "K";
+    };
+
     return (
         <>
             <Head title="Products" />
 
             <header className="bg-white dark:bg-gray-800 shadow">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between">
+                    <div className="sm:flex hidden justify-between">
                         <div className="breadcrumbs">
                             <ul>
                                 <li>
@@ -126,20 +138,30 @@ const Show = ({ product }) => {
                                 </li>
                             </ul>
                         </div>
+                        {user.role === "customer" && (
+                            <Link
+                                href={route("cart.index")}
+                                className="indicator btn btn-outline rounded-2xl btn-error -mb-4"
+                            >
+                                <span className="indicator-item badge badge-primary">
+                                    {nbItemInCart}
+                                </span>
+                                <span className="text-lg">
+                                    <FontAwesomeIcon
+                                        icon={faCartShopping}
+                                        className="w-8"
+                                    />
+                                    View cart
+                                </span>
+                            </Link>
+                        )}
+                    </div>
+                    <div className="sm:hidden block">
                         <Link
-                            href={route("cart.index")}
-                            className="indicator btn btn-outline rounded-2xl btn-error -mb-4"
+                            href={route("products.index")}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 p-4 rounded-full"
                         >
-                            <span className="indicator-item badge badge-primary">
-                                {nbItemInCart}
-                            </span>
-                            <span className="text-lg">
-                                <FontAwesomeIcon
-                                    icon={faCartShopping}
-                                    className="w-8"
-                                />
-                                View cart
-                            </span>
+                            <FontAwesomeIcon icon={faArrowLeftLong} />
                         </Link>
                     </div>
                 </div>
@@ -167,55 +189,34 @@ const Show = ({ product }) => {
                                     </h3>
                                 </div>
                                 <div className="order-2 flex justify-between w-fit">
-                                    <div className="flex items-center border-r-2 px-2">
+                                    <div className="flex items-center sm:border-r-2 border-r px-2">
                                         <span className="text-lg underline text-red-600 mx-2">
-                                            4.8/5
+                                            {product.rating}
                                         </span>
 
-                                        <div className="rating-sm sm:block hidden">
-                                            <input
-                                                type="radio"
-                                                disabled
-                                                name="rating-5"
-                                                className="mask mask-star-2 bg-red-600"
-                                            />
-                                            <input
-                                                type="radio"
-                                                disabled
-                                                name="rating-5"
-                                                className="mask mask-star-2 bg-red-600"
-                                            />
-                                            <input
-                                                type="radio"
-                                                disabled
-                                                name="rating-5"
-                                                className="mask mask-star-2 bg-red-600"
-                                            />
-                                            <input
-                                                type="radio"
-                                                disabled
-                                                name="rating-5"
-                                                className="mask mask-star-2 bg-red-600"
-                                            />
-                                            <input
-                                                type="radio"
-                                                disabled
-                                                name="rating-5"
-                                                className="mask mask-star-2 bg-red-600"
-                                            />
-                                        </div>
+                                        <Rating
+                                            name="read-only"
+                                            value={Math.floor(product.rating)}
+                                            readOnly
+                                        />
                                     </div>
                                     <div className="px-2 sm:flex hidden text-xl items-center gap-2">
-                                        <span className="text-red-600 underline">
-                                            1.2K
+                                        <span className="text-red-600 ">
+                                            {formatNum(
+                                                Math.floor(
+                                                    (product.sold *
+                                                        product.rating) /
+                                                        10
+                                                )
+                                            )}
                                         </span>
                                         <span className="text-gray-600">
                                             Ratings
                                         </span>
                                     </div>
-                                    <div className="px-2 flex text-xl border-l-2 items-center gap-2">
-                                        <span className="text-red-600 underline">
-                                            1.6K
+                                    <div className="px-2 flex text-xl sm:border-l-2 border-l items-center gap-2">
+                                        <span className="text-red-600 ">
+                                            {formatNum(product.sold)}
                                         </span>
                                         <span className="text-gray-600">
                                             Sold

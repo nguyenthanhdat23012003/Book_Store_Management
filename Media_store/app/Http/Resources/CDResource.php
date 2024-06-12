@@ -20,7 +20,7 @@ class CDResource extends JsonResource
         $product = $this->product;
 
         return [
-            'id' => $this->id,
+            'id' => $product->id,
             'collections' => $this->collections,
             'albums' => $this->albums,
             'artists' => $this->artists,
@@ -35,6 +35,8 @@ class CDResource extends JsonResource
             'in_stock' => $product->in_stock,
             'genre' => $product->genre,
             'weight' => $product->weight,
+            'rating' => $product->rating,
+            'sold' => $product->sold,
             'created_at' => $product->created_at->format('i:H d/m/Y'),
             'updated_at' => $product->updated_at->format('i:H d/m/Y'),
         ];

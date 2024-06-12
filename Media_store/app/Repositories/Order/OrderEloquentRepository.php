@@ -30,6 +30,10 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
      */
     public function manageOrders()
     {
+        if (auth()->user()->cannot('viewAny', $this->_model)) {
+            abort(403, 'Unauthorized action.');
+        };
+
         $query = $this->_model::with([
             'order_items' => function ($query) {
                 $query->with(['product' => function ($query) {
@@ -65,20 +69,10 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
             });
         }
 
-        $orders = $query->orderBy($sortField, $sortDirection)->paginate(10);
-
-        $transformedOrders = OrderResource::collection($orders);
-
-        $paginatedOrders = new LengthAwarePaginator(
-            $transformedOrders,
-            $orders->total(),
-            $orders->perPage(),
-            $orders->currentPage(),
-            ['path' => Paginator::resolveCurrentPath()]
-        );
+        $orders = $query->orderBy($sortField, $sortDirection)->paginate(10)->appends(request()->query())->onEachSide(1);
 
         return Inertia::render('Orders/Manage', [
-            'orders' => $paginatedOrders,
+            'orders' => OrderResource::collection($orders),
             'queryParams' => request()->query() ?: null,
         ]);
     }
@@ -89,6 +83,9 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
      */
     public function confirmOrder($order)
     {
+        if (auth()->user()->cannot('viewAny', $this->_model)) {
+            abort(403, 'Unauthorized action.');
+        };
 
         $outOfStock = $order->productsAreAvailable();
         if (!empty($outOfStock)) {
@@ -123,6 +120,10 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
      */
     public function rejectOrder($order)
     {
+        if (auth()->user()->cannot('viewAny', $this->_model)) {
+            abort(403, 'Unauthorized action.');
+        };
+
         $message = null;
 
         // Disable events temporarily and update the order
@@ -180,6 +181,9 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
      */
     public function confirmReceipt($order)
     {
+        if (auth()->user()->cannot('view', $order)) {
+            abort(403, 'Unauthorized action.');
+        };
 
         // Disable events temporarily and update the order
         $this->_model::withoutEvents(

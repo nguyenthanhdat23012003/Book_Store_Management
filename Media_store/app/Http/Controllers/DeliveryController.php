@@ -4,14 +4,12 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Delivery;
-use Illuminate\Http\Request;
 use App\Http\Resources\DeliveryResource;
 use App\Models\Order;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 
 class DeliveryController extends Controller
 {
+
     public function manage()
     {
         $query = Delivery::with('order')->whereHas('order', function ($query) {
@@ -34,20 +32,10 @@ class DeliveryController extends Controller
             $query->where('type', request('type'));
         };
 
-        $deliveries = $query->orderBy($sortField, $sortDirection)->paginate(10);
-
-        $transformedDeliveries = DeliveryResource::collection($deliveries);
-
-        $paginatedDeliveries = new LengthAwarePaginator(
-            $transformedDeliveries,
-            $deliveries->total(),
-            $deliveries->perPage(),
-            $deliveries->currentPage(),
-            ['path' => Paginator::resolveCurrentPath()]
-        );
+        $deliveries = $query->orderBy($sortField, $sortDirection)->paginate(10)->appends(request()->query())->onEachSide(1);
 
         return Inertia::render('Deliveries/Manage', [
-            'deliveries' => $paginatedDeliveries,
+            'deliveries' => DeliveryResource::collection($deliveries),
             'queryParams' => request()->query() ?: null,
         ]);
     }

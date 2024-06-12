@@ -43,6 +43,8 @@ class ProductFactory extends Factory
             'in_stock' => fake()->numberBetween(0, 100),
             'genre' => fake()->randomElement($genre),
             'weight' => fake()->numberBetween(100, 1000),
+            'rating' => fake()->randomFloat(1, 1, 5), // 'rating' => '1.0', 'rating' => '2.0', 'rating' => '3.0', 'rating' => '4.0', 'rating' => '5.0
+            'sold' => fake()->numberBetween(0, 10000),
             'created_at' => fake()->dateTimeBetween('-1 year', '-6 months'),
             'updated_at' => fake()->dateTimeBetween('-6 months', 'now')
         ];

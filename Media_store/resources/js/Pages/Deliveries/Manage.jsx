@@ -19,9 +19,10 @@ const Manage = ({ deliveries, queryParams = null }) => {
     const [messages, setMessages] = React.useState([]);
 
     useEffect(() => {
+        if (messages.length === 0) return;
         const timer = setInterval(() => {
             setMessages((currentMessages) => currentMessages.slice(1));
-        }, 5000);
+        }, 3000);
 
         // Cleanup the interval on component unmount
         return () => clearInterval(timer);
@@ -390,50 +391,48 @@ const Manage = ({ deliveries, queryParams = null }) => {
                                         className="odd:bg-rose-50 even:bg-base-50 hover:opacity-75"
                                     >
                                         <td scope="col" className="text-nowrap">
-                                            {delivery.data.id}
+                                            {delivery.id}
                                         </td>
 
                                         <td scope="col" className="text-nowrap">
-                                            {delivery.data.order?.id}
+                                            {delivery.order?.id}
                                         </td>
                                         <td
                                             scope="col"
                                             className="oberflow-hidden"
                                         >
-                                            {delivery.data.name}
+                                            {delivery.name}
                                         </td>
                                         <td scope="col">
                                             <span
                                                 className={`text-nowrap uppercase px-4 py-2 rounded-lg font-semibold text-white ${
                                                     deliveriestatus[
-                                                        delivery.data.status
+                                                        delivery.status
                                                     ]
                                                 }`}
                                             >
-                                                {delivery.data.status}
+                                                {delivery.status}
                                             </span>
                                         </td>
                                         <td
                                             scope="col"
                                             className="text-nowrap uppercase"
                                         >
-                                            {delivery.data.type}
+                                            {delivery.type}
                                         </td>
 
                                         <td scope="col" className="text-nowrap">
-                                            {delivery.data.rejected_at}
+                                            {delivery.rejected_at}
                                         </td>
                                         <td scope="col" className="text-nowrap">
-                                            {delivery.data.completed_at}
+                                            {delivery.completed_at}
                                         </td>
                                         <td scope="col" className="text-nowrap">
                                             <button
                                                 className="btn btn-outline rounded-2xl btn-info"
                                                 onClick={() => {
                                                     setShowModal(true);
-                                                    setdeliveryDetail(
-                                                        delivery.data
-                                                    );
+                                                    setdeliveryDetail(delivery);
                                                 }}
                                             >
                                                 Detail
@@ -444,7 +443,7 @@ const Manage = ({ deliveries, queryParams = null }) => {
                             </tbody>
                         </table>
 
-                        <Pagination links={deliveries.links} />
+                        <Pagination links={deliveries.meta.links} />
                     </div>
                 </div>
             </div>
@@ -454,7 +453,7 @@ const Manage = ({ deliveries, queryParams = null }) => {
                     <DeliveryDetails delivery={deliverydetail} />
 
                     {deliverydetail?.status === "pending" && (
-                        <div className="flex justify-center items-center mb-4">
+                        <div className="my-4 mx-12">
                             <div>
                                 <InputLabel
                                     htmlFor="reason"
@@ -464,7 +463,7 @@ const Manage = ({ deliveries, queryParams = null }) => {
                                 <Select
                                     id="reason"
                                     defaultValue=""
-                                    className="w-full min-w-40"
+                                    className="w-60"
                                     onChange={(e) => setReason(e.target.value)}
                                 >
                                     <option value="">Select reason...</option>

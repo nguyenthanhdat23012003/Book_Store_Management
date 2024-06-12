@@ -6,6 +6,8 @@ import InputLabel from "@/Components/InputLabel";
 import TextAreaInput from "@/Components/TextAreaInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import Select from "@/Components/Select";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Create = () => {
     const { data, setData, post, processing, errors } = useForm({
@@ -117,7 +119,7 @@ const Create = () => {
 
             <header className="bg-white dark:bg-gray-800 shadow">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between">
+                    <div className="sm:flex hidden justify-between">
                         <div className="breadcrumbs">
                             <ul>
                                 <li>
@@ -146,6 +148,14 @@ const Create = () => {
                                 </li>
                             </ul>
                         </div>
+                    </div>
+                    <div className="sm:hidden block">
+                        <Link
+                            href={route("products.manage")}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 p-4 rounded-full"
+                        >
+                            <FontAwesomeIcon icon={faArrowLeftLong} />
+                        </Link>
                     </div>
                 </div>
             </header>

@@ -12,15 +12,22 @@ import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import Toast from "@/Components/Toast";
 
-const Index = () => {
+const Index = ({ error }) => {
     const page = usePage();
     const cart_items = page.props.cart.data;
+    console.log(cart_items);
 
     const [selectedProducts, setSelectedProducts] = React.useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [removeProductID, setRemoveProductID] = useState(null);
     const [openModal, setOpenModal] = useState(false);
     const [sendingRequest, setSendingRequest] = useState(false);
+
+    if (error) {
+        setTimeout(() => {
+            router.reload();
+        }, 3000);
+    }
 
     const getSelectedProducts = () => {
         let items = cart_items.filter((product) =>
@@ -32,38 +39,13 @@ const Index = () => {
         return items;
     };
 
-    const [messages, setMessages] = React.useState([]);
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setMessages((currentMessages) => currentMessages.slice(1));
-        }, 5000);
-
-        // Cleanup the interval on component unmount
-        return () => clearInterval(timer);
-    }, []);
-
     const checkout = () => {
-        axios
-            .post(route("order.store"), { products: getSelectedProducts() })
-            .then((res) => {
-                console.log(res.data);
-                if (res.data.status === "error") {
-                    let outOfStockProducts = [];
-                    res.data.products.forEach((item) => {
-                        outOfStockProducts.push({
-                            message: `"${item.name}" is out of stock. Avalable: ${item.available}.`,
-                            type: "alert-error",
-                        });
-                    });
-                    setMessages([...messages, ...outOfStockProducts]);
-                }
-            });
+        router.post(route("order.store"), { products: getSelectedProducts() });
     };
 
     // remove items from cart
     const removeItems = () => {
-        router.get(route("cart.removeFromCart", removeProductID));
+        router.post(route("cart.removeFromCart", removeProductID));
     };
 
     // keep track of the quantity of each product
@@ -93,7 +75,6 @@ const Index = () => {
                         ...prevQuantities,
                         [product_id]: quantity,
                     }));
-                    // setSubtotal(calculateTotalPrice());
                 })
                 .catch((error) => {
                     console.error("Error updating quantity:", error);
@@ -117,7 +98,6 @@ const Index = () => {
 
     // handle select all checkbox change
     const handleSelectAllChange = () => {
-        // setSubtotal(calculateTotalPrice());
         setSelectAll(!selectAll);
         if (!selectAll) {
             setSelectedProducts(cart_items.map((product) => product.id));
@@ -165,7 +145,16 @@ const Index = () => {
                 </div>
             </header>
 
-            <Toast messages={messages} />
+            {error && (
+                <Toast
+                    messages={[
+                        {
+                            message: error,
+                            type: "alert-error",
+                        },
+                    ]}
+                />
+            )}
 
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12 mb-12">
                 <div className="flex flex-col gap-5 flex-1 p-4 text-gray-900 dark:text-gray-100">
@@ -180,7 +169,7 @@ const Index = () => {
                         cart_items.map((item) => (
                             <div
                                 key={item.id}
-                                className="flex flex-wrap sm:items-center px-4 py-2 rounded bg-base-100 shadow-lg border border-gray"
+                                className="flex flex-wrap sm:items-center px-4 py-2 rounded bg-pink-50 shadow-lg border border-gray"
                             >
                                 <div className="flex grow lg:w-1/5 md:w-1/3 w-2/5 justify-center items-center h-full sm:px-4">
                                     <div className="sm:px-2">
@@ -195,13 +184,16 @@ const Index = () => {
                                             className="w-5 h-5 checkbox checkbox-primary"
                                         />
                                     </div>
-                                    <div className="m-1 sm:h-40 h-32 w-full flex items-center justify-center">
+                                    <Link
+                                        href={route("products.show", item.id)}
+                                        className="m-1 sm:h-40 h-32 w-full flex items-center justify-center hover:opacity-80"
+                                    >
                                         <img
                                             src={item.image_url}
                                             className="rounded-lg h-full w-full object-contain object-center"
                                             alt={item.type}
                                         />
-                                    </div>
+                                    </Link>
                                 </div>
 
                                 <div className="flex grow flex-wrap lg:w-3/5 md:w-2/3 w-3/5 justify-between items-center">

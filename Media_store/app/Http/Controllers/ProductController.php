@@ -4,19 +4,15 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Product;
-use Illuminate\Http\Request;
-use function Pest\Laravel\json;
 use App\Http\Resources\CDResource;
 use App\Http\Resources\DVDResource;
 use App\Http\Resources\BookResource;
-use Illuminate\Pagination\Paginator;
 use App\Http\Resources\ProductResource;
 
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Repositories\Product\ProductEloquentRepository;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductController extends Controller
 {
@@ -33,21 +29,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::where('in_stock', '>', '0')->paginate(12);
-
-        $transformedProducts = ProductResource::collection($products);
-
-        $paginatedProducts = new LengthAwarePaginator(
-            $transformedProducts,
-            $products->total(),
-            $products->perPage(),
-            $products->currentPage(),
-            ['path' => Paginator::resolveCurrentPath()]
-        );
-
-        return Inertia::render('Products/Index', [
-            'products' => $paginatedProducts,
-        ]);
+        return $this->productRepository->index();
     }
 
     /**
@@ -76,9 +58,9 @@ class ProductController extends Controller
         };
 
         $data = $request->validated();
+        // dd($data);
         $data['image_path'] = $data['image']->store($data['type'] . 's/', 'public');
 
-        // dd($data);
         $product = Product::create([
             'name' => $data['name'],
             'type' => $data['type'],
@@ -100,7 +82,6 @@ class ProductController extends Controller
     public function show(string $id)
     {
         $product = Product::findOrfail($id);
-        // dd($product);
         switch ($product->type) {
             case 'book':
                 $transformedProduct = new BookResource($product->book);
@@ -186,5 +167,15 @@ class ProductController extends Controller
     public function manage()
     {
         return $this->productRepository->manageProducts();
+    }
+
+    public function restore(string $id)
+    {
+        $product = Product::withTrashed()->find($id);
+        $product->restore();
+        $action = $product->productActions()->where('action', 'deleted')->first();
+        $action->delete();
+
+        return to_route('products.history')->with('success', 'Product restored successfully.');
     }
 }

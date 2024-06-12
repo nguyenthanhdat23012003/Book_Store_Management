@@ -31,11 +31,8 @@ const Dashboard = () => {
                                     >
                                         Dashboard
                                     </NavLink>
-                                </div>
-
-                                {user && user.role !== "customer" ? (
-                                    <>
-                                        <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                    {user && user.role !== "customer" ? (
+                                        <>
                                             <NavLink
                                                 href={route("products.manage")}
                                                 active={route().current(
@@ -44,8 +41,6 @@ const Dashboard = () => {
                                             >
                                                 Manage products
                                             </NavLink>
-                                        </div>
-                                        <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                             <NavLink
                                                 href={route("orders.manage")}
                                                 active={route().current(
@@ -54,8 +49,6 @@ const Dashboard = () => {
                                             >
                                                 Manage orders
                                             </NavLink>
-                                        </div>
-                                        <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                             <NavLink
                                                 href={route(
                                                     "deliveries.manage"
@@ -66,9 +59,7 @@ const Dashboard = () => {
                                             >
                                                 Manage deliveries
                                             </NavLink>
-                                        </div>
-                                        {user.role === "admin" && (
-                                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                            {user.role === "admin" && (
                                                 <NavLink
                                                     href={route("users.manage")}
                                                     active={route().current(
@@ -77,12 +68,10 @@ const Dashboard = () => {
                                                 >
                                                     Manage users
                                                 </NavLink>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
                                             <NavLink
                                                 href={route("products.index")}
                                                 active={route().current(
@@ -91,8 +80,6 @@ const Dashboard = () => {
                                             >
                                                 Products
                                             </NavLink>
-                                        </div>
-                                        <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                             <NavLink
                                                 href={route("order.index")}
                                                 active={route().current(
@@ -101,9 +88,9 @@ const Dashboard = () => {
                                             >
                                                 Order history
                                             </NavLink>
-                                        </div>
-                                    </>
-                                )}
+                                        </>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="hidden sm:flex sm:items-center sm:ms-6">
@@ -207,6 +194,104 @@ const Dashboard = () => {
                                 </button>
                             </div>
                         </div>
+                    </div>
+
+                    <div
+                        className={
+                            (showingNavigationDropdown ? "block" : "hidden") +
+                            " sm:hidden"
+                        }
+                    >
+                        <div className="pt-2 pb-3 space-y-1">
+                            <ResponsiveNavLink
+                                href={route("dashboard")}
+                                active={route().current("dashboard")}
+                            >
+                                Dashboard
+                            </ResponsiveNavLink>
+                            {user && user.role !== "customer" ? (
+                                <>
+                                    <ResponsiveNavLink
+                                        href={route("products.manage")}
+                                        active={route().current(
+                                            "products.manage"
+                                        )}
+                                    >
+                                        Manage products
+                                    </ResponsiveNavLink>
+                                    <ResponsiveNavLink
+                                        href={route("orders.manage")}
+                                        active={route().current(
+                                            "orders.manage"
+                                        )}
+                                    >
+                                        Manage orders
+                                    </ResponsiveNavLink>
+                                    <ResponsiveNavLink
+                                        href={route("deliveries.manage")}
+                                        active={route().current(
+                                            "deliveries.manage"
+                                        )}
+                                    >
+                                        Manage deliveries
+                                    </ResponsiveNavLink>
+                                </>
+                            ) : (
+                                <>
+                                    <ResponsiveNavLink
+                                        href={route("products.index")}
+                                        active={route().current(
+                                            "products.index"
+                                        )}
+                                    >
+                                        Products
+                                    </ResponsiveNavLink>
+                                    <ResponsiveNavLink
+                                        href={route("order.index")}
+                                        active={route().current("order.index")}
+                                    >
+                                        Order history
+                                    </ResponsiveNavLink>
+                                </>
+                            )}
+
+                            {user && user.role === "admin" && (
+                                <ResponsiveNavLink
+                                    href={route("users.manage")}
+                                    active={route().current("users.manage")}
+                                >
+                                    Manage users
+                                </ResponsiveNavLink>
+                            )}
+                        </div>
+
+                        {user && (
+                            <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                                <div className="px-4">
+                                    <div className="font-medium text-base text-gray-800 dark:text-gray-200">
+                                        {user.name}
+                                    </div>
+                                    <div className="font-medium text-sm text-gray-500">
+                                        {user.email}
+                                    </div>
+                                </div>
+
+                                <div className="mt-3 space-y-1">
+                                    <ResponsiveNavLink
+                                        href={route("profile.edit")}
+                                    >
+                                        Profile
+                                    </ResponsiveNavLink>
+                                    <ResponsiveNavLink
+                                        method="post"
+                                        href={route("logout")}
+                                        as="button"
+                                    >
+                                        Log Out
+                                    </ResponsiveNavLink>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </nav>
 

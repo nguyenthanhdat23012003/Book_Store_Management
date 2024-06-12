@@ -6,7 +6,7 @@ const NumberInput = ({ min = 1, value, max, onChangevalue = () => {} }) => {
     return (
         <div className="flex justify-between items-center w-32 mx-3 my-2">
             <button
-                className="btn btn-outline border-none btn-primary rounded-none px-2"
+                className="btn btn-outline border-none btn-primary rounded-sm px-2"
                 onClick={() => {
                     onChangevalue(Math.max(min, value - 1));
                 }}
@@ -16,7 +16,7 @@ const NumberInput = ({ min = 1, value, max, onChangevalue = () => {} }) => {
             <input
                 type="number"
                 value={value}
-                min={1}
+                min={min}
                 max={max}
                 className="text-center w-20 py-3 border-none rounded-none"
                 onChange={(e) => {
@@ -24,7 +24,7 @@ const NumberInput = ({ min = 1, value, max, onChangevalue = () => {} }) => {
                 }}
             />
             <button
-                className="btn btn-outline border-none btn-accent rounded-none px-2"
+                className="btn btn-outline border-none btn-accent rounded-sm px-2"
                 onClick={() => {
                     onChangevalue(Math.min(value + 1, max));
                 }}

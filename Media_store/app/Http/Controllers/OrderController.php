@@ -25,30 +25,24 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with([
-            'order_items' => function ($query) {
-                $query->with(['product' => function ($query) {
-                    $query->withTrashed();
-                }]);
-            },
-            'delivery',
-            'payment'
-        ])->where('user_id', auth()->id())
-            ->latest()
-            ->paginate(12);
+        $query = Order::where('user_id', auth()->id())
+            ->with([
+                'order_items' => function ($query) {
+                    $query->with(['product' => function ($query) {
+                        $query->withTrashed();
+                    }]);
+                },
+                'delivery',
+                'payment'
+            ]);
 
-        $transformedOrders = OrderResource::collection($orders);
-
-        $paginatedOrders = new LengthAwarePaginator(
-            $transformedOrders,
-            $orders->total(),
-            $orders->perPage(),
-            $orders->currentPage(),
-            ['path' => Paginator::resolveCurrentPath()]
-        );
+        if (request('field') && request('field') !== 'all') {
+            $query->where('status', request('field'))->orderBy('created_at', 'desc');
+        }
 
         return Inertia::render('Orders/Index', [
-            'orders' => $paginatedOrders,
+            'orders' => OrderResource::collection($query->paginate(6)->appends(request()->query())->onEachSide(1)),
+            'queryParams' => request()->query() ?: null,
             'alert' => session('success') ?? session('fail'),
             'success' => session('success') ? true : false
         ]);
@@ -63,23 +57,11 @@ class OrderController extends Controller
         $total_price = 0;
 
         // Validate the number of items in stock
-        $outOfStockProducts = [];
         foreach ($items as $item) {
             if ($item['in_stock'] < $item['quantity']) {
-                $outOfStockProducts[] = [
-                    'name' => $item['name'],
-                    'available' => $item['in_stock'],
-                ];
+                return back()->with('error', 'The quantity of ' . $item['name'] . ' is not enough. Available: ' . $item['in_stock']);
             }
             $total_price += (int) $item['price'] * (int) $item['quantity'];
-        }
-
-        if (!empty($outOfStockProducts)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'The following products are out of stock',
-                'products' => $outOfStockProducts,
-            ]);
         }
 
         // calculate the total price of the order

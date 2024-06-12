@@ -5,6 +5,7 @@ import {
     faCircleExclamation,
     faCaretUp,
     faCaretDown,
+    faArrowLeftLong,
 } from "@fortawesome/free-solid-svg-icons";
 import { Head, Link, router } from "@inertiajs/react";
 import React, { useEffect } from "react";
@@ -22,25 +23,11 @@ const Manage = ({
     const [showModal, setShowModal] = React.useState(false);
     const [productID, setProductID] = React.useState(null);
 
-    const [messages, setMessages] = React.useState(
-        alert
-            ? [
-                  {
-                      message: alert,
-                      type: success ? "alert-success" : "alert-error",
-                  },
-              ]
-            : []
-    );
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setMessages((messages) => messages.slice(1));
+    if (alert) {
+        setTimeout(() => {
+            router.reload();
         }, 3000);
-
-        // Cleanup the interval on component unmount
-        return () => clearInterval(timer);
-    }, []);
+    }
 
     queryParams = queryParams || { sort_field: "id", sort_dir: "asc" };
 
@@ -82,37 +69,64 @@ const Manage = ({
             <header className="bg-white dark:bg-gray-800 shadow">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between">
-                        <div className="breadcrumbs">
-                            <ul>
-                                <li>
-                                    <Link
-                                        href={route("dashboard")}
-                                        className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
-                                    >
-                                        Media store
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href={route("products.manage")}
-                                        className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
-                                    >
-                                        Manage products
-                                    </Link>
-                                </li>
-                            </ul>
+                        <div className="sm:block hidden">
+                            <div className="breadcrumbs">
+                                <ul>
+                                    <li>
+                                        <Link
+                                            href={route("dashboard")}
+                                            className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
+                                        >
+                                            Media store
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href={route("products.manage")}
+                                            className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
+                                        >
+                                            Manage products
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <Link
-                            href={route("products.create")}
-                            className="btn btn-outline rounded-2xl btn-success -mb-4"
-                        >
-                            Add new
-                        </Link>
+                        <div className="sm:hidden block">
+                            <Link
+                                href={route("dashboard")}
+                                className="hover:bg-gray-100 dark:hover:bg-gray-700 p-4 rounded-full"
+                            >
+                                <FontAwesomeIcon icon={faArrowLeftLong} />
+                            </Link>
+                        </div>
+                        <div className="flex justify-between gap-2 items-center">
+                            <Link
+                                href={route("products.history")}
+                                className="btn btn-outline rounded-2xl btn-success -mb-4"
+                            >
+                                View histories
+                            </Link>
+                            <Link
+                                href={route("products.create")}
+                                className="btn btn-outline rounded-2xl btn-success -mb-4"
+                            >
+                                Add new
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </header>
 
-            <Toast messages={messages} />
+            {alert && (
+                <Toast
+                    messages={[
+                        {
+                            message: alert,
+                            type: success ? "alert-success" : "alert-error",
+                        },
+                    ]}
+                />
+            )}
 
             <div className="md:mx-12 md:px-4 lg:px-8 py-12">
                 <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg overflow-x-auto">
@@ -381,7 +395,7 @@ const Manage = ({
                                 ))}
                             </tbody>
                         </table>
-                        <Pagination links={products.links} />
+                        <Pagination links={products.meta.links} />
                     </div>
                 </div>
             </div>

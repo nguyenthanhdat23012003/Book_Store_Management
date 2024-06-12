@@ -6,6 +6,7 @@ import Timeline from "@/Components/Timeline";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 
 const edit = ({ order }) => {
     const { data, setData, put, errors } = useForm({
@@ -144,7 +145,7 @@ const edit = ({ order }) => {
 
             <header className="bg-white dark:bg-gray-800 shadow">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between">
+                    <div className="sm:flex justify-between hidden">
                         <div className="breadcrumbs">
                             <ul>
                                 <li>
@@ -170,6 +171,14 @@ const edit = ({ order }) => {
                                 </li>
                             </ul>
                         </div>
+                    </div>
+                    <div className="sm:hidden block">
+                        <Link
+                            href={route("cart.index")}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 p-4 rounded-full"
+                        >
+                            <FontAwesomeIcon icon={faArrowLeftLong} />
+                        </Link>
                     </div>
                 </div>
             </header>

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Cart;
 
+use Illuminate\Support\Facades\DB;
 use App\Repositories\EloquentRepository;
 
 class CartEloquentRepository extends EloquentRepository implements CartRepositoryInterface
@@ -23,26 +24,24 @@ class CartEloquentRepository extends EloquentRepository implements CartRepositor
      */
     public function addToCart($request, $product)
     {
-
         $cart = $request->user()->cart ??  $request->user()->cart()->create();
 
         $productID = $product->id;
         $quantity = $request->quantity ?? 1;
 
         // Check if the product is already in the cart
-        $existingItem = $cart->cart_items()->where('product_id', $product->id)->first();
+        $existingItem = $cart->cart_items()->where('product_id', $productID)->first();
+
+        $cart->cart_items()->updateOrCreate(
+            ['product_id' => $productID],
+            [
+                'quantity' => DB::raw("quantity + {$quantity}"),
+            ]
+        );
 
         if ($existingItem) {
-            // If the product already exists in the cart, update the quantity
-            $existingItem->quantity += $quantity;
-            $existingItem->save();
             return response()->json('exist');
         } else {
-            // If the product does not exist, create a new cart item
-            $cart->cart_items()->create([
-                'product_id' => $productID,
-                'quantity' => $quantity,
-            ]);
             return response()->json('new');
         }
     }

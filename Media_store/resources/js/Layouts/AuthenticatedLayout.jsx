@@ -28,11 +28,8 @@ export default function Authenticated({ user, header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
-                            </div>
-
-                            {user.role === "customer" ? (
-                                <>
-                                    <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                {user.role === "customer" ? (
+                                    <>
                                         <NavLink
                                             href={route("products.index")}
                                             active={route().current(
@@ -41,8 +38,6 @@ export default function Authenticated({ user, header, children }) {
                                         >
                                             Products
                                         </NavLink>
-                                    </div>
-                                    <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                         <NavLink
                                             href={route("order.index")}
                                             active={route().current(
@@ -51,11 +46,9 @@ export default function Authenticated({ user, header, children }) {
                                         >
                                             Order history
                                         </NavLink>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                    </>
+                                ) : (
+                                    <>
                                         <NavLink
                                             href={route("products.manage")}
                                             active={route().current(
@@ -64,8 +57,6 @@ export default function Authenticated({ user, header, children }) {
                                         >
                                             Manage products
                                         </NavLink>
-                                    </div>
-                                    <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                         <NavLink
                                             href={route("orders.manage")}
                                             active={route().current(
@@ -74,8 +65,6 @@ export default function Authenticated({ user, header, children }) {
                                         >
                                             Manage orders
                                         </NavLink>
-                                    </div>
-                                    <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                         <NavLink
                                             href={route("deliveries.manage")}
                                             active={route().current(
@@ -84,20 +73,18 @@ export default function Authenticated({ user, header, children }) {
                                         >
                                             Manage deliveries
                                         </NavLink>
-                                    </div>
-                                </>
-                            )}
+                                    </>
+                                )}
 
-                            {user.role === "admin" && (
-                                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                {user.role === "admin" && (
                                     <NavLink
                                         href={route("users.manage")}
                                         active={route().current("users.manage")}
                                     >
                                         Manage users
                                     </NavLink>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
@@ -201,6 +188,54 @@ export default function Authenticated({ user, header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        {user.role === "customer" ? (
+                            <>
+                                <ResponsiveNavLink
+                                    href={route("products.index")}
+                                    active={route().current("products.index")}
+                                >
+                                    Products
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route("order.index")}
+                                    active={route().current("order.index")}
+                                >
+                                    Order history
+                                </ResponsiveNavLink>
+                            </>
+                        ) : (
+                            <>
+                                <ResponsiveNavLink
+                                    href={route("products.manage")}
+                                    active={route().current("products.manage")}
+                                >
+                                    Manage products
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route("orders.manage")}
+                                    active={route().current("orders.manage")}
+                                >
+                                    Manage orders
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route("deliveries.manage")}
+                                    active={route().current(
+                                        "deliveries.manage"
+                                    )}
+                                >
+                                    Manage deliveries
+                                </ResponsiveNavLink>
+                            </>
+                        )}
+
+                        {user.role === "admin" && (
+                            <ResponsiveNavLink
+                                href={route("users.manage")}
+                                active={route().current("users.manage")}
+                            >
+                                Manage users
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">

@@ -7,64 +7,56 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
-    }
+        $data = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'role' => 'required|string|in:manager,customer',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
+        // $rawPass = substr(md5(rand()), 0, 8);
+        $rawPass = '12345678';
+        $data['password'] = bcrypt($rawPass);
+        $data['email_verified_at'] = now();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
+        User::create($data);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
+        return redirect()->back()->with('success', 'User created successfully');
     }
 
     public function manage()
     {
         // 
+    }
+
+    public function changeRole(User $user)
+    {
+        $user->update([
+            'role' => $user->role === 'manager' ? 'customer' : 'manager',
+        ]);
+
+        $message = $user->role === 'manager' ? 'User is now a manager' : 'User is now a customer';
+
+        return response()->json([
+            'message' => $message,
+        ]);
+    }
+
+    public function block(User $user)
+    {
+        $user->update([
+            'blocked_at' => $user->blocked_at ? null : now(),
+        ]);
+
+        $message = $user->blocked_at ? 'Your account has been blocked' : 'Your account has been activated';
+
+        return response()->json([
+            'message' => $message,
+        ]);
     }
 }

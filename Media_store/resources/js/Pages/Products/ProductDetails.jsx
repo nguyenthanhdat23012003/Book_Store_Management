@@ -12,7 +12,16 @@ const ProductDetails = ({ product }) => {
                         <span className="text-nowrap text-gray-600">
                             Authors:
                         </span>
-                        <span className="text-info">{product.authors}</span>
+                        <div className="flex flex-col">
+                            {product.authors.map((author, index) => (
+                                <span
+                                    key={index}
+                                    className="text-neutral underline"
+                                >
+                                    {author + ", "}
+                                </span>
+                            ))}
+                        </div>
                     </div>
                     <div className="sm:grid sm:grid-cols-2 flex justify-between">
                         <span className="text-nowrap text-gray-600">

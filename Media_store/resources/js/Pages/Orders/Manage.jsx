@@ -3,7 +3,11 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Pagination from "@/Components/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Head, Link, router } from "@inertiajs/react";
-import { faCaretUp, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import {
+    faCaretUp,
+    faCaretDown,
+    faArrowLeftLong,
+} from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/Components/Modal";
 import TextInput from "@/Components/TextInput";
 import Select from "@/Components/Select";
@@ -19,9 +23,10 @@ const Manage = ({ orders, queryParams = null }) => {
     const [messages, setMessages] = React.useState([]);
 
     useEffect(() => {
+        if (messages.length === 0) return;
         const timer = setInterval(() => {
             setMessages((currentMessages) => currentMessages.slice(1));
-        }, 5000);
+        }, 3000);
 
         // Cleanup the interval on component unmount
         return () => clearInterval(timer);
@@ -105,7 +110,7 @@ const Manage = ({ orders, queryParams = null }) => {
 
             <header className="bg-white dark:bg-gray-800 shadow">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between">
+                    <div className="sm:flex hidden justify-between">
                         <div className="breadcrumbs">
                             <ul>
                                 <li>
@@ -126,6 +131,14 @@ const Manage = ({ orders, queryParams = null }) => {
                                 </li>
                             </ul>
                         </div>
+                    </div>
+                    <div className="sm:hidden block">
+                        <Link
+                            href={route("dashboard")}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 p-4 rounded-full"
+                        >
+                            <FontAwesomeIcon icon={faArrowLeftLong} />
+                        </Link>
                     </div>
                 </div>
             </header>
@@ -368,7 +381,7 @@ const Manage = ({ orders, queryParams = null }) => {
                                         className="odd:bg-rose-50 even:bg-base-50 hover:opacity-75"
                                     >
                                         <td scope="col" className="text-nowrap">
-                                            {order.data.id}
+                                            {order.id}
                                         </td>
                                         <td
                                             scope="col"
@@ -377,53 +390,51 @@ const Manage = ({ orders, queryParams = null }) => {
                                             <Link
                                                 href={route(
                                                     "order.show",
-                                                    order.data.id
+                                                    order.id
                                                 )}
                                                 className="hover:underline hover:text-primary cursor-pointer"
                                             >
-                                                {order.data.user_name}
+                                                {order.user_name}
                                             </Link>
                                         </td>
                                         <td scope="col" className="text-nowrap">
                                             {Intl.NumberFormat().format(
-                                                order.data.total_price
+                                                order.total_price
                                             ) + " vnd"}
                                         </td>
                                         <td scope="col">
                                             <span
                                                 className={`text-nowrap uppercase px-4 py-2 rounded-lg font-semibold text-white ${
-                                                    orderStatus[
-                                                        order.data.status
-                                                    ]
+                                                    orderStatus[order.status]
                                                 }`}
                                             >
-                                                {order.data.status}
+                                                {order.status}
                                             </span>
                                         </td>
                                         <td
                                             scope="col"
                                             className="text-nowrap uppercase"
                                         >
-                                            {order.data.payment_method}
+                                            {order.payment_method}
                                         </td>
                                         <td
                                             scope="col"
                                             className="text-nowrap uppercase"
                                         >
-                                            {order.data.delivery_type}
+                                            {order.delivery_type}
                                         </td>
                                         <td scope="col" className="text-nowrap">
-                                            {order.data.created_at}
+                                            {order.created_at}
                                         </td>
                                         <td scope="col" className="text-nowrap">
-                                            {order.data.completed_at}
+                                            {order.completed_at}
                                         </td>
                                         <td scope="col" className="text-nowrap">
                                             <button
                                                 className="btn btn-outline btn-info rounded-2xl"
                                                 onClick={(e) => {
                                                     setShowModal(true);
-                                                    setOrderDetail(order.data);
+                                                    setOrderDetail(order);
                                                 }}
                                             >
                                                 Detail
@@ -434,7 +445,7 @@ const Manage = ({ orders, queryParams = null }) => {
                             </tbody>
                         </table>
 
-                        <Pagination links={orders.links} />
+                        <Pagination links={orders.meta.links} />
                     </div>
                 </div>
             </div>
@@ -446,7 +457,7 @@ const Manage = ({ orders, queryParams = null }) => {
                     </h3>
                     <OrderDetails order={orderdetail} />
                     {orderdetail?.status === "pending" && (
-                        <div className="flex justify-center items-center mb-4">
+                        <div className="my-4 mx-12">
                             <div>
                                 <InputLabel
                                     htmlFor="reason"
@@ -456,7 +467,7 @@ const Manage = ({ orders, queryParams = null }) => {
                                 <Select
                                     id="reason"
                                     defaultValue=""
-                                    className="w-full min-w-40"
+                                    className="w-60"
                                     onChange={(e) => setReason(e.target.value)}
                                 >
                                     <option value="">Select reason...</option>

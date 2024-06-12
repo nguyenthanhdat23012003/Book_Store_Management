@@ -17,14 +17,10 @@ class ProductObserver
 
         switch ($data['type']) {
             case 'book':
-                $data['book']['authors'] = json_encode($data['book']['authors']);
                 $product->book()->create($data['book']);
                 break;
             case 'cd':
-                $data['cd']['artists'] = json_encode($data['cd']['artists']);
-                $data['cd']['albums'] = json_encode($data['cd']['albums']);
-                $data['cd']['track_list'] = json_encode($data['cd']['track_list']);
-                $data['cd']['record_label'] = json_encode($data['cd']['record_label']);
+                $data['cd']['record_label'] = json_decode($data['cd']['record_label']);
                 $product->cd()->create($data['cd']);
                 break;
             case 'dvd':
@@ -36,7 +32,7 @@ class ProductObserver
             'action' => 'created',
             'done_at' => now(),
             'user_id' => auth()->id(),
-            'details' => json_encode($product->toArray())
+            'details' => $product->toArray()
         ]);
     }
 
@@ -58,7 +54,7 @@ class ProductObserver
             'action' => 'updated',
             'done_at' => now(),
             'user_id' => auth()->id(),
-            'details' => json_encode($changes)
+            'details' => $changes
         ]);
     }
 
@@ -84,21 +80,17 @@ class ProductObserver
     }
 
     /**
-     * Handle the Product "deleting" event.
+     * Handle the Product "deleted" event.
      */
-    public function deleting(Product $product): void
+    public function deleted(Product $product): void
     {
         // record action
         $product->productActions()->create([
             'action' => 'deleted',
             'done_at' => now(),
             'user_id' => auth()->id(),
-            'details' => json_encode($product->toArray())
+            'details' => $product->toArray()
         ]);
-
-        // dissociate the productActions from the product
-        // $actions->product()->dissociate();
-        // $actions->save();
     }
 
     /**
