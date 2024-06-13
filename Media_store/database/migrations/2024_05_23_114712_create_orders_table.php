@@ -20,7 +20,6 @@ return new class extends Migration
             $table->timestamp('cancelled_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->string('session_id')->nullable();
-            $table->timestamps();
 
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         });

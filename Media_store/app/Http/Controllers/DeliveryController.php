@@ -43,6 +43,7 @@ class DeliveryController extends Controller
     public function confirm(Delivery $delivery)
     {
         $delivery->status = 'in progress';
+        $delivery->confirmed_at = now();
         $delivery->save();
 
         return response()->json(['status' => 'success', 'message' => 'Confirm delivery successfully']);

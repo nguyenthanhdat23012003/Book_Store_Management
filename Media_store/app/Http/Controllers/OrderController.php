@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
 use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreOrderRequest;
-use Illuminate\Pagination\LengthAwarePaginator;
 use App\Repositories\Order\OrderEloquentRepository;
 
 class OrderController extends Controller
@@ -20,6 +18,7 @@ class OrderController extends Controller
     {
         $this->orderRepository = $orderRepo;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -37,11 +36,13 @@ class OrderController extends Controller
             ]);
 
         if (request('field') && request('field') !== 'all') {
-            $query->where('status', request('field'))->orderBy('created_at', 'desc');
+            $query->where('status', request('field'));
         }
 
+        $order = $query->orderBy('created_at', 'desc')->paginate(6)->appends(request()->query())->onEachSide(1);
+
         return Inertia::render('Orders/Index', [
-            'orders' => OrderResource::collection($query->paginate(6)->appends(request()->query())->onEachSide(1)),
+            'orders' => OrderResource::collection($order),
             'queryParams' => request()->query() ?: null,
             'alert' => session('success') ?? session('fail'),
             'success' => session('success') ? true : false
@@ -78,6 +79,24 @@ class OrderController extends Controller
      */
     public function show(string $id)
     {
+        $order = Order::with([
+            'order_items' => function ($query) {
+                $query->with(['product' => function ($query) {
+                    $query->withTrashed();
+                }]);
+            },
+            'delivery',
+            'payment'
+        ])->findOrFail($id);
+
+        if (auth()->user()->cannot('view', $order)) {
+            return to_route('orders.index')->with('fail', 'You are not authorized to view this order.');
+        }
+
+
+        return Inertia::render('Orders/Show', [
+            'order' => new OrderResource($order),
+        ]);
     }
 
     /**
@@ -102,6 +121,7 @@ class OrderController extends Controller
             $item->product->image_path = Storage::url($item->product->image_path);
             return $item;
         });
+
         return Inertia::render('Orders/Edit', [
             'order' => $order,
         ]);

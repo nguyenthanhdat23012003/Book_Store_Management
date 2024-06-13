@@ -7,6 +7,7 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const edit = ({ order }) => {
     const { data, setData, put, errors } = useForm({
@@ -488,18 +489,17 @@ const edit = ({ order }) => {
                         </div>
 
                         <div className="flex justify-center mb-12">
-                            <Timeline
-                                completeSteps={
-                                    [
-                                        "cancelled",
-                                        "failed",
-                                        "unpaid",
-                                        "rejected",
-                                    ].includes(order.status)
-                                        ? 4
-                                        : 5
-                                }
-                            />
+                            <ul className="steps steps-vertical lg:steps-horizontal">
+                                <li className="step step-primary">Register</li>
+                                <li className="step step-primary">
+                                    Choose a product
+                                </li>
+                                <li className="step step-primary">
+                                    Add to cart
+                                </li>
+                                <li className="step step-primary">Checkout</li>
+                                <li className="step">Pay</li>
+                            </ul>
                         </div>
                     </div>
                 </div>

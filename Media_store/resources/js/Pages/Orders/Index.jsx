@@ -171,7 +171,10 @@ const index = ({
                                     </h3>
                                 </div>
 
-                                <div className="flex flex-col gap-2">
+                                <Link
+                                    href={route("order.show", item.id)}
+                                    className="flex flex-col gap-2"
+                                >
                                     {item.order_items.map(
                                         (productItem, index) => (
                                             <div
@@ -229,7 +232,7 @@ const index = ({
                                             </div>
                                         )
                                     )}
-                                </div>
+                                </Link>
 
                                 <div className="flex flex-col flex-1">
                                     <div className="flex sm:justify-end justify-between items-center gap-3 px-4">

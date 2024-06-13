@@ -14,8 +14,9 @@ class Delivery extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'completed_at' => 'datetime',
-        'rejected_at' => 'datetime',
+        'confirmed_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public $timestamps = false;

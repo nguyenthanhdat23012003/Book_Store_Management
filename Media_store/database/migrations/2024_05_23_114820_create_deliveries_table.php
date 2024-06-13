@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('province');
             $table->string('address');
             $table->enum('status', ['pending', 'in progress', 'completed', 'rejected'])->default('in progress');
+            $table->timestamp('confirmed_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('rejected_at')->nullable();
 

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->enum('method', ['cod', 'vnpay']);
             $table->string('total');
             $table->timestamp('paid_at')->nullable();
+            $table->timestamps();
 
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
         });

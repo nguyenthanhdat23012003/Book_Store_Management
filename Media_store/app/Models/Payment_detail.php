@@ -15,6 +15,8 @@ class Payment_detail extends Model
 
     protected $casts = [
         'paid_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public $timestamps = false;
