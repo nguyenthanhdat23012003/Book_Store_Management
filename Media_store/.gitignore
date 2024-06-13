@@ -1,9 +1,10 @@
 /.phpunit.cache
 /node_modules
 /public/hot
-/public/storage
+/public/build/
 /storage/*.key
 /vendor
+.env
 .env.backup
 .env.production
 .phpactor.json
