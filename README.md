@@ -10,13 +10,38 @@
 
 ## Feature:
 
-- (coming soon)
+#### Customer
+
+- Register/Login
+- View list of products
+- View product
+- Add to cart
+- View cart
+- Place order (COD/VNPAY)
+
+#### Manager
+
+- View all products
+- Create, update (**only 2 times** per day for each product), delete product (**maximum 5** products per day), restore products
+- View history of product's actions
+- Confirm/reject order
+- Confirm/reject delivery
+- Send email (comming soon)
+
+#### Admin
+
+- All the same permission as manager
+- Create user, change user's role, block user (comming soon)
+
+### Note: the vnpay info for testing is inside **./Media_store/vnpay_bank_info.txt**
 
 # How to run?
 
 ## Requirement
 
-Make sure you already install docker, docker compose and wsl2
+Make sure you already install docker, docker compose and wsl2 (if you are using window)
+
+If not, following this guide: https://docs.docker.com/engine/install/
 
 ### Navigate to Media_store
 
@@ -27,40 +52,57 @@ Make sure you already install docker, docker compose and wsl2
 ~$ cp .env.example .env
 
 APP_NAME=Laravel
+
 APP_ENV=dev
+
 APP_KEY=
+
 APP_DEBUG=true
+
 APP_TIMEZONE=UTC
+
 APP_URL=http://localhost:8000
 
 DB_CONNECTION=mysql
+
 DB_HOST=db
+
 DB_PORT=3306
+
 DB_DATABASE=media_store
+
 DB_USERNAME=media_user
+
 DB_PASSWORD=password
+
 ...
 
 ### Build project
 
 ~$ docker compose build app --no-cache
+
 ~$ docker compose up -d
 
 ### Install composer
 
 ~$ docker compose exec app rm -rf vendor composer.lock
+
 ~$ docker compose exec app composer update
+
 ~$ docker compose exec app composer install
 
 ### Install npm and build the manifest.json
 
 ~$ docker compose run --rm npm install
+
 ~$ docker compose run --rm npm run build
 
 ### Generate app key and seeding data
 
 ~$ docker compose exec app php artisan key:generate
+
 ~$ docker compose exec app php artisan storage:link
+
 ~$ docker compose exec app php artisan migrate:fresh --seed
 
 ## Now application is running at http://localhost:8000
