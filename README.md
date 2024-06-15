@@ -97,9 +97,19 @@ DB_PASSWORD=password
 
 ~$ docker compose run --rm npm run build
 
-### Generate app key and seeding data
+### Generate app key
 
 ~$ docker compose exec app php artisan key:generate
+
+## Important
+
+> Before seeding data, you must to unzip the data.zip inside /data_for_seeding/
+> then move it to /Media_store/storage/app/public/
+> The dir must be look like this:
+
+![alt text](image.png)
+
+Run following command to seed data:
 
 ~$ docker compose exec app php artisan storage:link
 
