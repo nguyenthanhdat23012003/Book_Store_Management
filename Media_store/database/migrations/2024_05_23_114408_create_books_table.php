@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->json('authors');
             $table->enum('cover_type', ['paperback', 'hardcover']);
-            $table->string('publisher');
-            $table->integer('pages');
-            $table->string('language');
-            $table->date('publication_date');
+            $table->string('publisher')->nullable();
+            $table->integer('pages')->nullable();
+            $table->string('language')->nullable();
+            $table->date('publication_date')->nullable();
 
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
         });

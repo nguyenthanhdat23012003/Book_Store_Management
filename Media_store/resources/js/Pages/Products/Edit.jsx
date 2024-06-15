@@ -8,6 +8,7 @@ import TextAreaInput from "@/Components/TextAreaInput";
 import Select from "@/Components/Select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import GenrePicker from "@/Components/GenrePicker";
 
 const Edit = ({ product, alert, success }) => {
     const { data, setData, post, processing, errors } = useForm({
@@ -17,20 +18,85 @@ const Edit = ({ product, alert, success }) => {
         description: product.description || "",
         price: Math.round(product.price / 1000) || 0,
         in_stock: product.in_stock || 0,
-        genre: product.genre || "",
+        genre: product.genre || [],
         _method: "PUT",
     });
 
     const [img, setImg] = React.useState(product.image_path);
 
-    const genres = [
-        "fiction",
-        "comedy",
-        "drama",
-        "action",
-        "horror",
-        "romance",
-        "thriller",
+    const listGenres = [
+        "Adventure",
+        "Classics",
+        "Fantasy",
+        "Fiction",
+        "Horror",
+        "Mystery",
+        "Thriller",
+        "Romance",
+        "Suspense",
+        "Young",
+        "Biography",
+        "CookBook",
+        "Essay",
+        "Poetry",
+        "Art",
+        "Business",
+        "Computer",
+        "Education",
+        "Engineering",
+        "Heath",
+        "Fitness",
+        "Law",
+        "Mathematics",
+        "Medical",
+        "Psychology",
+        "Philosophy",
+        "Social",
+        "Sports",
+        "Technology",
+        "Drama",
+        "LGBT",
+        "Humor",
+        "Economics",
+        "Comics",
+        "Graphic",
+        "Hobbies",
+        "Family",
+        "Relationships",
+        "Study",
+        "Foreign",
+        "Game",
+        "Gardening",
+        "Disciplines",
+        "Music",
+        "Nature",
+        "Pet",
+        "Travel",
+        "Adult",
+        "Aid",
+        "Nonfiction",
+        "Christian",
+        "Classical",
+        "Country",
+        "Jazz",
+        "Misc",
+        "Rap",
+        "Rock",
+        "Soul",
+        "Soundtrack",
+        "Standard",
+        "World",
+        "Punk",
+        "Blues",
+        "Opera",
+        "Symphony",
+        "Garage",
+        "EDM",
+        "Beat",
+        "House",
+        "Electro",
+        "Hop",
+        "Pop",
     ];
 
     const onSubmit = (e) => {
@@ -245,7 +311,6 @@ const Edit = ({ product, alert, success }) => {
                                             setData("type", e.target.value)
                                         }
                                     >
-                                        <option>Select type...</option>
                                         <option value="book">Book</option>
                                         <option value="cd">Compact disc</option>
                                         <option value="dvd">
@@ -262,22 +327,13 @@ const Edit = ({ product, alert, success }) => {
                                             value="Product genre"
                                         />
                                     </div>
-                                    <Select
-                                        className="w-full"
-                                        id="genre"
-                                        name="genre"
+                                    <GenrePicker
+                                        genres={listGenres}
+                                        onSelect={(selectedGenres) => {
+                                            setData("genre", selectedGenres);
+                                        }}
                                         value={data.genre}
-                                        onChange={(e) =>
-                                            setData("genre", e.target.value)
-                                        }
-                                    >
-                                        <option>Select genre...</option>
-                                        {genres.map((genre) => (
-                                            <option key={genre} value={genre}>
-                                                {genre}
-                                            </option>
-                                        ))}
-                                    </Select>
+                                    />
                                     <InputError message={errors.genre} />
                                 </div>
 

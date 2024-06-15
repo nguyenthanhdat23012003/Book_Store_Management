@@ -27,7 +27,8 @@ class ProductResource extends JsonResource
             'in_stock' => $this->in_stock,
             'genre' => $this->genre,
             'weight' => $this->weight,
-            'rating' => $this->rating,
+            'rating' => $this->avgRating,
+            'ratingsCount' => $this->ratingsCount,
             'sold' => $this->sold,
             'created_at' => $this->created_at->format('Y-m-d'),
         ];

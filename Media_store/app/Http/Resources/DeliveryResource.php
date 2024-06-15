@@ -23,8 +23,8 @@ class DeliveryResource extends JsonResource
             'address' => $this->address,
             'status' => $this->status,
             'type' => $this->type,
-            'completed_at' => $this->completed_at ? $this->completed_at->format('d-m-Y') : null,
-            'rejected_at' => $this->rejected_at ? $this->rejected_at->format('d-m-Y') : null,
+            'completed_at' => $this->completed_at ? $this->completed_at->format('d-m-Y H:i') : null,
+            'rejected_at' => $this->rejected_at ? $this->rejected_at->format('d-m-Y H:i') : null,
             'order' => [
                 'id' => $this->order->id,
                 'created_at' => $this->order->created_at->format('Y-m-d'),

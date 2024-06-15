@@ -8,6 +8,8 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import Select from "@/Components/Select";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import GenrePicker from "@/Components/GenrePicker";
+import DynamicJson from "@/Components/DynamicJson";
 
 const Create = () => {
     const { data, setData, post, processing, errors } = useForm({
@@ -17,7 +19,7 @@ const Create = () => {
         description: "",
         price: "",
         in_stock: "",
-        genre: "",
+        genre: [],
         weight: "",
         book: {
             authors: [],
@@ -31,28 +33,97 @@ const Create = () => {
             artists: [],
             collections: "",
             albums: [],
-            record_label: "",
+            record_label: [],
             track_list: [],
+            videos: [],
+            country: "",
             release_date: "",
         },
         dvd: {
             disc_type: "",
-            director: "",
+            director: [],
+            actors: [],
+            writer: [],
             runtime: "",
-            studio: "",
             language: "",
+            country: "",
             release_date: "",
         },
     });
 
-    const genres = [
-        "fiction",
-        "comedy",
-        "drama",
-        "action",
-        "horror",
-        "romance",
-        "thriller",
+    const listGenres = [
+        "Adventure",
+        "Classics",
+        "Fantasy",
+        "Fiction",
+        "Horror",
+        "Mystery",
+        "Thriller",
+        "Romance",
+        "Suspense",
+        "Young",
+        "Biography",
+        "CookBook",
+        "Essay",
+        "Poetry",
+        "Art",
+        "Business",
+        "Computer",
+        "Education",
+        "Engineering",
+        "Heath",
+        "Fitness",
+        "Law",
+        "Mathematics",
+        "Medical",
+        "Psychology",
+        "Philosophy",
+        "Social",
+        "Sports",
+        "Technology",
+        "Drama",
+        "LGBT",
+        "Humor",
+        "Economics",
+        "Comics",
+        "Graphic",
+        "Hobbies",
+        "Family",
+        "Relationships",
+        "Study",
+        "Foreign",
+        "Game",
+        "Gardening",
+        "Disciplines",
+        "Music",
+        "Nature",
+        "Pet",
+        "Travel",
+        "Adult",
+        "Aid",
+        "Nonfiction",
+        "Christian",
+        "Classical",
+        "Country",
+        "Jazz",
+        "Misc",
+        "Rap",
+        "Rock",
+        "Soul",
+        "Soundtrack",
+        "Standard",
+        "World",
+        "Punk",
+        "Blues",
+        "Opera",
+        "Symphony",
+        "Garage",
+        "EDM",
+        "Beat",
+        "House",
+        "Electro",
+        "Hop",
+        "Pop",
     ];
 
     const language = {
@@ -95,16 +166,17 @@ const Create = () => {
         cy: "Welsh",
     };
 
-    const recordLabelConvert = (e) => {
-        const result = {};
-        const pairs = e.target.value.split(",") ?? e.target.value.split();
-        pairs.forEach((pair) => {
-            const [time, label] = pair.split(" - ");
-            result[time] = label;
-        });
+    const onAddedTracklist = (object) => {
         setData("cd", {
             ...data.cd,
-            record_label: JSON.stringify(result),
+            track_list: [...data.cd.track_list, object],
+        });
+    };
+
+    const onAddedVideo = (object) => {
+        setData("cd", {
+            ...data.cd,
+            videos: [...data.cd.videos, object],
         });
     };
 
@@ -165,9 +237,10 @@ const Create = () => {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 flex justify-center">
                             <form
-                                className="grid grid-cols-2 gap-6 w-full max-w-3xl"
+                                className="md:grid md:grid-cols-2 flex flex-col gap-6 w-full max-w-3xl"
                                 onSubmit={onSubmit}
                             >
+                                {/* name */}
                                 <div>
                                     <div className="mb-2 block">
                                         <InputLabel
@@ -189,7 +262,7 @@ const Create = () => {
                                     />
                                     <InputError message={errors.name} />
                                 </div>
-
+                                {/* image */}
                                 <div>
                                     <div className="mb-2 block">
                                         <InputLabel
@@ -208,7 +281,7 @@ const Create = () => {
                                     />
                                     <InputError message={errors.image} />
                                 </div>
-
+                                {/* desription */}
                                 <div className="col-span-2">
                                     <div className="mb-2 block">
                                         <InputLabel
@@ -230,7 +303,7 @@ const Create = () => {
                                     ></TextAreaInput>
                                     <InputError message={errors.description} />
                                 </div>
-
+                                {/* price */}
                                 <div>
                                     <div className="mb-2 block">
                                         <InputLabel
@@ -252,7 +325,7 @@ const Create = () => {
                                     />
                                     <InputError message={errors.price} />
                                 </div>
-
+                                {/* quantity */}
                                 <div>
                                     <div className="mb-2 block">
                                         <InputLabel
@@ -274,7 +347,7 @@ const Create = () => {
                                     />
                                     <InputError message={errors.in_stock} />
                                 </div>
-
+                                {/* weight */}
                                 <div>
                                     <div className="mb-2 block">
                                         <InputLabel
@@ -296,7 +369,7 @@ const Create = () => {
                                     />
                                     <InputError message={errors.weight} />
                                 </div>
-
+                                {/* genres */}
                                 <div>
                                     <div className="mb-2 block">
                                         <InputLabel
@@ -304,25 +377,16 @@ const Create = () => {
                                             value="Product genre"
                                         />
                                     </div>
-                                    <Select
-                                        className="w-full"
-                                        id="genre"
-                                        name="genre"
+                                    <GenrePicker
+                                        genres={listGenres}
+                                        onSelect={(selectedGenres) => {
+                                            setData("genre", selectedGenres);
+                                        }}
                                         value={data.genre}
-                                        onChange={(e) =>
-                                            setData("genre", e.target.value)
-                                        }
-                                    >
-                                        <option>Select genre...</option>
-                                        {genres.map((genre) => (
-                                            <option key={genre} value={genre}>
-                                                {genre}
-                                            </option>
-                                        ))}
-                                    </Select>
+                                    />
                                     <InputError message={errors.genre} />
                                 </div>
-
+                                {/* Type */}
                                 <div>
                                     <div className="mb-2 block">
                                         <InputLabel
@@ -339,7 +403,9 @@ const Create = () => {
                                             setData("type", e.target.value)
                                         }
                                     >
-                                        <option>Select type...</option>
+                                        <option value="" disabled>
+                                            Select type...
+                                        </option>
                                         <option value="book">Book</option>
                                         <option value="cd">Compact disc</option>
                                         <option value="dvd">
@@ -349,8 +415,10 @@ const Create = () => {
                                     <InputError message={errors.type} />
                                 </div>
 
+                                {/* Book info */}
                                 {data.type === "book" && (
                                     <>
+                                        {/* Book's authors */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -380,7 +448,7 @@ const Create = () => {
                                                 message={errors["book.authors"]}
                                             />
                                         </div>
-
+                                        {/* Book's cover type */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -401,7 +469,7 @@ const Create = () => {
                                                     })
                                                 }
                                             >
-                                                <option>
+                                                <option value="" disabled>
                                                     Select cover type...
                                                 </option>
                                                 <option value="paperback">
@@ -417,7 +485,7 @@ const Create = () => {
                                                 }
                                             />
                                         </div>
-
+                                        {/* Book's publisher */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -446,7 +514,7 @@ const Create = () => {
                                                 }
                                             />
                                         </div>
-
+                                        {/* Book's language */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -467,7 +535,7 @@ const Create = () => {
                                                     })
                                                 }
                                             >
-                                                <option>
+                                                <option value="" disabled>
                                                     Select language...
                                                 </option>
                                                 {Object.entries(language).map(
@@ -487,7 +555,7 @@ const Create = () => {
                                                 }
                                             />
                                         </div>
-
+                                        {/* Book's pages */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -514,7 +582,7 @@ const Create = () => {
                                                 message={errors["book.pages"]}
                                             />
                                         </div>
-
+                                        {/* Book's published date */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -551,6 +619,31 @@ const Create = () => {
 
                                 {data.type === "cd" && (
                                     <>
+                                        {/* CD's videos */}
+                                        <div>
+                                            <div className="mb-2 block">
+                                                <InputLabel
+                                                    htmlFor="videos"
+                                                    value="CD's videos"
+                                                />
+                                            </div>
+                                            <DynamicJson
+                                                keys={[
+                                                    "title",
+                                                    "uri",
+                                                    "duration",
+                                                    "description",
+                                                ]}
+                                                inputID="videos"
+                                                onAdded={onAddedVideo}
+                                                values={data.cd.videos}
+                                            />
+                                            <InputError
+                                                message={errors["cd.videos"]}
+                                            />
+                                        </div>
+
+                                        {/* CD's artists */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -580,7 +673,63 @@ const Create = () => {
                                                 message={errors["cd.artists"]}
                                             />
                                         </div>
-
+                                        {/* CD's tracklist */}
+                                        <div>
+                                            <div className="mb-2 block">
+                                                <InputLabel
+                                                    htmlFor="track_list"
+                                                    value="CD's track_list"
+                                                />
+                                            </div>
+                                            <DynamicJson
+                                                keys={[
+                                                    "position",
+                                                    "title",
+                                                    "duration",
+                                                ]}
+                                                inputID="track_list"
+                                                onAdded={onAddedTracklist}
+                                                values={data.cd.track_list}
+                                            />
+                                            <InputError
+                                                message={
+                                                    errors["cd.track_list"]
+                                                }
+                                            />
+                                        </div>
+                                        {/* CD's record label */}
+                                        <div>
+                                            <div className="mb-2 block">
+                                                <InputLabel
+                                                    htmlFor="record_label"
+                                                    value="CD's record_label"
+                                                />
+                                            </div>
+                                            <TextInput
+                                                id="record_label"
+                                                name="record_label"
+                                                value={data.cd.record_label}
+                                                className="w-full"
+                                                onChange={(e) =>
+                                                    setData("cd", {
+                                                        ...data.cd,
+                                                        record_label:
+                                                            e.target.value.split(
+                                                                ","
+                                                            ) ??
+                                                            e.target.value.split(),
+                                                    })
+                                                }
+                                                type="text"
+                                                placeholder="Sony Music, Warner Music..."
+                                            />
+                                            <InputError
+                                                message={
+                                                    errors["cd.record_label"]
+                                                }
+                                            />
+                                        </div>
+                                        {/* CD's collections */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -609,7 +758,7 @@ const Create = () => {
                                                 }
                                             />
                                         </div>
-
+                                        {/* CD's albums */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -639,63 +788,7 @@ const Create = () => {
                                                 message={errors["cd.albums"]}
                                             />
                                         </div>
-
-                                        <div>
-                                            <div className="mb-2 block">
-                                                <InputLabel
-                                                    htmlFor="record_label"
-                                                    value="CD's record_label"
-                                                />
-                                            </div>
-                                            <TextInput
-                                                id="record_label"
-                                                name="record_label"
-                                                className="w-full"
-                                                onChange={(e) =>
-                                                    recordLabelConvert(e)
-                                                }
-                                                type="text"
-                                                placeholder="4:03 - Sony, 7:49 - Warner, 10:25 - Universal..."
-                                            />
-                                            <InputError
-                                                message={
-                                                    errors["cd.record_label"]
-                                                }
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <div className="mb-2 block">
-                                                <InputLabel
-                                                    htmlFor="track_list"
-                                                    value="CD's track_list"
-                                                />
-                                            </div>
-                                            <TextInput
-                                                id="track_list"
-                                                name="track_list"
-                                                value={data.cd.track_list}
-                                                className="w-full"
-                                                onChange={(e) =>
-                                                    setData("cd", {
-                                                        ...data.cd,
-                                                        track_list:
-                                                            e.target.value.split(
-                                                                ","
-                                                            ) ??
-                                                            e.target.value.split(),
-                                                    })
-                                                }
-                                                type="text"
-                                                placeholder="1. Track 1, 2. Track 2, 3. Track 3..."
-                                            />
-                                            <InputError
-                                                message={
-                                                    errors["cd.track_list"]
-                                                }
-                                            />
-                                        </div>
-
+                                        {/* CD's release date */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -723,11 +816,38 @@ const Create = () => {
                                                 }
                                             />
                                         </div>
+                                        {/* CD's country */}
+                                        <div>
+                                            <div className="mb-2 block">
+                                                <InputLabel
+                                                    htmlFor="country"
+                                                    value="CD's country"
+                                                />
+                                            </div>
+                                            <TextInput
+                                                id="country"
+                                                name="country"
+                                                value={data.cd.country}
+                                                className="w-full"
+                                                onChange={(e) =>
+                                                    setData("cd", {
+                                                        ...data.cd,
+                                                        country: e.target.value,
+                                                    })
+                                                }
+                                                type="text"
+                                                placeholder="US, Brazil..."
+                                            />
+                                            <InputError
+                                                message={errors["cd.country"]}
+                                            />
+                                        </div>
                                     </>
                                 )}
 
                                 {data.type === "dvd" && (
                                     <>
+                                        {/* DVD's director */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -754,7 +874,7 @@ const Create = () => {
                                                 message={errors["dvd.director"]}
                                             />
                                         </div>
-
+                                        {/* DVD's disc type */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -775,7 +895,7 @@ const Create = () => {
                                                     })
                                                 }
                                             >
-                                                <option>
+                                                <option value="" disabled>
                                                     Select disc type...
                                                 </option>
                                                 <option value="Blu-ray">
@@ -791,33 +911,67 @@ const Create = () => {
                                                 }
                                             />
                                         </div>
-
+                                        {/* DVD's actors */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
-                                                    htmlFor="studio"
-                                                    value="DVD's studio"
+                                                    htmlFor="actors"
+                                                    value="DVD's actors"
                                                 />
                                             </div>
                                             <TextInput
-                                                id="studio"
-                                                name="studio"
-                                                value={data.dvd.studio}
+                                                id="actors"
+                                                name="actors"
+                                                value={data.dvd.actors}
                                                 className="w-full"
                                                 onChange={(e) =>
                                                     setData("dvd", {
                                                         ...data.dvd,
-                                                        studio: e.target.value,
+                                                        actors:
+                                                            e.target.value.split(
+                                                                ","
+                                                            ) ??
+                                                            e.target.value.split(),
                                                     })
                                                 }
                                                 type="text"
-                                                placeholder="Barton, Jacobs and Okuneva..."
+                                                placeholder="Dolly Carrol..."
                                             />
                                             <InputError
-                                                message={errors["dvd.studio"]}
+                                                message={errors["dvd.actors"]}
                                             />
                                         </div>
-
+                                        {/* DVD's writer */}
+                                        <div>
+                                            <div className="mb-2 block">
+                                                <InputLabel
+                                                    htmlFor="writer"
+                                                    value="DVD's writer"
+                                                />
+                                            </div>
+                                            <TextInput
+                                                id="writer"
+                                                name="writer"
+                                                value={data.dvd.writer}
+                                                className="w-full"
+                                                onChange={(e) =>
+                                                    setData("dvd", {
+                                                        ...data.dvd,
+                                                        writer:
+                                                            e.target.value.split(
+                                                                ","
+                                                            ) ??
+                                                            e.target.value.split(),
+                                                    })
+                                                }
+                                                type="text"
+                                                placeholder="Semon..."
+                                            />
+                                            <InputError
+                                                message={errors["dvd.writer"]}
+                                            />
+                                        </div>
+                                        {/* DVD's language */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -825,9 +979,10 @@ const Create = () => {
                                                     value="DVD's language"
                                                 />
                                             </div>
-                                            <Select
+                                            <TextInput
                                                 id="language"
                                                 name="language"
+                                                type="text"
                                                 value={data.dvd.language}
                                                 className="w-full"
                                                 onChange={(e) =>
@@ -837,26 +992,13 @@ const Create = () => {
                                                             e.target.value,
                                                     })
                                                 }
-                                            >
-                                                <option>
-                                                    Select language...
-                                                </option>
-                                                {Object.entries(language).map(
-                                                    ([key, value]) => (
-                                                        <option
-                                                            key={key}
-                                                            value={key}
-                                                        >
-                                                            {value}
-                                                        </option>
-                                                    )
-                                                )}
-                                            </Select>
+                                                placeholder="English, Spanish..."
+                                            />
                                             <InputError
                                                 message={errors["dvd.language"]}
                                             />
                                         </div>
-
+                                        {/* DVD's runtime */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel
@@ -883,7 +1025,33 @@ const Create = () => {
                                                 message={errors["dvd.runtime"]}
                                             />
                                         </div>
-
+                                        {/* DVD's country */}
+                                        <div>
+                                            <div className="mb-2 block">
+                                                <InputLabel
+                                                    htmlFor="country"
+                                                    value="DVD's country"
+                                                />
+                                            </div>
+                                            <TextInput
+                                                id="country"
+                                                name="country"
+                                                value={data.dvd.country}
+                                                className="w-full"
+                                                onChange={(e) =>
+                                                    setData("dvd", {
+                                                        ...data.dvd,
+                                                        country: e.target.value,
+                                                    })
+                                                }
+                                                type="text"
+                                                placeholder="US, Brazil..."
+                                            />
+                                            <InputError
+                                                message={errors["dvd.country"]}
+                                            />
+                                        </div>
+                                        {/* DVD's release date */}
                                         <div>
                                             <div className="mb-2 block">
                                                 <InputLabel

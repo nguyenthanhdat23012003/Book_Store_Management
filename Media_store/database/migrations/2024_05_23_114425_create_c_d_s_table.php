@@ -18,7 +18,9 @@ return new class extends Migration
             $table->json('artists')->nullable();
             $table->json('record_label')->nullable();
             $table->json('track_list')->nullable();
-            $table->timestamp('release_date');
+            $table->json('videos')->nullable();
+            $table->string('country')->nullable();
+            $table->timestamp('release_date')->nullable();
 
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
         });

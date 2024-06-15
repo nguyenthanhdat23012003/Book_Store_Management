@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OrderTimeLine from "@/Components/OrderTimeLine";
 
 const Show = ({ order }) => {
-    console.log(order);
     return (
         <>
             <Head title="Place order" />
@@ -26,7 +25,7 @@ const Show = ({ order }) => {
                                 </li>
                                 <li>
                                     <Link
-                                        href={route("cart.index")}
+                                        href={route("order.index")}
                                         className="font-semibold hover:text-amber-700 text-lg text-slate-800 dark:text-gray-200 leading-tight"
                                     >
                                         Order history

@@ -31,8 +31,7 @@ class UpdateProductRequest extends FormRequest
             'description' => ['required', 'string'],
             'price' => ['required', 'integer', new ValidPriceChange($productID)],
             'in_stock' => ['required', 'integer'],
-            'genre' => ['required', 'string', Rule::in(['fiction', 'comedy', 'drama', 'horror', 'action', 'romance', 'thriller'])],
-
+            'genre' => ['required', 'array'],
         ];
     }
 }

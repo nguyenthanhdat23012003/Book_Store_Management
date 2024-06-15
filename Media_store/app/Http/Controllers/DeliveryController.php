@@ -13,8 +13,9 @@ class DeliveryController extends Controller
     public function manage()
     {
         $query = Delivery::with('order')->whereHas('order', function ($query) {
-            $query->where('status', 'confirmed')
-                ->orWhere('status', 'completed');
+            $query->where('status', '<>', 'pending')
+                ->orWhere('status', '<>', 'unpaid')
+                ->orWhere('status', '<>', 'failed');
         });
 
         $sortField = request('sort_field', 'id');

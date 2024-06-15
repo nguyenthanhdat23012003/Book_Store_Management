@@ -109,6 +109,7 @@ class ProductController extends Controller
         if (auth()->user()->cannot('update', $product)) {
             return back()->with('fail', 'You are not authorized to edit a product.');
         };
+
         return Inertia::render('Products/Edit', [
             'product' => new ProductResource($product),
         ]);
@@ -127,7 +128,7 @@ class ProductController extends Controller
         }
 
         $data = $request->validated();
-
+        // dd($data);
         if ($request->hasFile('image')) {
             Storage::disk('public')->delete($product->image_path);
             $data['image_path'] = $data['image']->store($data['type'] . 's/', 'public');

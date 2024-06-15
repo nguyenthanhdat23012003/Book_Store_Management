@@ -185,6 +185,7 @@ const index = ({ products, queryParams = null }) => {
                                 searchFieldChanged,
                                 filterPrice,
                                 clearAll,
+                                sort,
                             }}
                         />
                     </div>
@@ -332,11 +333,9 @@ const index = ({ products, queryParams = null }) => {
                                                     <h2 className="card-title uppercase">
                                                         {product.type}
                                                     </h2>
-                                                    <div className="h-20 overflow-hidden">
-                                                        <p className="text-ellipsis">
-                                                            {product.name}
-                                                        </p>
-                                                    </div>
+                                                    <p className="h-20 overflow-hidden text-ellipsis">
+                                                        {product.name}
+                                                    </p>
 
                                                     <div className="text-2xl text-neutral">
                                                         {Intl.NumberFormat().format(
@@ -348,7 +347,7 @@ const index = ({ products, queryParams = null }) => {
                                                             value={
                                                                 product.rating
                                                             }
-                                                            name="read-only"
+                                                            readOnly={true}
                                                         />
                                                         <div>
                                                             {formatNum(
@@ -356,9 +355,25 @@ const index = ({ products, queryParams = null }) => {
                                                             ) + " sold"}
                                                         </div>
                                                     </div>
-                                                    <p className="italic bg-base-200 w-fit px-2 rounded">
-                                                        {product.genre}
-                                                    </p>
+                                                    <div className="flex flex-nowrap mb-2 gap-2 overflow-hidden text-ellipsis">
+                                                        {product.genre.length >
+                                                            0 &&
+                                                            product.genre.map(
+                                                                (
+                                                                    genre,
+                                                                    index
+                                                                ) => (
+                                                                    <span
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        className="italic bg-black/5 px-2 rounded-lg"
+                                                                    >
+                                                                        {genre}
+                                                                    </span>
+                                                                )
+                                                            )}
+                                                    </div>
                                                     <div className="card-actions justify-end">
                                                         <button
                                                             className="btn btn-outline rounded-2xl btn-error"

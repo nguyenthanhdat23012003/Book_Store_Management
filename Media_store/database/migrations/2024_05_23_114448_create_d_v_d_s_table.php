@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('DigitalVideoDiscs', function (Blueprint $table) {
             $table->id();
             $table->enum('disc_type', ['Blu-ray', 'HD-DVD']);
-            $table->string('director');
-            $table->integer('runtime');
-            $table->string('studio');
-            $table->string('language');
-            $table->timestamp('release_date');
+            $table->json('director');
+            $table->json('actors')->nullable();
+            $table->json('writer')->nullable();
+            $table->string('runtime')->nullable();
+            $table->string('language')->nullable();
+            $table->string('country')->nullable();
+            $table->timestamp('release_date')->nullable();
 
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
         });

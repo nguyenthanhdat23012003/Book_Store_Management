@@ -20,10 +20,10 @@ class ProductObserver
                 $product->book()->create($data['book']);
                 break;
             case 'cd':
-                $data['cd']['record_label'] = json_decode($data['cd']['record_label']);
                 $product->cd()->create($data['cd']);
                 break;
             case 'dvd':
+                $data['dvd']['runtime'] = $data['dvd']['runtime'];
                 $product->dvd()->create($data['dvd']);
                 break;
         }

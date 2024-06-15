@@ -56,7 +56,8 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
         $query = $this->_model::where('in_stock', '>', '0');
 
         if (request('name')) {
-            $query->where('name', 'like', '%' . request('name') . '%');
+            $query->where('name', 'like', '%' . request('name') . '%')
+                ->orWhere('genre', 'like', '%' . request('name') . '%');
         }
 
         if (request('type') && request('type') !== 'all') {
@@ -64,7 +65,7 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
         }
 
         if (request('genre') && request('genre') !== 'all') {
-            $query->where('genre', request('genre'));
+            $query->where('genre', 'like', '%' . request('genre') . '%');
         }
 
         if (request('price_range')) {
@@ -77,7 +78,7 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
         }
 
         if (request('rating')) {
-            $query->where('rating', '>=', request('rating') - 1)->orderBy('rating', 'asc');
+            $query->where('avgRating', '>=', 2 * request('rating') - 1)->orderBy('avgRating', 'asc');
         }
 
         if (!request('sort_field') || request('sort_field') === 'random') {

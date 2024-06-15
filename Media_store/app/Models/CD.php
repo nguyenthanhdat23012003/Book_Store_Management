@@ -18,8 +18,9 @@ class CD extends Model
     protected $casts = [
         'artists' => 'array',
         'albums' => 'array',
-        'record_label' => 'object',
+        'record_label' => 'array',
         'track_list' => 'array',
+        'videos' => 'array',
         'release_date' => 'datetime',
     ];
 

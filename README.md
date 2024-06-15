@@ -54,13 +54,14 @@ DB_PASSWORD=password
 
 ### Install npm and build the manifest.json
 
-~$ docker compose run -rm npm install
-~$ docker compose run -rm npm run build
+~$ docker compose run --rm npm install
+~$ docker compose run --rm npm run build
 
 ### Generate app key and seeding data
 
 ~$ docker compose exec app php artisan key:generate
-~$ docker compose exec php php artisan migrate:fresh --seed
+~$ docker compose exec app php artisan storage:link
+~$ docker compose exec app php artisan migrate:fresh --seed
 
 ## Now application is running at http://localhost:8000
 

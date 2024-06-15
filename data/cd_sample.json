@@ -1,0 +1,37 @@
+{
+    "country": "US",
+    "year": "2009",
+    "format": [
+        "CD",
+        "Album"
+    ],
+    "label": [
+        "True Panther Sounds"
+    ],
+    "type": "master",
+    "genre": [
+        "Rock"
+    ],
+    "style": [
+        "Pop Rock",
+        "Indie Rock"
+    ],
+    "id": 192971,
+    "barcode": [],
+    "user_data": {
+        "in_wantlist": false,
+        "in_collection": false
+    },
+    "master_id": 192971,
+    "master_url": "https://api.discogs.com/masters/192971",
+    "uri": "/master/192971-Girls-Album",
+    "catno": "TRUE-010",
+    "title": "Girls (5) - Album",
+    "thumb": "https://i.discogs.com/FRlI-eyRY7X0qncW0WEk3FSMXXfYhrLMHza5a2COIik/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5NDI2/MTEtMTI1Mzk4NDUx/OC5qcGVn.jpeg",
+    "cover_image": "https://i.discogs.com/OixW7FHRoGrdmD_ady-bOeNlfrJNttJTDcNTgdiRObY/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5NDI2/MTEtMTI1Mzk4NDUx/OC5qcGVn.jpeg",
+    "resource_url": "https://api.discogs.com/masters/192971",
+    "community": {
+        "want": 1661,
+        "have": 5294
+    }
+}

@@ -1,4 +1,5 @@
 import {
+    faCircleExclamation,
     faClipboardList,
     faMoneyBill1Wave,
     faRightToBracket,
@@ -61,86 +62,134 @@ const OrderTimeLine = ({ order }) => {
                     </div>
                     <hr />
                 </li>
-                <li>
-                    <hr />
-                    <div className="timeline-end">
-                        {order.delivery.confirmed_at}
-                    </div>
-                    <div className="timeline-middle">
-                        <div
-                            className={`rounded-full border ${
-                                order.delivery.confirmed_at &&
-                                "border-success text-success"
-                            } h-12 w-12 flex items-center justify-center`}
-                        >
-                            <FontAwesomeIcon
-                                icon={faTruckFast}
-                                className="w-8 h-6"
-                            />
+
+                {order.status === "rejected" && (
+                    <li className="text-error">
+                        <hr />
+                        <div className="timeline-end">
+                            {order.delivery.rejected_at}
                         </div>
-                    </div>
-                    <div
-                        className={`timeline-start timeline-box ${
-                            order.delivery.confirmed_at &&
-                            "border-success text-success"
-                        }`}
-                    >
-                        Order shipped out
-                    </div>
-                    <hr />
-                </li>
-                <li>
-                    <hr />
-                    <div className="timeline-end">
-                        {order.delivery.completed_at}
-                    </div>
-                    <div className="timeline-middle">
-                        <div
-                            className={`rounded-full border ${
-                                order.delivery.completed_at &&
-                                "border-success text-success"
-                            } h-12 w-12 flex items-center justify-center`}
-                        >
-                            <FontAwesomeIcon
-                                icon={faRightToBracket}
-                                className="w-8 h-6 fa-rotate-90"
-                            />
+                        <div className="timeline-middle">
+                            <div className="rounded-full border border-error h-12 w-12 flex items-center justify-center">
+                                <FontAwesomeIcon
+                                    icon={faCircleExclamation}
+                                    className="w-8 h-6"
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div
-                        className={`timeline-start timeline-box ${
-                            order.delivery.completed_at &&
-                            "border-success text-success"
-                        }`}
-                    >
-                        Order received
-                    </div>
-                    <hr />
-                </li>
-                <li>
-                    <hr />
-                    <div className="timeline-end">{order.completed_at}</div>
-                    <div className="timeline-middle">
-                        <div
-                            className={`rounded-full border ${
-                                order.completed_at &&
-                                "border-success text-success"
-                            } h-12 w-12 flex items-center justify-center`}
-                        >
-                            <FontAwesomeIcon
-                                icon={faStar}
-                                className="w-8 h-6"
-                            />
+                        <div className="timeline-start timeline-box border-error">
+                            Order rejected
                         </div>
-                    </div>
-                    <div
-                        className={`timeline-start timeline-box ${
-                            order.completed_at && "border-success text-success"
-                        }`}
-                    >
-                        Order completed
-                    </div>
-                </li>
+                    </li>
+                )}
+
+                {order.status === "cancelled" && (
+                    <li className="text-error">
+                        <hr />
+                        <div className="timeline-end">{order.updated_at}</div>
+                        <div className="timeline-middle">
+                            <div className="rounded-full border border-error h-12 w-12 flex items-center justify-center">
+                                <FontAwesomeIcon
+                                    icon={faCircleExclamation}
+                                    className="w-8 h-6"
+                                />
+                            </div>
+                        </div>
+                        <div className="timeline-start timeline-box border-error">
+                            Order cancelled
+                        </div>
+                        <hr />
+                    </li>
+                )}
+
+                {order.status !== "cancelled" &&
+                    order.status !== "rejected" && (
+                        <>
+                            <li>
+                                <hr />
+                                <div className="timeline-end">
+                                    {order.delivery.confirmed_at}
+                                </div>
+                                <div className="timeline-middle">
+                                    <div
+                                        className={`rounded-full border ${
+                                            order.delivery.confirmed_at &&
+                                            "border-success text-success"
+                                        } h-12 w-12 flex items-center justify-center`}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faTruckFast}
+                                            className="w-8 h-6"
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    className={`timeline-start timeline-box ${
+                                        order.delivery.confirmed_at &&
+                                        "border-success text-success"
+                                    }`}
+                                >
+                                    Order shipped out
+                                </div>
+                                <hr />
+                            </li>
+                            <li>
+                                <hr />
+                                <div className="timeline-end">
+                                    {order.delivery.completed_at}
+                                </div>
+                                <div className="timeline-middle">
+                                    <div
+                                        className={`rounded-full border ${
+                                            order.delivery.completed_at &&
+                                            "border-success text-success"
+                                        } h-12 w-12 flex items-center justify-center`}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faRightToBracket}
+                                            className="w-8 h-6 fa-rotate-90"
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    className={`timeline-start timeline-box ${
+                                        order.delivery.completed_at &&
+                                        "border-success text-success"
+                                    }`}
+                                >
+                                    Order received
+                                </div>
+                                <hr />
+                            </li>
+                            <li>
+                                <hr />
+                                <div className="timeline-end">
+                                    {order.completed_at}
+                                </div>
+                                <div className="timeline-middle">
+                                    <div
+                                        className={`rounded-full border ${
+                                            order.completed_at &&
+                                            "border-success text-success"
+                                        } h-12 w-12 flex items-center justify-center`}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faStar}
+                                            className="w-8 h-6"
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    className={`timeline-start timeline-box ${
+                                        order.completed_at &&
+                                        "border-success text-success"
+                                    }`}
+                                >
+                                    Order completed
+                                </div>
+                            </li>
+                        </>
+                    )}
             </ul>
         </>
     );

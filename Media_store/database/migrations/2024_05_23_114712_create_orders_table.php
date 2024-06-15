@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'unpaid', 'confirmed', 'paid', 'failed', 'completed', 'cancelled', 'rejected'])->default('pending');
             $table->timestamp('cancelled_at')->nullable();
             $table->timestamp('completed_at')->nullable();
+            $table->timestamps();
             $table->string('session_id')->nullable();
 
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

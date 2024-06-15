@@ -15,21 +15,82 @@ const ProductsSidebar = ({
     searchFieldChanged = () => {},
     filterPrice = () => {},
     clearAll = () => {},
+    sort = () => {},
 }) => {
     const genres = [
-        "fiction",
-        "comedy",
-        "drama",
-        "action",
-        "horror",
-        "romance",
-        "thriller",
+        "Education",
+        "Science",
+        "Fiction",
+        "Art",
+        "History",
+        "Action",
+        "Animation",
+        "Comedy",
+        "Drama",
+        "Fantasy",
+        "Horror",
+        "Mystery",
+        "Romance",
+        "Thriller",
+        "Rock",
+        "Pop",
+        "Jazz",
+        "Classical",
+        "Country",
+        "Electronic",
     ];
 
     const [range, setRange] = useState({});
 
     return (
         <>
+            <div className="lg:hidden flex flex-col gap-4 p-4">
+                <div>
+                    <p>Sort by</p>
+                </div>
+                <button
+                    className={`btn w-28 ${
+                        queryParams.sort_field !== "random" && "btn-outline"
+                    } btn-primary rounded-sm`}
+                    onClick={() => sort("random", "asc")}
+                >
+                    Random
+                </button>
+                <button
+                    className={`btn w-28 ${
+                        queryParams.sort_field !== "sold" && "btn-outline"
+                    } btn-primary rounded-sm`}
+                    onClick={() => sort("sold", "desc")}
+                >
+                    Top sales
+                </button>
+                <button
+                    className={`btn w-28 ${
+                        queryParams.sort_field !== "created_at" && "btn-outline"
+                    } btn-primary rounded-sm`}
+                    onClick={() => sort("created_at", "desc")}
+                >
+                    Latest
+                </button>
+                <select
+                    value={
+                        queryParams.sort_field === "price"
+                            ? queryParams.sort_dir
+                            : ""
+                    }
+                    className={`py-3 rounded-sm border-primary border ${
+                        queryParams.sort_field === "price" &&
+                        "bg-primary text-white"
+                    }`}
+                    onChange={(e) => sort("price", e.target.value)}
+                >
+                    <option value="" disabled>
+                        Price...
+                    </option>
+                    <option value="asc">Price low to high</option>
+                    <option value="desc">Price high to low</option>
+                </select>
+            </div>
             <div className="p-4">
                 <div
                     className="text-xl flex items-center gap-1 py-2 mb-2 border-b cursor-pointer hover:text-primary"
@@ -95,16 +156,16 @@ const ProductsSidebar = ({
                         onClick={() => searchFieldChanged("genre", "all")}
                     >
                         <FontAwesomeIcon icon={faBarsStaggered} />
-                        <h3>All genres</h3>
+                        <h3>Common genres</h3>
                     </div>
-                    <div className="mx-4">
+                    <div className="mb-2">
                         <ul>
                             {genres.map((genre, index) => (
                                 <li key={index}>
                                     <div
-                                        className={`py-2 hover:opacity-80 hover:text-primary cursor-pointer ${
+                                        className={`px-4 py-2 hover:opacity-80 hover:text-primary cursor-pointer ${
                                             queryParams.genre === genre &&
-                                            "text-primary pl-2 bg-black/5"
+                                            "text-primary pl-6 bg-black/5"
                                         }`}
                                         onClick={() =>
                                             searchFieldChanged("genre", genre)
@@ -175,18 +236,18 @@ const ProductsSidebar = ({
                 </div>
 
                 {/* Rating */}
-                <div className="mx-4 mb-2 border-b">
+                <div className="mb-2 border-b">
                     <div
-                        className={`flex items-center gap-1 py-2 mb-2 hover:opacity-80 hover:text-primary cursor-pointer ${
+                        className={`flex items-center gap-1 px-4 py-2 mb-2 hover:opacity-80 hover:text-primary cursor-pointer ${
                             queryParams.rating === "all" &&
-                            "text-primary pl-2 bg-black/5"
+                            "text-primary pl-6 bg-black/5"
                         }`}
                         onClick={() => searchFieldChanged("rating", "all")}
                     >
                         <FontAwesomeIcon icon={faStarHalfStroke} />
                         <h3>Rating</h3>
                     </div>
-                    <div className="mx-4">
+                    <div className="mx-4 mb-2">
                         <ul>
                             {[5, 4, 3, 2, 1].map((rating, index) => (
                                 <li key={index}>
@@ -202,8 +263,8 @@ const ProductsSidebar = ({
                                         <Rating
                                             value={rating}
                                             size="small"
-                                            name="read-only"
-                                            emptyIcon
+                                            readOnly={true}
+                                            emptyIcon={<></>}
                                         />
                                         {index !== 0 && "& up"}
                                     </div>
@@ -215,7 +276,7 @@ const ProductsSidebar = ({
             </div>
             <div className="text-center mx-8">
                 <button
-                    className="btn btn-outline btn-primary rounded-sm w-full"
+                    className="btn btn-outline btn-primary rounded-sm w-full mb-4"
                     onClick={() => clearAll()}
                 >
                     Clear all

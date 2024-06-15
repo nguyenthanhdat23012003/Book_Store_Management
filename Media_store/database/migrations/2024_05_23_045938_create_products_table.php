@@ -16,12 +16,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('type');
             $table->string('image_path');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->integer('price');
             $table->integer('in_stock');
-            $table->string('genre');
+            $table->json('genre');
             $table->integer('weight');
-            $table->decimal('rating', 2, 1)->default(0);
+            $table->decimal('avgRating', 2, 1)->default(0);
+            $table->integer('ratingsCount')->default(0);
             $table->integer('sold')->default(0);
             $table->timestamps();
             $table->softDeletes();

@@ -14,6 +14,9 @@ class DVD extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'director' => 'array',
+        'actors' => 'array',
+        'writer' => 'array',
         'release_date' => 'datetime',
     ];
 

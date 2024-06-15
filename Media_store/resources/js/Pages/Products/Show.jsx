@@ -196,18 +196,16 @@ const Show = ({ product }) => {
 
                                         <Rating
                                             name="read-only"
-                                            value={Math.floor(product.rating)}
+                                            value={Math.floor(
+                                                product.rating / 2
+                                            )}
                                             readOnly
                                         />
                                     </div>
                                     <div className="px-2 sm:flex hidden text-xl items-center gap-2">
                                         <span className="text-red-600 ">
-                                            {formatNum(
-                                                Math.floor(
-                                                    (product.sold *
-                                                        product.rating) /
-                                                        10
-                                                )
+                                            {Intl.NumberFormat().format(
+                                                product.ratingsCount
                                             )}
                                         </span>
                                         <span className="text-gray-600">
@@ -242,9 +240,19 @@ const Show = ({ product }) => {
                                             />
                                             Genre:
                                         </span>
-                                        <span className="italic bg-black/5 px-2 rounded-lg">
-                                            {product.genre}
-                                        </span>
+                                        <div className="flex gap-2">
+                                            {product.genre.length > 0 &&
+                                                product.genre.map(
+                                                    (genre, index) => (
+                                                        <span
+                                                            key={index}
+                                                            className="italic bg-black/5 px-2 rounded-lg"
+                                                        >
+                                                            {genre}
+                                                        </span>
+                                                    )
+                                                )}
+                                        </div>
                                     </div>
                                     {product.type === "book" && (
                                         <div className="flex justify-between items-center w-fit gap-4">

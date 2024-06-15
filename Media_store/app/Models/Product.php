@@ -14,6 +14,10 @@ class Product extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'genre' => 'array'
+    ];
+
     public function book()
     {
         return $this->hasOne(Book::class);
