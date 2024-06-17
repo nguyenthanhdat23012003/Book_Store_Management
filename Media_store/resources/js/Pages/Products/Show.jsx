@@ -173,7 +173,7 @@ const Show = ({ product }) => {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-6">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 flex md:flex-nowrap flex-wrap gap-4 justify-center">
-                            <div className="lg:w-1/3 w-full max-w-3xl self-center mb-4">
+                            <div className="lg:w-1/3 w-full max-w-3xl self-center mb-4 animate-zoomIn">
                                 <div className="flex items-center justify-center">
                                     <img
                                         src={product.image_path}
@@ -182,7 +182,7 @@ const Show = ({ product }) => {
                                     />
                                 </div>
                             </div>
-                            <div className="lg:w-2/3 w-full max-w-3xl flex flex-col gap-4">
+                            <div className="lg:w-2/3 w-full max-w-3xl flex flex-col gap-4 animate-splitIn">
                                 <div className="sm:order-1 order-3">
                                     <h3 className="sm:text-3xl text-xl">
                                         {product.name}
@@ -364,7 +364,7 @@ const Show = ({ product }) => {
                             <div className="collapse-title bg-base-100 text-primary-content peer-checked:bg-white peer-checked:text-secondary-content">
                                 Product details
                             </div>
-                            <div className="collapse-content bg-base-100 text-primary-content peer-checked:bg-white peer-checked:text-secondary-content">
+                            <div className="collapse-content bg-base-100 text-primary-content peer-checked:bg-white peer-checked:text-secondary-content ">
                                 <ProductDetails product={product} />
                             </div>
                         </div>

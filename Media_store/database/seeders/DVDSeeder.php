@@ -31,7 +31,7 @@ class DVDSeeder extends Seeder
                         'weight' => rand(100, 500),
                         'avgRating' => (float) $dvd['avgRating'],
                         'ratingsCount' => (int) str_replace(",", "", $dvd['ratingsCount']),
-                        'sold' => rand(100, 1000),
+                        'sold' => rand(0, 100000),
                     ]
                 );
                 $release_date = Carbon::createFromFormat('d M Y', $dvd['releasedDate'])->toDateString();

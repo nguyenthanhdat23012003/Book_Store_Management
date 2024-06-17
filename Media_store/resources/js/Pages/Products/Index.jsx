@@ -194,15 +194,17 @@ const index = ({ products, queryParams = null }) => {
                     {/* Page content here */}
                     <div className="flex gap-4 mx-auto sm:px-6 lg:px-12 py-12">
                         {/* Side bar */}
-                        <div className="lg:flex flex-col lg:w-1/6 hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg min-h-screen">
-                            <ProductsSidebar
-                                {...{
-                                    queryParams,
-                                    searchFieldChanged,
-                                    filterPrice,
-                                    clearAll,
-                                }}
-                            />
+                        <div className="lg:flex flex-col lg:w-1/6 hidden ">
+                            <div className="bg-white dark:bg-gray-800 animate-flyIn sticky inset-0 shadow-sm sm:rounded-lg h-fit pb-12 mb-16">
+                                <ProductsSidebar
+                                    {...{
+                                        queryParams,
+                                        searchFieldChanged,
+                                        filterPrice,
+                                        clearAll,
+                                    }}
+                                />
+                            </div>
                         </div>
 
                         {/* Main content */}
@@ -307,7 +309,7 @@ const index = ({ products, queryParams = null }) => {
                                     {products.data.map((product, index) => (
                                         <div
                                             key={index}
-                                            className="xl:w-1/4 lg:w-1/3 md:w-1/2 w-full p-4 hover:p-2 hover:opacity-80 transition-all duration-200 ease-in-out"
+                                            className="xl:w-1/4 lg:w-1/3 md:w-1/2 w-full p-4 hover:p-2 hover:opacity-80 transition-all duration-200 ease-in-out animate-zoomIn"
                                         >
                                             <div className="card rounded-lg indicator w-full bg-base-100 shadow-lg hover:shadow-2xl">
                                                 <Link
@@ -317,7 +319,7 @@ const index = ({ products, queryParams = null }) => {
                                                     )}
                                                 >
                                                     <figure className="h-80 m-2">
-                                                        <span className="indicator-item badge badge-primary text-white">
+                                                        <span className="indicator-item badge badge-primary text-white animate-wiggle">
                                                             new
                                                         </span>
                                                         <img
@@ -355,7 +357,7 @@ const index = ({ products, queryParams = null }) => {
                                                             ) + " sold"}
                                                         </div>
                                                     </div>
-                                                    <div className="flex flex-nowrap mb-2 gap-2 overflow-hidden text-ellipsis">
+                                                    <div className="mb-2 gap-2 h-12 overflow-hidden text-ellipsis">
                                                         {product.genre.length >
                                                             0 &&
                                                             product.genre.map(
@@ -376,7 +378,7 @@ const index = ({ products, queryParams = null }) => {
                                                     </div>
                                                     <div className="card-actions justify-end">
                                                         <button
-                                                            className="btn btn-outline rounded-2xl btn-error"
+                                                            className="btn btn-outline rounded-2xl btn-error animate-bounce"
                                                             onClick={() =>
                                                                 addToCart(
                                                                     product

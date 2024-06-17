@@ -9,14 +9,13 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductHistoryController;
 
-Route::redirect('/', 'dashboard');
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->name('dashboard');
+Route::get('/', [HomeController::class, 'index']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
     // routing for cart
     Route::post('/add-to-cart/{product}', [CartController::class, 'addToCart'])->name('cart.addToCart');
     Route::post('/remove-from-cart/{product}', [CartController::class, 'removeFromCart'])->name('cart.removeFromCart');

@@ -33,7 +33,7 @@ class CDSeeder extends Seeder
                         'weight' => rand(100, 500),
                         'avgRating' => rand(10, 50) / 10,
                         'ratingsCount' => rand(10, 100),
-                        'sold' => rand(100, 1000),
+                        'sold' => rand(0, 100000),
                     ]
                 );
                 $year = $cd['year'];

@@ -57,7 +57,7 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
 
         if (request('name')) {
             $query->where('name', 'like', '%' . request('name') . '%')
-                ->orWhere('genre', 'like', '%' . request('name') . '%');
+                ->orWhere('genre', 'LIKE', '%' . request('name') . '%');
         }
 
         if (request('type') && request('type') !== 'all') {
