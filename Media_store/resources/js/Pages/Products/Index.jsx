@@ -13,6 +13,7 @@ import Toast from "@/Components/Toast";
 import TextInput from "@/Components/TextInput";
 import ProductsSidebar from "./ProductsSidebar";
 import { Rating } from "@mui/material";
+import LazyLoad from "react-lazyload";
 
 const index = ({ products, queryParams = null }) => {
     const page = usePage();
@@ -323,6 +324,7 @@ const index = ({ products, queryParams = null }) => {
                                                             new
                                                         </span>
                                                         <img
+                                                            loading="lazy"
                                                             className="object-cover object-center"
                                                             src={
                                                                 product.image_path

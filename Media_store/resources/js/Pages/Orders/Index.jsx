@@ -69,10 +69,9 @@ const index = ({
     const navItems = {
         all: "All",
         unpaid: "To pay",
-        pending: "To ship",
+        paid: "To ship",
         confirmed: "To receive",
         completed: "Completed",
-        cancelled: "Cancelled",
         failed: "Failed",
     };
 
@@ -146,7 +145,7 @@ const index = ({
                         orders.data.map((item, index) => (
                             <div
                                 key={index}
-                                className="flex flex-col flex-1 px-4 py-2 rounded bg-pink-50 shadow-lg border border-gray"
+                                className="flex flex-col flex-1 px-4 py-2 rounded bg-pink-50 shadow-lg border border-gray animate-fadeIn"
                             >
                                 <div className="flex gap-4 justify-end items-center border-b py-2 mb-2 border-amber-600">
                                     <h3 className="text-success uppercase flex gap-2 items-center">

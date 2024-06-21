@@ -1,40 +1,45 @@
 version: "3.7"
 services:
   app:
-    build:
-      args:
-        user: sammy
-        uid: 1000
-      context: ./
-      dockerfile: Dockerfile
-    image: travellist
-    container_name: travellist-app
+    image: registry.gitlab.com/bereftheart/cicd:latest
+    container_name: daicy-app
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
       - ./:/var/www
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
-      - travellist
+      - daicy
 
   db:
     image: mysql:8.0
-    container_name: travellist-db
+    container_name: daicy-db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_USER: ${DB_USERNAME}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
+    ports:
+      - 3307:3306
     volumes:
       - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
-      - travellist
+      - daicy
 
   nginx:
     image: nginx:alpine
-    container_name: travellist-nginx
+    container_name: daicy-nginx
     restart: unless-stopped
     ports:
       - 8000:80
@@ -42,11 +47,11 @@ services:
       - ./:/var/www
       - ./docker-compose/nginx:/etc/nginx/conf.d/
     networks:
-      - travellist
+      - daicy
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: daicy-pma
     environment:
       PMA_ARBITRARY: 1
       PMA_PORT: ${DB_PORT}
@@ -59,7 +64,7 @@ services:
     ports:
       - 8888:80
     networks:
-      - travellist
+      - daicy
 
   npm:
     image: node:alpine
@@ -74,8 +79,12 @@ services:
     profiles: ["npm"]
     entrypoint: ["npm"]
     networks:
-      - travellist
+      - daicy
 
 networks:
-  travellist:
+  daicy:
     driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

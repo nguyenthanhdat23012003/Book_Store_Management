@@ -4,9 +4,11 @@ import { Head, Link, usePage } from "@inertiajs/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightLong } from "@fortawesome/free-solid-svg-icons";
 import Toast from "@/Components/Toast";
+import LazyLoad from "react-lazyload";
 
 const Dashboard = ({ products }) => {
     const page = usePage();
+    const user = page.props.auth.user;
     const myCart = page.props.cart;
     const [nbItemInCart, setNbItemInCart] = React.useState(myCart.data.length);
 
@@ -123,14 +125,24 @@ const Dashboard = ({ products }) => {
                                             )}
                                         </p>
                                     </div>
-                                    <div className="w-full h-full absolute z-20 inset-x-0 bg-white/25 flex items-end justify-center -bottom-12 opacity-0 hover:bottom-0 hover:opacity-100 transition-all duration-300">
-                                        <button
-                                            className="btn btn-neutral rounded-none w-full"
-                                            onClick={() => addToCart(product)}
-                                        >
-                                            Add to cart
-                                        </button>
-                                    </div>
+                                    <Link
+                                        href={route(
+                                            "products.show",
+                                            product.id
+                                        )}
+                                        className="w-full h-full absolute z-20 inset-x-0 bg-white/25 flex items-end justify-center -bottom-12 opacity-0 hover:bottom-0 hover:opacity-100 transition-all duration-300"
+                                    >
+                                        {user.role === "customer" && (
+                                            <button
+                                                className="btn btn-neutral rounded-none w-full"
+                                                onClick={() =>
+                                                    addToCart(product)
+                                                }
+                                            >
+                                                Add to cart
+                                            </button>
+                                        )}
+                                    </Link>
                                 </div>
                             ))}
                         </div>
@@ -183,11 +195,46 @@ const Dashboard = ({ products }) => {
                         <h3>Choose Your Fav</h3>
                     </div>
                     <div className="grid md:grid-cols-7 grid-cols-2 md:grid-rows-2 grid-rows-6 gap-4">
-                        <div className="col-span-3 md:row-span-2 bg-[url('/images/book&cat.png')] md:col-start-3 md:row-start-1 row-span-2 row-start-3 bg-cover bg-center w-full"></div>
-                        <div className="col-span-2 row-span-1 bg-[url('/images/cd_tl.jpg')] bg-cover bg-center w-full aspect-square"></div>
-                        <div className="col-span-2 row-span-1 bg-[url('/images/dvd_tr.jpg')] bg-cover bg-center w-full aspect-square"></div>
-                        <div className="col-span-2 row-span-1 bg-[url('/images/book_lb.png')] bg-cover bg-center w-full aspect-square"></div>
-                        <div className="col-span-2 row-span-1 bg-[url('/images/cd_rb.jpg')] bg-cover bg-center w-full aspect-square"></div>
+                        <div className="col-span-3 md:row-span-2 md:col-start-3 md:row-start-1 row-span-2 row-start-3 overflow-hidden">
+                            <img
+                                loading="lazy"
+                                src="/images/book&cat.png"
+                                alt=""
+                                className="w-full h-full object-cover object-center"
+                            />
+                        </div>
+                        <div className="col-span-2 row-span-1">
+                            <img
+                                loading="lazy"
+                                src="/images/cd_tl.jpg"
+                                alt=""
+                                className="w-full h-full object-cover object-center aspect-square"
+                            />
+                        </div>
+                        <div className="col-span-2 row-span-1">
+                            <img
+                                loading="lazy"
+                                src="/images/dvd_tr.jpg"
+                                alt=""
+                                className="w-full h-full object-cover object-center aspect-square"
+                            />
+                        </div>
+                        <div className="col-span-2 row-span-1">
+                            <img
+                                loading="lazy"
+                                src="/images/book_lb.png"
+                                alt=""
+                                className="w-full h-full object-cover object-center aspect-square"
+                            />
+                        </div>
+                        <div className="col-span-2 row-span-1">
+                            <img
+                                loading="lazy"
+                                src="/images/cd_rb.jpg"
+                                alt=""
+                                className="w-full h-full object-cover object-center aspect-square"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

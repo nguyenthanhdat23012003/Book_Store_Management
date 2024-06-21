@@ -51,29 +51,19 @@ If not, following this guide: https://docs.docker.com/engine/install/
 
 ~$ cp .env.example .env
 
-APP_NAME=Laravel
-
+"""APP_NAME=Laravel
 APP_ENV=dev
-
 APP_KEY=
-
 APP_DEBUG=true
-
 APP_TIMEZONE=UTC
-
 APP_URL=http://localhost:8000
 
 DB_CONNECTION=mysql
-
 DB_HOST=db
-
 DB_PORT=3306
-
 DB_DATABASE=media_store
-
 DB_USERNAME=media_user
-
-DB_PASSWORD=password
+DB_PASSWORD=password"""
 
 ...
 
@@ -86,8 +76,6 @@ DB_PASSWORD=password
 ### Install composer
 
 ~$ docker compose exec app rm -rf vendor composer.lock
-
-~$ docker compose exec app composer update
 
 ~$ docker compose exec app composer install
 
@@ -103,8 +91,7 @@ DB_PASSWORD=password
 
 ## Important
 
-> Before seeding data, you must to unzip the data.zip inside /data_for_seeding/
-> then move it to /Media_store/storage/app/public/
+> Before seeding data, you must to unzip the data.zip inside /Media_store/storage/app/
 > The dir must be look like this:
 
 ![alt text](image.png)
@@ -118,3 +105,29 @@ Run following command to seed data:
 ## Now application is running at http://localhost:8000
 
 ## Phpmyadmin already at http://localhost:8888
+
+# Production
+
+> I have setup gitlab CICD pipeline that include:
+
+![alt text](image-1.png)
+
+> What does it has? Build app, automation test with PEST, release image and finally auto deployment
+> Now you can visit my website at:
+> https://daicy.shop
+
+You can test for the VNPAY feature by the following infomation:
+"""
+Ngân hàng:
+NCB
+Số thẻ:
+9704198526191432198
+Tên chủ thẻ:
+NGUYEN VAN A
+Ngày phát hành:
+07/15
+Mật khẩu OTP:
+123456
+"""
+
+### Visit my gitlab: https://gitlab.com/bereftHeart/cicd

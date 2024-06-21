@@ -169,7 +169,7 @@ const Index = ({ error }) => {
                         cart_items.map((item) => (
                             <div
                                 key={item.id}
-                                className="flex flex-wrap sm:items-center px-4 py-2 rounded bg-pink-50 shadow-lg border border-gray"
+                                className="flex flex-wrap sm:items-center px-4 py-2 rounded bg-pink-50 shadow-lg border border-gray animate-jumpIn"
                             >
                                 <div className="flex grow lg:w-1/5 md:w-1/3 w-2/5 justify-center items-center h-full sm:px-4">
                                     <div className="sm:px-2">

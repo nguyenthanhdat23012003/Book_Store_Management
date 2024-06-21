@@ -12,8 +12,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Carousel from "@/Components/Carousel";
 import Countdown from "@/Components/Countdown";
-import { useState } from "react";
 import AnimationSection from "@/Components/AnimationSection";
+import LazyLoad from "react-lazyload";
 
 export default function Welcome({ auth }) {
     const slides = [
@@ -31,6 +31,12 @@ export default function Welcome({ auth }) {
     );
 
     const initTimer = timeDiff / 1000;
+
+    const Loading = () => {
+        <div className="flex justify-center items-center w-full h-32">
+            <span className="loading loading-spinner text-primary"></span>
+        </div>;
+    };
 
     return (
         <>
@@ -103,75 +109,121 @@ export default function Welcome({ auth }) {
                         </div>
                     </div>
                 </div>
-                <main className="w-full bg-[url('/images/store_02.png')] bg-cover bg-center bg-fixed">
-                    <div className="flex gap-4 justify-between bg-white/80 py-12 lg:px-12 px-4">
-                        <FontAwesomeIcon
-                            icon={faQuoteLeft}
-                            className="lg:text-7xl text-3xl text-black/50 self-start"
-                        />
-                        <div className="py-6 lg:px-8 flex flex-col gap-4 justify-center items-center">
-                            <h3 className="lg:text-3xl text-lg text-justify italic text-black/90">
-                                Explore a vast collection of captivating
-                                literature, soulful music, and cinematic
-                                masterpieces at our one-stop e-commerce
-                                destination. From the latest bestsellers to
-                                timeless classics, our carefully curated
-                                selection of books, CDs, and DVDs caters to
-                                every taste and interest. Immerse yourself in
-                                the worlds of words, melodies, and visual
-                                storytelling with just a few clicks.
-                            </h3>
-                            <h5 className="lg:text-xl font-semibold text-black/25">
-                                - Daicy
-                            </h5>
+                <LazyLoad once={true} placeholder={<Loading />} offset={-100}>
+                    <main className="w-full bg-[url('/images/store_02.png')] bg-cover bg-center bg-fixed">
+                        <div className="flex gap-4 justify-between bg-white/80 py-12 lg:px-12 px-4">
+                            <FontAwesomeIcon
+                                icon={faQuoteLeft}
+                                className="lg:text-7xl text-3xl text-black/50 self-start"
+                            />
+                            <div className="py-6 lg:px-8 flex flex-col gap-4 justify-center items-center">
+                                <h3 className="lg:text-3xl text-lg text-justify italic text-black/90">
+                                    Explore a vast collection of captivating
+                                    literature, soulful music, and cinematic
+                                    masterpieces at our one-stop e-commerce
+                                    destination. From the latest bestsellers to
+                                    timeless classics, our carefully curated
+                                    selection of books, CDs, and DVDs caters to
+                                    every taste and interest. Immerse yourself
+                                    in the worlds of words, melodies, and visual
+                                    storytelling with just a few clicks.
+                                </h3>
+                                <h5 className="lg:text-xl font-semibold text-black/25">
+                                    - Daicy
+                                </h5>
+                            </div>
+                            <FontAwesomeIcon
+                                icon={faQuoteRight}
+                                className="lg:text-7xl text-3xl text-black/50 self-end"
+                            />
                         </div>
-                        <FontAwesomeIcon
-                            icon={faQuoteRight}
-                            className="lg:text-7xl text-3xl text-black/50 self-end"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-6 items-center py-12 bg-gray-200">
-                        <h3 className="lg:text-7xl text-3xl text-neutral uppercase font-bold [text-shadow:_4px_4px_6px_rgb(0_0_0_/_60%)]">
-                            Upcoming Sales
-                        </h3>
-                        <AnimationSection animation="jumpIn">
-                            <Countdown initialTime={initTimer} />
-                        </AnimationSection>
-                    </div>
-                    {/* Book */}
-                    <div className="min-h-[600px] bg-gray-100 flex flex-col justify-center">
-                        <div className="hero bg-gray-100 mb-8">
-                            <div className="hero-content flex-col lg:flex-row">
-                                <div className="lg:w-1/3">
+                        <div className="flex flex-col gap-6 items-center py-12 bg-gray-200">
+                            <h3 className="lg:text-7xl text-3xl text-neutral uppercase font-bold [text-shadow:_4px_4px_6px_rgb(0_0_0_/_60%)]">
+                                Upcoming Sales
+                            </h3>
+                            <AnimationSection animation="jumpIn">
+                                <Countdown initialTime={initTimer} />
+                            </AnimationSection>
+                        </div>
+                        {/* Book */}
+                        <div className="min-h-[600px] bg-gray-100 flex flex-col justify-center">
+                            <div className="hero bg-gray-100 mb-8">
+                                <div className="hero-content flex-col lg:flex-row">
+                                    <div className="lg:w-1/3">
+                                        <AnimationSection animation="zoomIn">
+                                            <Carousel autoSlide={true}>
+                                                {slides.map((slide, index) => (
+                                                    <img
+                                                        key={index}
+                                                        src={slide}
+                                                        alt={`Slide ${
+                                                            index + 1
+                                                        }`}
+                                                        className="p-12"
+                                                    />
+                                                ))}
+                                            </Carousel>
+                                        </AnimationSection>
+                                    </div>
                                     <AnimationSection animation="zoomIn">
-                                        <Carousel autoSlide={true}>
-                                            {slides.map((slide, index) => (
-                                                <img
-                                                    key={index}
-                                                    src={slide}
-                                                    alt={`Slide ${index + 1}`}
-                                                    className="p-12"
-                                                />
-                                            ))}
-                                        </Carousel>
+                                        <div className="lg:w-2/3 flex flex-col lg:items-start items-center">
+                                            <h1 className="lg:text-5xl text-3xl font-bold text-black">
+                                                Best Selling Books
+                                            </h1>
+                                            <hr className="bg-rose-600 mt-4 h-[2px] w-36" />
+                                            <p className="py-6 text-justify mb-4">
+                                                Discover a world of literary
+                                                wonder in our expertly curated
+                                                collection of books. From
+                                                captivating fiction to
+                                                insightful non-fiction, our
+                                                selection covers a wide range of
+                                                genres to satisfy every reader's
+                                                appetite. Immerse yourself in
+                                                the power of the written word
+                                                and let your imagination soar.
+                                            </p>
+                                            <button
+                                                className="btn btn-neutral w-36"
+                                                onClick={() => {
+                                                    router.get(
+                                                        route("products.index"),
+                                                        {
+                                                            type: "book",
+                                                            sort_field: "sold",
+                                                            sort_dir: "desc",
+                                                        }
+                                                    );
+                                                }}
+                                            >
+                                                Shop All Books
+                                            </button>
+                                        </div>
                                     </AnimationSection>
                                 </div>
-                                <AnimationSection animation="zoomIn">
-                                    <div className="lg:w-2/3 flex flex-col lg:items-start items-center">
-                                        <h1 className="lg:text-5xl text-3xl font-bold text-black">
-                                            Best Selling Books
+                            </div>
+                        </div>
+                        {/* CD */}
+                        <div className="hero bg-black/35 min-h-[480px] lg:border-x-[160px] md:border-x-[80px] border-gray-100">
+                            <div className="hero-content flex-col lg:flex-row mt-8">
+                                <div className="lg:w-1/2 text-white lg:text-right text-center">
+                                    <AnimationSection animation="flyIn">
+                                        <h3 className="text-xl mb-2">
+                                            Limited Time Offer
+                                        </h3>
+                                        <h1 className="md:text-5xl text-3xl font-bold">
+                                            Music CDs
                                         </h1>
-                                        <hr className="bg-rose-600 mt-4 h-[2px] w-36" />
-                                        <p className="py-6 text-justify mb-4">
-                                            Discover a world of literary wonder
-                                            in our expertly curated collection
-                                            of books. From captivating fiction
-                                            to insightful non-fiction, our
-                                            selection covers a wide range of
-                                            genres to satisfy every reader's
-                                            appetite. Immerse yourself in the
-                                            power of the written word and let
-                                            your imagination soar.
+                                        <p className="py-6 text-justify font-semibold">
+                                            Experience the magic of music with
+                                            our extensive collection of CDs.
+                                            From chart-topping hits to timeless
+                                            classics, our selection covers a
+                                            wide range of genres to suit every
+                                            musical taste. Whether you're a fan
+                                            of rock, pop, jazz, or classical,
+                                            you'll find something to delight
+                                            your ears in our store.
                                         </p>
                                         <button
                                             className="btn btn-neutral w-36"
@@ -179,137 +231,100 @@ export default function Welcome({ auth }) {
                                                 router.get(
                                                     route("products.index"),
                                                     {
-                                                        type: "book",
-                                                        sort_field: "sold",
+                                                        type: "cd",
+                                                        sort_field:
+                                                            "created_at",
                                                         sort_dir: "desc",
                                                     }
                                                 );
                                             }}
                                         >
-                                            Shop All Books
+                                            Latest CDs
                                         </button>
-                                    </div>
-                                </AnimationSection>
-                            </div>
-                        </div>
-                    </div>
-                    {/* CD */}
-                    <div className="hero bg-black/35 min-h-[480px] lg:border-x-[160px] md:border-x-[80px] border-gray-100">
-                        <div className="hero-content flex-col lg:flex-row mt-8">
-                            <div className="lg:w-1/2 text-white lg:text-right text-center">
-                                <AnimationSection animation="flyIn">
-                                    <h3 className="text-xl mb-2">
-                                        Limited Time Offer
-                                    </h3>
-                                    <h1 className="md:text-5xl text-3xl font-bold">
-                                        Music CDs
-                                    </h1>
-                                    <p className="py-6 text-justify font-semibold">
-                                        Experience the magic of music with our
-                                        extensive collection of CDs. From
-                                        chart-topping hits to timeless classics,
-                                        our selection covers a wide range of
-                                        genres to suit every musical taste.
-                                        Whether you're a fan of rock, pop, jazz,
-                                        or classical, you'll find something to
-                                        delight your ears in our store.
-                                    </p>
-                                    <button
-                                        className="btn btn-neutral w-36"
-                                        onClick={() => {
-                                            router.get(
-                                                route("products.index"),
-                                                {
-                                                    type: "cd",
-                                                    sort_field: "created_at",
-                                                    sort_dir: "desc",
-                                                }
-                                            );
-                                        }}
+                                    </AnimationSection>
+                                </div>
+                                <div className="lg:w-1/2 flex justify-center items-center lg:my-0 my-12">
+                                    <a
+                                        href="https://youtube.com"
+                                        target="_blank"
                                     >
-                                        Latest CDs
-                                    </button>
-                                </AnimationSection>
+                                        <FontAwesomeIcon
+                                            icon={faPlay}
+                                            className=" w-16 h-16 text-white/50"
+                                        />
+                                    </a>
+                                </div>
                             </div>
-                            <div className="lg:w-1/2 flex justify-center items-center lg:my-0 my-12">
-                                <a href="https://youtube.com" target="_blank">
+                        </div>
+                        <div className="w-full bg-gray-100 flex justify-center py-20">
+                            <div className="grid lg:grid-cols-4 lg:gap-6 max-w-5xl w-full text-base-content">
+                                <div className="flex flex-col justify-between items-center gap-4">
                                     <FontAwesomeIcon
-                                        icon={faPlay}
-                                        className=" w-16 h-16 text-white/50"
+                                        icon={faEarthAsia}
+                                        className="h-12"
                                     />
-                                </a>
+                                    <p className="text-xl font-semibold font-serif">
+                                        Worldwide Shipping
+                                    </p>
+                                    <p className="text-justify text-gray-600 max-w-80 h-32 px-4">
+                                        We deliver to over 100 countries around
+                                        the world. Wherever you are, we'll get
+                                        your order to you.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col justify-between items-center gap-4">
+                                    <FontAwesomeIcon
+                                        icon={faMedal}
+                                        className="h-12"
+                                    />
+                                    <p className="text-xl font-semibold font-serif">
+                                        Best Quality
+                                    </p>
+                                    <p className="text-justify text-gray-600 max-w-80 h-32 px-4">
+                                        We source our products from the best
+                                        suppliers to ensure that you get the
+                                        highest quality items.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col justify-between items-center gap-4">
+                                    <FontAwesomeIcon
+                                        icon={faHandHoldingDollar}
+                                        className="h-12"
+                                    />
+                                    <p className="text-xl font-semibold font-serif">
+                                        Best Offers
+                                    </p>
+                                    <p className="text-justify text-gray-600 max-w-80 h-32 px-4">
+                                        We offer competitive prices and regular
+                                        discounts to help you save money on your
+                                        purchases.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col justify-between items-center gap-4">
+                                    <FontAwesomeIcon
+                                        icon={faKey}
+                                        className="h-12"
+                                    />
+                                    <p className="text-xl font-semibold font-serif">
+                                        Secure Payments
+                                    </p>
+                                    <p className="text-justify text-gray-600 max-w-80 h-32 px-4">
+                                        Our payment gateway is secure and
+                                        reliable, so you can shop with
+                                        confidence.
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="w-full bg-gray-100 flex justify-center py-20">
-                        <div className="grid lg:grid-cols-4 lg:gap-6 max-w-5xl w-full text-base-content">
-                            <div className="flex flex-col justify-between items-center gap-4">
-                                <FontAwesomeIcon
-                                    icon={faEarthAsia}
-                                    className="h-12"
-                                />
-                                <p className="text-xl font-semibold font-serif">
-                                    Worldwide Shipping
-                                </p>
-                                <p className="text-justify text-gray-600 max-w-80 h-32 px-4">
-                                    We deliver to over 100 countries around the
-                                    world. Wherever you are, we'll get your
-                                    order to you.
-                                </p>
-                            </div>
-                            <div className="flex flex-col justify-between items-center gap-4">
-                                <FontAwesomeIcon
-                                    icon={faMedal}
-                                    className="h-12"
-                                />
-                                <p className="text-xl font-semibold font-serif">
-                                    Best Quality
-                                </p>
-                                <p className="text-justify text-gray-600 max-w-80 h-32 px-4">
-                                    We source our products from the best
-                                    suppliers to ensure that you get the highest
-                                    quality items.
-                                </p>
-                            </div>
-                            <div className="flex flex-col justify-between items-center gap-4">
-                                <FontAwesomeIcon
-                                    icon={faHandHoldingDollar}
-                                    className="h-12"
-                                />
-                                <p className="text-xl font-semibold font-serif">
-                                    Best Offers
-                                </p>
-                                <p className="text-justify text-gray-600 max-w-80 h-32 px-4">
-                                    We offer competitive prices and regular
-                                    discounts to help you save money on your
-                                    purchases.
-                                </p>
-                            </div>
-                            <div className="flex flex-col justify-between items-center gap-4">
-                                <FontAwesomeIcon
-                                    icon={faKey}
-                                    className="h-12"
-                                />
-                                <p className="text-xl font-semibold font-serif">
-                                    Secure Payments
-                                </p>
-                                <p className="text-justify text-gray-600 max-w-80 h-32 px-4">
-                                    Our payment gateway is secure and reliable,
-                                    so you can shop with confidence.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    {/* DVD */}
-                    <div className="min-h-[600px] bg-white hero py-4">
-                        <div className="hero-content flex-col gap-4 justify-center">
-                            <h1 className="text-5xl font-bold">
-                                Latest Movies
-                            </h1>
-                            <hr className="bg-cyan-700 h-[2px] w-40" />
+                        {/* DVD */}
+                        <div className="min-h-[600px] bg-white hero py-4">
+                            <div className="hero-content flex-col gap-4 justify-center">
+                                <h1 className="text-5xl font-bold">
+                                    Latest Movies
+                                </h1>
+                                <hr className="bg-cyan-700 h-[2px] w-40" />
 
-                            <AnimationSection animation="splitIn">
-                                <div className="grid lg:grid-cols-3 gap-4 my-6">
+                                <div className="grid lg:grid-cols-3 gap-4 my-6 animate-splitIn">
                                     <div className="relative">
                                         <div className="bg-black skeleton rounded-none">
                                             <img
@@ -338,7 +353,7 @@ export default function Welcome({ auth }) {
                                         <div className="bg-black skeleton rounded-none">
                                             <img
                                                 src="/images/dvd_02.png"
-                                                alt="kong"
+                                                alt="beekeeper"
                                                 className="opacity-50"
                                             />
                                         </div>
@@ -360,7 +375,7 @@ export default function Welcome({ auth }) {
                                         <div className="bg-black skeleton rounded-none">
                                             <img
                                                 src="/images/dvd_03.png"
-                                                alt="kong"
+                                                alt="dune"
                                                 className="opacity-50"
                                             />
                                         </div>
@@ -379,32 +394,33 @@ export default function Welcome({ auth }) {
                                         </div>
                                     </div>
                                 </div>
-                            </AnimationSection>
 
-                            <p className="py-6 text-justify">
-                                Dive into the world of cinema with our
-                                collection of DVDs. From Hollywood blockbusters
-                                to indie gems, our selection covers a wide range
-                                of genres to suit every movie buff's taste.
-                                Whether you're a fan of action, drama, comedy,
-                                or horror, you'll find something to entertain
-                                you in our store.
-                            </p>
-                            <button
-                                className="btn btn-neutral w-36"
-                                onClick={() => {
-                                    router.get(route("products.index"), {
-                                        type: "dvd",
-                                        sort_field: "created_at",
-                                        sort_dir: "desc",
-                                    });
-                                }}
-                            >
-                                Explore now
-                            </button>
+                                <p className="py-6 text-justify">
+                                    Dive into the world of cinema with our
+                                    collection of DVDs. From Hollywood
+                                    blockbusters to indie gems, our selection
+                                    covers a wide range of genres to suit every
+                                    movie buff's taste. Whether you're a fan of
+                                    action, drama, comedy, or horror, you'll
+                                    find something to entertain you in our
+                                    store.
+                                </p>
+                                <button
+                                    className="btn btn-neutral w-36"
+                                    onClick={() => {
+                                        router.get(route("products.index"), {
+                                            type: "dvd",
+                                            sort_field: "created_at",
+                                            sort_dir: "desc",
+                                        });
+                                    }}
+                                >
+                                    Explore now
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </main>
+                    </main>
+                </LazyLoad>
                 <Footer />
             </div>
         </>

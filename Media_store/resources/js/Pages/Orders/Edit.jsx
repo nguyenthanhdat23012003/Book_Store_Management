@@ -315,7 +315,7 @@ const edit = ({ order }) => {
                                                     )
                                                 }
                                             >
-                                                <option value="">
+                                                <option value="" disabled>
                                                     Select your province...
                                                 </option>
                                                 {provinces.map(

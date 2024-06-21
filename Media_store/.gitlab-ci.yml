@@ -6,6 +6,15 @@ services:
 
 stages:
   - build
+  - test
+  - release
+  - deploy
+
+# Cache Composer dependencies and node modules
+cache:
+  paths:
+    - vendor/
+    - node_modules/
 
 before_script:
   - docker version
@@ -17,4 +26,82 @@ build:
     - docker pull $CI_REGISTRY_IMAGE:latest || true
     - docker build --build-arg user=sammy --build-arg uid=1000 --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+test:
+  stage: test
+  before_script:
+    - docker compose version
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - cp .env.testing .env # Copy .env.testing to .env
+  script:
+    - docker compose up -d
+    - sleep 15 # Wait for services to initialize
+    - docker compose exec -T app composer install --no-interaction --optimize-autoloader # Install Composer dependencies
+    # - docker compose exec -T app php artisan migrate # Run migrations and seed the database
+    - docker compose exec -T app vendor/bin/pest # Run Pest tests
+  after_script:
+    - docker compose down # Clean up
+
+release-tag:
+  variables:
+    GIT_STRATEGY: none
+  stage: release
+  except:
+    - main
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+release-latest:
+  variables:
+    GIT_STRATEGY: none
+  stage: release
+  only:
+    - main
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE:latest
+
+deploy:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  only:
+    - main
+  before_script:
+    - apk update && apk add openssh-client bash
+  script:
+    # chạy ssh-agent tương ứng với Gitlab Runner hiện tại
+    - eval $(ssh-agent -s)
+
+    # thêm nội dung của biến SSH_PRIVATE_KEY vào agent store
+    - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
+
+    # tạo folder ~/.ssh
+    - mkdir -p ~/.ssh
+
+    # Scan lấy SSH Host key cho địa chỉ IP server
+    # Được kết quả bao nhiêu thì thêm vào file known_hosts
+    - ssh-keyscan -H $SSH_SERVER_IP >> ~/.ssh/known_hosts
+
+    # Sửa lại quyền của file known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+    # Thực hiện SSH vào server, login vào Registry, chuyển tới folder project
+    # Down project, pull image về, up project và xoá đi image cũ
+    - >
+      ssh $SSH_USER@$SSH_SERVER_IP
+      "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY};
+      cd ${PATH_TO_PROJECT};
+      docker compose down;
+      git pull origin main;
+      docker pull ${CI_REGISTRY_IMAGE}:latest;
+      docker compose up -d;
+      docker compose exec app composer update;
+      docker compose run --rm npm install;
+      docker compose run --rm npm run build;
+      docker image prune -f;"

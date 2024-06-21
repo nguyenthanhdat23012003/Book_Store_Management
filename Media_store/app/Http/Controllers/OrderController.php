@@ -36,7 +36,13 @@ class OrderController extends Controller
             ]);
 
         if (request('field') && request('field') !== 'all') {
-            $query->where('status', request('field'));
+            if (request('field') === 'paid') {
+                $query->whereIn('status', ['paid', 'pending']);
+            } else if (request('field') === 'failed') {
+                $query->whereIn('status', ['failed', 'rejected', 'cancelled']);
+            } else {
+                $query->where('status', request('field'));
+            }
         }
 
         $order = $query->orderBy('created_at', 'desc')->paginate(6)->appends(request()->query())->onEachSide(1);

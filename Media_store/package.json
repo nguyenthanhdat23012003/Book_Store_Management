@@ -33,6 +33,8 @@
         "@mui/icons-material": "^5.15.19",
         "@mui/material": "^5.15.19",
         "@mui/styled-engine-sc": "^6.0.0-alpha.18",
+        "react-lazyload": "^3.2.1",
         "styled-components": "^6.1.11"
-    }
+    },
+    "test": "jest --coverage --forceExit"
 }
