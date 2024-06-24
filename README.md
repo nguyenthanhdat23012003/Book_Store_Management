@@ -51,20 +51,19 @@ If not, following this guide: https://docs.docker.com/engine/install/
 
 ~$ cp .env.example .env
 
-"""APP_NAME=Laravel
-APP_ENV=dev
-APP_KEY=
-APP_DEBUG=true
-APP_TIMEZONE=UTC
-APP_URL=http://localhost:8000
+APP_NAME=Laravel  
+APP_ENV=dev  
+APP_KEY=  
+APP_DEBUG=true  
+APP_TIMEZONE=UTC  
+APP_URL=http://localhost:8000  
 
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=media_store
-DB_USERNAME=media_user
-DB_PASSWORD=password"""
-
+DB_CONNECTION=mysql  
+DB_HOST=db  
+DB_PORT=3306  
+DB_DATABASE=media_store  
+DB_USERNAME=media_user  
+DB_PASSWORD=password  
 ...
 
 ### Build project
@@ -117,17 +116,16 @@ Run following command to seed data:
 > https://daicy.shop
 
 You can test for the VNPAY feature by the following infomation:
-"""
-Ngân hàng:
-NCB
-Số thẻ:
-9704198526191432198
-Tên chủ thẻ:
-NGUYEN VAN A
-Ngày phát hành:
-07/15
-Mật khẩu OTP:
-123456
-"""
+
+Ngân hàng:  
+NCB  
+Số thẻ:  
+9704198526191432198  
+Tên chủ thẻ:  
+NGUYEN VAN A  
+Ngày phát hành:  
+07/15  
+Mật khẩu OTP:  
+123456  
 
 ### Visit my gitlab: https://gitlab.com/bereftHeart/cicd
