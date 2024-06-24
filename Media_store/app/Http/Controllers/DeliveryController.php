@@ -22,7 +22,7 @@ class DeliveryController extends Controller
         $sortDirection = request('sort_dir', 'desc');
 
         if (request('name')) {
-            $query->where('name', 'like', '%' . request('name') . '%');
+            $query->where('name', 'LIKE', '%' . request('name') . '%');
         };
 
         if (request('status') && request('status') !== 'all') {

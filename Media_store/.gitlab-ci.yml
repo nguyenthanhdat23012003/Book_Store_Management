@@ -104,4 +104,5 @@ deploy:
       docker compose exec app composer update;
       docker compose run --rm npm install;
       docker compose run --rm npm run build;
+      docker compose exec app php artisan optimize;
       docker image prune -f;"

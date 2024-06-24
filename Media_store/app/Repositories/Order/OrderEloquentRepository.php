@@ -49,12 +49,12 @@ class OrderEloquentRepository extends EloquentRepository implements OrderReposit
 
         if (request('name')) {
             $query->whereHas('user', function ($q) {
-                $q->where('name', 'like', '%' . request('name') . '%');
+                $q->where('name', 'LIKE', '%' . request('name') . '%');
             });
         };
 
-        if (request('status')) {
-            request('status') === 'all' ? '' : $query->where('status', request('status'));
+        if (request('status') && request('status') !== 'all') {
+            $query->where('status', request('status'));
         };
 
         if (request('delivery_type') && request('delivery_type') !== 'all') {

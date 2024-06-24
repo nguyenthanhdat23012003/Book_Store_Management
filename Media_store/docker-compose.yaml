@@ -1,7 +1,14 @@
 version: "3.7"
 services:
   app:
-    image: registry.gitlab.com/bereftheart/cicd:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        user: sammy
+        uid: 1000
+    image: daicy-app
+    # image: registry.gitlab.com/bereftheart/cicd:latest
     container_name: daicy-app
     restart: unless-stopped
     working_dir: /var/www/

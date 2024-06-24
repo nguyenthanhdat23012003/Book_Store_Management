@@ -3,7 +3,6 @@ import Pagination from "@/Components/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faArrowLeftLong,
-    faCartShopping,
     faFilter,
     faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
@@ -13,7 +12,6 @@ import Toast from "@/Components/Toast";
 import TextInput from "@/Components/TextInput";
 import ProductsSidebar from "./ProductsSidebar";
 import { Rating } from "@mui/material";
-import LazyLoad from "react-lazyload";
 
 const index = ({ products, queryParams = null }) => {
     const page = usePage();
@@ -58,10 +56,17 @@ const index = ({ products, queryParams = null }) => {
                         },
                     ]);
                 }
+                router.reload({ only: ["cart"] });
             })
             .catch((error) => {
                 console.log(error);
-                setMessages("Oop! Something went wrong!");
+                setMessages([
+                    ...messages,
+                    {
+                        message: "Oop! Something went wrong!",
+                        type: "alert-error",
+                    },
+                ]);
             });
     };
 
@@ -135,7 +140,7 @@ const index = ({ products, queryParams = null }) => {
                                 </li>
                             </ul>
                         </div>
-                        <Link
+                        {/* <Link
                             href={route("cart.index")}
                             className="indicator btn btn-outline rounded-2xl btn-error -mb-4"
                         >
@@ -151,7 +156,7 @@ const index = ({ products, queryParams = null }) => {
                                     View cart
                                 </span>
                             </span>
-                        </Link>
+                        </Link> */}
                     </div>
                     <div className="sm:hidden block">
                         <Link
@@ -178,7 +183,7 @@ const index = ({ products, queryParams = null }) => {
                         aria-label="close sidebar"
                         className="drawer-overlay"
                     ></label>
-                    <div className="p-4 w-80 min-h-full bg-base-200 text-base-content">
+                    <div className="p-4 w-80 h-screen overflow-auto no-scrollbar bg-base-200 text-base-content">
                         {/* Sidebar content for mobile here */}
                         <ProductsSidebar
                             {...{

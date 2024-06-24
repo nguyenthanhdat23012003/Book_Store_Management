@@ -15,7 +15,6 @@ import Toast from "@/Components/Toast";
 const Index = ({ error }) => {
     const page = usePage();
     const cart_items = page.props.cart.data;
-    console.log(cart_items);
 
     const [selectedProducts, setSelectedProducts] = React.useState([]);
     const [selectAll, setSelectAll] = useState(false);

@@ -287,7 +287,6 @@ const Manage = ({ orders, queryParams = null }) => {
                                     <th scope="col"></th>
                                     <th scope="col">
                                         <TextInput
-                                            className="w-full min-w-32"
                                             placeholder="search..."
                                             onBlur={(e) =>
                                                 searchFieldChanged(
@@ -415,19 +414,19 @@ const Manage = ({ orders, queryParams = null }) => {
                                             scope="col"
                                             className="text-nowrap uppercase"
                                         >
-                                            {order.payment_method}
+                                            {order.payment_method || "-"}
                                         </td>
                                         <td
                                             scope="col"
                                             className="text-nowrap uppercase"
                                         >
-                                            {order.delivery_type}
+                                            {order.delivery_type || "-"}
                                         </td>
                                         <td scope="col" className="text-nowrap">
                                             {order.created_at}
                                         </td>
                                         <td scope="col" className="text-nowrap">
-                                            {order.completed_at}
+                                            {order.completed_at || "-"}
                                         </td>
                                         <td scope="col" className="text-nowrap">
                                             <button

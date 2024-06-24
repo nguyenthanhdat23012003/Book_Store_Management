@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Link, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import Footer from "@/Pages/Footer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import CartDrawer from "@/Pages/Carts/CartDrawer";
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+    const page = usePage();
+    const myCart = page.props.cart;
+
+    const viewCart = () => {
+        router.get(route("cart.index"));
+    };
 
     return (
         <div className="h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
@@ -79,8 +88,8 @@ export default function Authenticated({ user, header, children }) {
 
                                 {user.role === "admin" && (
                                     <NavLink
-                                        href={route("users.manage")}
-                                        active={route().current("users.manage")}
+                                        href={route("users.index")}
+                                        active={route().current("users.index")}
                                     >
                                         Manage users
                                     </NavLink>
@@ -89,6 +98,20 @@ export default function Authenticated({ user, header, children }) {
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
+                            {user.role === "customer" && (
+                                <label
+                                    htmlFor="my-drawer"
+                                    className="indicator btn btn-outline btn-circle btn-warning btn-sm drawer-button"
+                                >
+                                    <span className="indicator-item badge badge-info">
+                                        {myCart.data.length}
+                                    </span>
+                                    <FontAwesomeIcon
+                                        icon={faCartShopping}
+                                        className="w-8"
+                                    />
+                                </label>
+                            )}
                             <div className="ms-3 relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -231,8 +254,8 @@ export default function Authenticated({ user, header, children }) {
 
                         {user.role === "admin" && (
                             <ResponsiveNavLink
-                                href={route("users.manage")}
-                                active={route().current("users.manage")}
+                                href={route("users.index")}
+                                active={route().current("users.index")}
                             >
                                 Manage users
                             </ResponsiveNavLink>
@@ -273,9 +296,48 @@ export default function Authenticated({ user, header, children }) {
                 </header>
             )}
 
-            <div className="overflow-auto no-scrollbar">
-                <div className="min-h-screen">{children}</div>
-                <Footer />
+            <div className="drawer drawer-end overflow-auto no-scrollbar">
+                <input
+                    id="my-drawer"
+                    type="checkbox"
+                    className="drawer-toggle"
+                />
+                <div className="drawer-content">
+                    {/* Page content here */}
+
+                    <div className="min-h-screen">{children}</div>
+                    <Footer />
+                </div>
+                <div className="drawer-side z-10">
+                    <label
+                        htmlFor="my-drawer"
+                        aria-label="close sidebar"
+                        className="drawer-overlay"
+                    ></label>
+                    <div className="menu relative bg-base-100 text-base-content h-svh w-80 p-4">
+                        {/* Sidebar content here */}
+                        <div className="h-[calc(100%-120px)] overflow-auto no-scrollbar border-b-2">
+                            <CartDrawer cart={myCart} />
+                        </div>
+                        <div className="absolute inset-x-0 bottom-12 text-center">
+                            <label
+                                htmlFor="my-drawer"
+                                className="indicator btn btn-outline btn-error rounded-xl"
+                                onClick={viewCart}
+                            >
+                                <span className="text-lg">
+                                    <FontAwesomeIcon
+                                        icon={faCartShopping}
+                                        className="w-8"
+                                    />
+                                    <span className="sm:inline-block hidden">
+                                        View cart
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

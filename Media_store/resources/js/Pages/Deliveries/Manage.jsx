@@ -317,7 +317,6 @@ const Manage = ({ deliveries, queryParams = null }) => {
                                     <th scope="col"></th>
                                     <th scope="col">
                                         <TextInput
-                                            className="w-full min-w-32"
                                             placeholder="search..."
                                             onBlur={(e) =>
                                                 searchFieldChanged(
@@ -339,7 +338,6 @@ const Manage = ({ deliveries, queryParams = null }) => {
                                                     e.target.value
                                                 )
                                             }
-                                            className="w-full min-w-32"
                                             defaultValue={queryParams.status}
                                         >
                                             <option value="all">All</option>
@@ -360,7 +358,6 @@ const Manage = ({ deliveries, queryParams = null }) => {
 
                                     <th scope="col">
                                         <Select
-                                            className="w-full min-w-32"
                                             onChange={(e) =>
                                                 searchFieldChanged(
                                                     "type",

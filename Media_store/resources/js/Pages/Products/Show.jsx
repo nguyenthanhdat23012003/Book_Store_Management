@@ -138,23 +138,6 @@ const Show = ({ product }) => {
                                 </li>
                             </ul>
                         </div>
-                        {user.role === "customer" && (
-                            <Link
-                                href={route("cart.index")}
-                                className="indicator btn btn-outline rounded-2xl btn-error -mb-4"
-                            >
-                                <span className="indicator-item badge badge-primary">
-                                    {nbItemInCart}
-                                </span>
-                                <span className="text-lg">
-                                    <FontAwesomeIcon
-                                        icon={faCartShopping}
-                                        className="w-8"
-                                    />
-                                    View cart
-                                </span>
-                            </Link>
-                        )}
                     </div>
                     <div className="sm:hidden block">
                         <Link

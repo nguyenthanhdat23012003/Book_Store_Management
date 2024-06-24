@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightLong } from "@fortawesome/free-solid-svg-icons";
 import Toast from "@/Components/Toast";
@@ -50,10 +50,17 @@ const Dashboard = ({ products }) => {
                         },
                     ]);
                 }
+                router.reload({ only: ["cart"] });
             })
             .catch((error) => {
                 console.log(error);
-                setMessages("Oop! Something went wrong!");
+                setMessages([
+                    ...messages,
+                    {
+                        message: "Oop! Something went wrong!",
+                        type: "alert-error",
+                    },
+                ]);
             });
     };
 
@@ -66,7 +73,7 @@ const Dashboard = ({ products }) => {
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
                 <div className="p-6 text-gray-900 dark:text-gray-100 grid space-y-8">
                     <div className="grid lg:grid-cols-3 grid-cols-2 grid-flow-row gap-4">
-                        <div className="relative col-span-2 row-span-2 bg-[url('/images/book.png')] bg-cover bg-center h-[464px] animate-floatIn">
+                        <div className="relative col-span-2 row-span-2 bg-[url('https://i.pinimg.com/564x/bd/97/6e/bd976ec7dde6b731183b18c67f6584ee.jpg')] bg-cover bg-center h-[464px] animate-floatIn">
                             <div className="bg-gradient-to-b from-black/15 to-white/50 h-full"></div>
                             <div className="absolute left-8 bottom-4 flex flex-col gap-4">
                                 <h3 className="text-5xl font-bold">
@@ -87,8 +94,8 @@ const Dashboard = ({ products }) => {
                                 </Link>
                             </div>
                         </div>
-                        <div className="bg-[url('/images/cd.jpg')] bg-cover bg-center h-56 animate-splitIn shadow"></div>
-                        <div className="bg-[url('/images/dvd.jpg')] bg-cover bg-center h-56 animate-splitIn shadow"></div>
+                        <div className="bg-[url('https://i.pinimg.com/564x/77/dd/08/77dd08b55c56cf126b7da1e7ea99a39a.jpg')] bg-cover bg-center h-56 animate-splitIn shadow"></div>
+                        <div className="bg-[url('https://i.pinimg.com/564x/61/a5/f4/61a5f46f1b0d6440b38204407bd0ec9c.jpg')] bg-cover bg-center h-56 animate-splitIn shadow"></div>
                     </div>
 
                     <div className="text-xl">
@@ -134,7 +141,7 @@ const Dashboard = ({ products }) => {
                                     >
                                         {user.role === "customer" && (
                                             <button
-                                                className="btn btn-neutral rounded-none w-full"
+                                                className="btn btn-neutral rounded-none w-full absolute inset-x-0 bottom-0 z-30"
                                                 onClick={() =>
                                                     addToCart(product)
                                                 }
@@ -198,7 +205,7 @@ const Dashboard = ({ products }) => {
                         <div className="col-span-3 md:row-span-2 md:col-start-3 md:row-start-1 row-span-2 row-start-3 overflow-hidden">
                             <img
                                 loading="lazy"
-                                src="/images/book&cat.png"
+                                src="https://i.pinimg.com/564x/a2/cc/6f/a2cc6f96357e71fa2e66979edb0c9bd3.jpg"
                                 alt=""
                                 className="w-full h-full object-cover object-center"
                             />
@@ -206,7 +213,7 @@ const Dashboard = ({ products }) => {
                         <div className="col-span-2 row-span-1">
                             <img
                                 loading="lazy"
-                                src="/images/cd_tl.jpg"
+                                src="https://i.pinimg.com/736x/8f/d0/84/8fd0840afc1d7defc479f34779e0c30b.jpg"
                                 alt=""
                                 className="w-full h-full object-cover object-center aspect-square"
                             />
@@ -214,7 +221,7 @@ const Dashboard = ({ products }) => {
                         <div className="col-span-2 row-span-1">
                             <img
                                 loading="lazy"
-                                src="/images/dvd_tr.jpg"
+                                src="https://i.pinimg.com/564x/fd/9b/28/fd9b2881dd4ad41a718cc03a91d6b543.jpg"
                                 alt=""
                                 className="w-full h-full object-cover object-center aspect-square"
                             />
@@ -222,7 +229,7 @@ const Dashboard = ({ products }) => {
                         <div className="col-span-2 row-span-1">
                             <img
                                 loading="lazy"
-                                src="/images/book_lb.png"
+                                src="https://i.pinimg.com/564x/19/ac/ab/19acabcc9f40a0df209a7a1703785fe8.jpg"
                                 alt=""
                                 className="w-full h-full object-cover object-center aspect-square"
                             />
@@ -230,7 +237,7 @@ const Dashboard = ({ products }) => {
                         <div className="col-span-2 row-span-1">
                             <img
                                 loading="lazy"
-                                src="/images/cd_rb.jpg"
+                                src="https://i.pinimg.com/564x/f8/9d/6c/f89d6c128f25e9d19e6490957a9e524c.jpg"
                                 alt=""
                                 className="w-full h-full object-cover object-center aspect-square"
                             />

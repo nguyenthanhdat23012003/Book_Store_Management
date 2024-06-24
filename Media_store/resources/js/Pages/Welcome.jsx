@@ -46,7 +46,7 @@ export default function Welcome({ auth }) {
                     <div className="relative flex flex-col items-center justify-center bg-gradient-to-b from-cyan-900/20 to-indigo-900/40 selection:bg-gray-100 selection:text-black">
                         {/* Nav */}
                         <div className="bg-black/15 flex justify-center items-center w-full">
-                            <div className="w-full lg:max-w-7xl max-w-2xl">
+                            <div className="w-full lg:max-w-7xl max-w-2xl mx-6">
                                 <header className="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
                                     <div className="flex lg:justify-center lg:col-start-2">
                                         <svg
@@ -96,12 +96,12 @@ export default function Welcome({ auth }) {
                                     Explore the colorful world
                                 </h3>
                                 <hr className="w-32" />
-                                <h1 className="md:text-7xl text-5xl text-nowrap [text-shadow:_0_6px_6px_rgb(0_0_0_/_60%)]">
+                                <h1 className="md:text-7xl text-4xl text-nowrap [text-shadow:_0_6px_6px_rgb(0_0_0_/_60%)]">
                                     A Wonderful Store
                                 </h1>
                                 <Link
                                     href={route("products.index")}
-                                    className="skeleton btn btn-xs sm:btn-sm md:btn-md lg:btn-lg btn-accent mt-8 lg:rounded-full animate-shake"
+                                    className="skeleton btn btn-md lg:btn-lg btn-accent mt-8 rounded-full animate-shake"
                                 >
                                     Shop Now
                                 </Link>
@@ -110,7 +110,7 @@ export default function Welcome({ auth }) {
                     </div>
                 </div>
                 <LazyLoad once={true} placeholder={<Loading />} offset={-100}>
-                    <main className="w-full bg-[url('/images/store_02.png')] bg-cover bg-center bg-fixed">
+                    <main className="w-full bg-[url('https://images.squarespace-cdn.com/content/v1/5bf59fef96d455387f15457f/66f8d70a-5a79-433a-8157-48ab16160848/4B003808-B596-4DC5-89A4-6E6D6FB56FB3-6835-000015DAEE44A128+2.jpg?format=2500w')] bg-cover bg-center bg-fixed">
                         <div className="flex gap-4 justify-between bg-white/80 py-12 lg:px-12 px-4">
                             <FontAwesomeIcon
                                 icon={faQuoteLeft}
@@ -148,7 +148,7 @@ export default function Welcome({ auth }) {
                         {/* Book */}
                         <div className="min-h-[600px] bg-gray-100 flex flex-col justify-center">
                             <div className="hero bg-gray-100 mb-8">
-                                <div className="hero-content flex-col lg:flex-row">
+                                <div className="hero-content w-full flex-col lg:flex-row">
                                     <div className="lg:w-1/3">
                                         <AnimationSection animation="zoomIn">
                                             <Carousel autoSlide={true}>

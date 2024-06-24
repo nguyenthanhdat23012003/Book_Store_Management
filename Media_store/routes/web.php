@@ -14,7 +14,7 @@ use App\Http\Controllers\ProductHistoryController;
 
 Route::get('/', [HomeController::class, 'index']);
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
     // routing for cart
     Route::post('/add-to-cart/{product}', [CartController::class, 'addToCart'])->name('cart.addToCart');
@@ -62,9 +62,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // routing for admin actions
     Route::middleware('admin')->group(function () {
-        Route::get('/users', [UserController::class, 'manage'])->name('users.manage');
         Route::post('/users/{user}/change-role', [UserController::class, 'changeRole'])->name('users.changeRole');
         Route::post('/users/{user}/change-active', [UserController::class, 'block'])->name('users.changeActive');
+        Route::resource('users', UserController::class)->only(['create', 'store', 'index']);
     });
 });
 

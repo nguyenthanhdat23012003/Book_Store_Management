@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruck, faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
+import { Link } from "@inertiajs/react";
 
 const OrderDetails = ({ order }) => {
     return (
@@ -31,7 +32,10 @@ const OrderDetails = ({ order }) => {
                         key={index}
                         className="flex justify-between h-full sm:px-4 my-2"
                     >
-                        <div className="md:w-2/3 w-full flex flex-wrap">
+                        <Link
+                            href={route("products.show", item.id)}
+                            className="md:w-2/3 w-full flex flex-wrap"
+                        >
                             <div className="md:w-1/4 sm:w-1/3 w-1/2 sm:h-32 p-1 border rounded border-primary">
                                 <img
                                     src={item.product.image_path}
@@ -66,7 +70,7 @@ const OrderDetails = ({ order }) => {
                                     </p>
                                 )}
                             </div>
-                        </div>
+                        </Link>
 
                         <div className="sm:block hidden self-center">
                             <p className="text-red-600">

@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'restrict_product_updation' => \App\Http\Middleware\RestrictProductUpdate::class,
             'restrict_product_deletion' => \App\Http\Middleware\RestrictProductDeletion::class,
             'admin' => \App\Http\Middleware\Admin::class,
+            'active' => \App\Http\Middleware\ActiveMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

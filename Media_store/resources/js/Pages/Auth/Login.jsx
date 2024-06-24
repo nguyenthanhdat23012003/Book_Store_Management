@@ -7,7 +7,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ error, status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: "",
         password: "",
@@ -33,6 +33,12 @@ export default function Login({ status, canResetPassword }) {
             {status && (
                 <div className="mb-4 font-medium text-sm text-green-600">
                     {status}
+                </div>
+            )}
+
+            {error && (
+                <div className="mb-4 font-medium text-sm text-red-600">
+                    {error}
                 </div>
             )}
 

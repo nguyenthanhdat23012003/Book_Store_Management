@@ -31,11 +31,11 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
         $sortDirection = request('sort_dir', 'asc');
 
         if (request('name')) {
-            $query->where('name', 'like', '%' . request('name') . '%');
+            $query->where('name', 'LIKE', '%' . request('name') . '%');
         }
 
-        if (request('type')) {
-            request('type') === 'all' ? '' : $query->where('type', request('type'));
+        if (request('type' && request('type') !== 'all')) {
+            $query->where('type', request('type'));
         }
 
         $products = $query->orderBy($sortField, $sortDirection)->paginate(10)->appends(request()->query())->onEachSide(1);
@@ -56,7 +56,7 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
         $query = $this->_model::where('in_stock', '>', '0');
 
         if (request('name')) {
-            $query->where('name', 'like', '%' . request('name') . '%')
+            $query->where('name', 'LIKE', '%' . request('name') . '%')
                 ->orWhere('genre', 'LIKE', '%' . request('name') . '%');
         }
 
@@ -65,7 +65,7 @@ class ProductEloquentRepository extends EloquentRepository implements ProductRep
         }
 
         if (request('genre') && request('genre') !== 'all') {
-            $query->where('genre', 'like', '%' . request('genre') . '%');
+            $query->where('genre', 'LIKE', '%' . request('genre') . '%');
         }
 
         if (request('price_range')) {
